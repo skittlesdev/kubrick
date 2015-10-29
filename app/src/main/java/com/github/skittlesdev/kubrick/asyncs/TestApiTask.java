@@ -1,4 +1,4 @@
-package com.github.skittlesdev.kubrick.async;
+package com.github.skittlesdev.kubrick.asyncs;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -10,6 +10,25 @@ import info.movito.themoviedbapi.model.MovieDb;
 
 /**
  * Created by lowgr on 10/28/2015.
+ */
+/*
+
+
+
+
+
+
+
+USELESS (FOR NOW?)
+
+
+
+
+
+
+
+
+
  */
 public class TestApiTask extends AsyncTask<String, Integer, String> {
     private Context mContext;

@@ -1,11 +1,20 @@
 package com.github.skittlesdev.kubrick;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
-import com.github.skittlesdev.kubrick.async.TestApiTask;
+import com.github.skittlesdev.kubrick.receivers.MovieBroadcastReceiver;
+import com.github.skittlesdev.kubrick.services.ElementService;
+import com.github.skittlesdev.kubrick.ui.fragments.FragmentHome;
+import com.github.skittlesdev.kubrick.utils.Constants;
 
 public class Home extends Activity {
+    private Intent mElementService;
+    private MovieBroadcastReceiver mMovieBroadcastReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -13,7 +22,26 @@ public class Home extends Activity {
         this.setContentView(R.layout.activity_home);
 
         String apiKey = "0d1d0cc3c4aec9ca1c2c8c9e781a7ef1";
-        TestApiTask testApiTask = new TestApiTask(this);
-        testApiTask.execute(apiKey);
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentHome fragmentHome = new FragmentHome();
+
+        this.mElementService = new Intent(this, ElementService.class);
+        this.mElementService.putExtra(Constants.Intent.INTENT_API_KEY, apiKey);
+
+        this.mMovieBroadcastReceiver = new MovieBroadcastReceiver(fragmentHome);
+        this.registerReceiver(this.mMovieBroadcastReceiver, new IntentFilter(Constants.Intent.ACTION_NEW_DATA));
+
+        fragmentHome.onAttach(this);
+        transaction.add(R.id.homeContainer, fragmentHome);
+        transaction.commit();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.startService(this.mElementService);
     }
 }
