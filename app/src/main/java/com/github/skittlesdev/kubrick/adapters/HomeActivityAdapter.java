@@ -18,10 +18,10 @@ import info.movito.themoviedbapi.model.core.IdElement;
 /**
  * Created by lowgr on 10/29/2015.
  */
-public class MovieAdapter extends BaseAdapter implements View.OnClickListener {
+public class HomeActivityAdapter extends BaseAdapter implements View.OnClickListener {
     private List<? extends IdElement> mElements;
 
-    public MovieAdapter(List<? extends IdElement> movies) {
+    public HomeActivityAdapter(List<? extends IdElement> movies) {
         this.mElements = movies;
     }
 

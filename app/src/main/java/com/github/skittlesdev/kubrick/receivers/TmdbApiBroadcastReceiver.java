@@ -14,14 +14,14 @@ import info.movito.themoviedbapi.model.core.IdElement;
 /**
  * Created by lowgr on 10/29/2015.
  */
-public class MovieBroadcastReceiver extends BroadcastReceiver {
+public class TmdbApiBroadcastReceiver extends BroadcastReceiver {
     private DataReceiver mDataReceiver;
 
-    public MovieBroadcastReceiver() {
+    public TmdbApiBroadcastReceiver() {
         this(null);
     }
 
-    public MovieBroadcastReceiver(DataReceiver dataReceiver) {
+    public TmdbApiBroadcastReceiver(DataReceiver dataReceiver) {
         super();
 
         this.mDataReceiver = dataReceiver;

@@ -23,10 +23,10 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".services.ElementService"
+            android:name=".services.TmdbApiCallService"
             android:exported="true"
             android:label="@string/element_service" />
-        <receiver android:name=".receivers.MovieBroadcastReceiver"
+        <receiver android:name=".receivers.TmdbApiBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

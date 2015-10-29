@@ -17,21 +17,21 @@ import info.movito.themoviedbapi.model.core.MovieResultsPage;
 /**
  * Created by lowgr on 10/29/2015.
  */
-public class ElementService extends IntentService {
-    private ElementService() {
+public class TmdbApiCallService extends IntentService {
+    private TmdbApiCallService() {
         super("");
     }
 
-    private ElementService(String name) {
+    private TmdbApiCallService(String name) {
         super(name);
     }
 
     public void callBroadcaster(List<? extends IdElement> data) {
-        final Intent movieBroadcastReceiverIntent = new Intent(Constants.Intent.ACTION_NEW_DATA);
+        final Intent TmdbApiBroadcastReceiverIntent = new Intent(Constants.Intent.ACTION_NEW_DATA);
         final Bundle extras = new Bundle();
         extras.putSerializable(Constants.Intent.INTENT_ID_ELEMENTS, (Serializable) data);
-        movieBroadcastReceiverIntent.putExtras(extras);
-        this.sendBroadcast(movieBroadcastReceiverIntent);
+        TmdbApiBroadcastReceiverIntent.putExtras(extras);
+        this.sendBroadcast(TmdbApiBroadcastReceiverIntent);
         this.stopSelf();
     }
 

@@ -15,29 +15,10 @@ import info.movito.themoviedbapi.model.core.MovieResultsPage;
 /**
  * Created by lowgr on 10/29/2015.
  */
-/*
-
-
-
-
-
-
-
-USELESS (FOR NOW?)
-
-
-
-
-
-
-
-
-
- */
-public class DiscoverTask extends AsyncTask<String, Integer, List<? extends IdElement>> {
+public class TmdbApiTask extends AsyncTask<String, Integer, List<? extends IdElement>> {
     private DataListener mDataListener;
 
-    public DiscoverTask(DataListener dataListener) {
+    public TmdbApiTask(DataListener dataListener) {
         this.mDataListener = dataListener;
     }
 
