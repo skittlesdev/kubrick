@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Home"
+            android:name=".HomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_home"
             >
@@ -22,17 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service
-            android:name=".services.TmdbApiCallService"
-            android:exported="true"
-            android:label="@string/element_service" />
-        <receiver android:name=".receivers.TmdbApiBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_NEW_DATA" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

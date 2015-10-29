@@ -9,8 +9,6 @@ public class Constants {
     }
 
     public class Intent {
-        public static final String ACTION_NEW_DATA = "ACTION_NEW_DATA";
-        public static final String INTENT_ID_ELEMENTS = "INTENT_ID_ELEMENTS";
         public static final String INTENT_API_KEY = "INTENT_API_KEY";
     }
 }
