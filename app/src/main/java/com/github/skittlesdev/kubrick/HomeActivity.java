@@ -16,15 +16,11 @@ import android.widget.Toolbar;
 
 import com.github.skittlesdev.kubrick.adapters.HomeDrawerAdapter;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentHome;
-<<<<<<< HEAD
-import com.github.skittlesdev.kubrick.utils.Constants;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
 
 import java.util.ArrayList;
 import java.util.List;
-=======
->>>>>>> origin/master
 
 public class HomeActivity extends Activity {
     private Toolbar mToolbar;
