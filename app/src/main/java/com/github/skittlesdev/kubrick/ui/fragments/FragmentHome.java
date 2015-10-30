@@ -13,7 +13,6 @@ import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.HomeActivityRecyclerAdapter;
 import com.github.skittlesdev.kubrick.asyncs.TmdbApiTask;
 import com.github.skittlesdev.kubrick.interfaces.DataListener;
-import com.github.skittlesdev.kubrick.utils.Constants;
 
 import java.util.List;
 
@@ -29,8 +28,7 @@ public class FragmentHome extends Fragment implements DataListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        this.mApiKey = this.getArguments().getString(Constants.Intent.INTENT_API_KEY);
+        this.mApiKey = getString(R.string.tmdb_api_key);
     }
 
     @Override
