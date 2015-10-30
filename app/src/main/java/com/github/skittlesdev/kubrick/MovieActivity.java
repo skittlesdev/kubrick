@@ -30,6 +30,14 @@ public class MovieActivity extends Activity implements MovieListener {
                 .into((ImageView) findViewById(R.id.poster));
 
         TextView titleView = (TextView) findViewById(R.id.title);
+        TextView yearView = (TextView) findViewById(R.id.year);
+        TextView overviewView = (TextView) findViewById(R.id.overview);
+
         titleView.setText(movie.getTitle());
+
+        String year = "(" + movie.getReleaseDate().split("-")[0] + ")";
+        yearView.setText(year);
+
+        overviewView.setText(movie.getOverview());
     }
 }
