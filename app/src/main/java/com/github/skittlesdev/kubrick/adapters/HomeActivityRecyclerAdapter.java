@@ -77,9 +77,9 @@ public class HomeActivityRecyclerAdapter extends
         @Override
         public void onClick(View view) {
             Context context = view.getContext();
-            Bundle options = new Bundle();
-            options.putInt("ITEM_ID", this.element.getId());
-            context.startActivity(new Intent(context, MovieActivity.class), options);
+            Intent intent = new Intent(context, MovieActivity.class);
+            intent.putExtra("ITEM_ID", this.element.getId());
+            context.startActivity(intent);
         }
     }
 }
