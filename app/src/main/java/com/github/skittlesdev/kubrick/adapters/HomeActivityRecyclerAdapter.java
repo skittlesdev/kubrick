@@ -1,6 +1,8 @@
 package com.github.skittlesdev.kubrick.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.github.skittlesdev.kubrick.HomeActivity;
 import com.github.skittlesdev.kubrick.KubrickApplication;
+import com.github.skittlesdev.kubrick.MovieActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.squareup.picasso.Picasso;
 
@@ -44,6 +48,7 @@ public class HomeActivityRecyclerAdapter extends
         IdElement element = this.mElements.get(position);
         ImageView poster = holder.moviePoster;
         String posterPath = ((MovieDb) element).getPosterPath();
+        holder.element = element;
 
         Picasso.with(this.mContext)
                 .load("http://image.tmdb.org/t/p/w500" + posterPath)
@@ -60,6 +65,7 @@ public class HomeActivityRecyclerAdapter extends
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView moviePoster;
+        public IdElement element;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -70,7 +76,10 @@ public class HomeActivityRecyclerAdapter extends
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(KubrickApplication.getContext(), "CLICKED!", Toast.LENGTH_SHORT).show();
+            Context context = view.getContext();
+            Bundle options = new Bundle();
+            options.putInt("ITEM_ID", this.element.getId());
+            context.startActivity(new Intent(context, MovieActivity.class), options);
         }
     }
 }
