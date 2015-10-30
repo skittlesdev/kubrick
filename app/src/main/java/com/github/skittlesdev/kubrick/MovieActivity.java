@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -9,6 +10,8 @@ import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.interfaces.MovieListener;
 import com.squareup.picasso.Picasso;
 import info.movito.themoviedbapi.model.MovieDb;
+import org.joda.time.Duration;
+import org.joda.time.format.*;
 
 public class MovieActivity extends Activity implements MovieListener {
     @Override
@@ -30,13 +33,24 @@ public class MovieActivity extends Activity implements MovieListener {
                 .into((ImageView) findViewById(R.id.poster));
 
         TextView titleView = (TextView) findViewById(R.id.title);
-        TextView yearView = (TextView) findViewById(R.id.year);
+        TextView durationView = (TextView) findViewById(R.id.duration);
         TextView overviewView = (TextView) findViewById(R.id.overview);
 
-        titleView.setText(movie.getTitle());
-
         String year = "(" + movie.getReleaseDate().split("-")[0] + ")";
-        yearView.setText(year);
+
+        titleView.setText(movie.getTitle() + " " + year);
+
+        Duration duration = new Duration(movie.getRuntime() * 1000 * 60);
+        PeriodFormatter formatter = new PeriodFormatterBuilder()
+                .appendHours()
+                .appendSuffix(":")
+                .minimumPrintedDigits(2)
+                .appendMinutes()
+                .toFormatter();
+
+        String durationDisplay = formatter.print(duration.toPeriod());
+
+        durationView.setText(durationDisplay);
 
         overviewView.setText(movie.getOverview());
     }
