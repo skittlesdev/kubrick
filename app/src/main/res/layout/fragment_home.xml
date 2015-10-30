@@ -5,13 +5,6 @@
     android:id="@+id/fragmentHome"
     tools:context="com.github.skittlesdev.kubrick.ui.fragments.FragmentHome" >
 
-    <!--<GridView
-        android:id="@+id/movieGridView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:numColumns="auto_fit"
-        android:stretchMode="columnWidth" />-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
