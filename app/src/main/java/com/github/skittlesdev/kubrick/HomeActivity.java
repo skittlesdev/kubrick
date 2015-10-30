@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -107,6 +108,7 @@ public class HomeActivity extends Activity {
 
         switch (id) {
             case R.id.action_search:
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
                 tmpStringToShowItWorks = "Search";
                 break;
             case R.id.action_user:
