@@ -25,45 +25,50 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
     private List<RowElement> mTitles;
     private ProfileElement mProfile;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public int holderId;
-        public TextView title;
-        public ImageView icon;
+    public static class ProfileViewHolder extends HomeDrawerAdapter.ViewHolder implements View.OnClickListener {
         public ImageView avatar;
         public TextView name;
         public TextView email;
 
-        public ViewHolder(View itemView, int ViewType) {
+        public ProfileViewHolder(View itemView) {
             super(itemView);
 
-            if (ViewType == HomeDrawerAdapter.TYPE_ITEM) {
-                this.title = (TextView) itemView.findViewById(R.id.rowTextHome);
-                this.title.setOnClickListener(this);
-                this.icon = (ImageView) itemView.findViewById(R.id.rowIconHome);
-                this.icon.setOnClickListener(this);
-                this.holderId = 1;
-            } else {
-                this.name = (TextView) itemView.findViewById(R.id.name);
-                this.name.setOnClickListener(this);
-                this.email = (TextView) itemView.findViewById(R.id.email);
-                this.email.setOnClickListener(this);
-                this.avatar = (ImageView) itemView.findViewById(R.id.circleView);
-                this.avatar.setOnClickListener(this);
-                this.holderId = 0;
-            }
+            this.name = (TextView) itemView.findViewById(R.id.name);
+            this.name.setOnClickListener(this);
+            this.email = (TextView) itemView.findViewById(R.id.email);
+            this.email.setOnClickListener(this);
+            this.avatar = (ImageView) itemView.findViewById(R.id.circleView);
+            this.avatar.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            String toDisplay = "Hey!";
+            Toast.makeText(KubrickApplication.getContext(), "Profile clicked!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
-            if (view.getId() == R.id.rowTextHome || view.getId() ==  R.id.rowIconHome) {
-                toDisplay += " Title clicked!";
-            } else {
-                toDisplay += " Profile clicked!";
-            }
+    public static class TitleViewHolder extends HomeDrawerAdapter.ViewHolder implements View.OnClickListener {
+        public TextView title;
+        public ImageView icon;
 
-            Toast.makeText(KubrickApplication.getContext(), toDisplay, Toast.LENGTH_SHORT).show();
+        public TitleViewHolder(View itemView) {
+            super(itemView);
+
+            this.title = (TextView) itemView.findViewById(R.id.rowTextHome);
+            this.title.setOnClickListener(this);
+            this.icon = (ImageView) itemView.findViewById(R.id.rowIconHome);
+            this.icon.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Toast.makeText(KubrickApplication.getContext(), "Title clicked!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public ViewHolder(View itemView) {
+            super(itemView);
         }
     }
 
@@ -75,31 +80,39 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
     @Override
     public HomeDrawerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutToInflate;
+        View view;
 
         if (viewType == HomeDrawerAdapter.TYPE_ITEM) {
             layoutToInflate = R.layout.item_row_home;
+            view = LayoutInflater.from(parent.getContext()).inflate(layoutToInflate, parent, false);
+            return new TitleViewHolder(view);
         } else if (viewType == HomeDrawerAdapter.TYPE_HEADER) {
             layoutToInflate = R.layout.header_home;
-        } else {
-            return null;
+            view = LayoutInflater.from(parent.getContext()).inflate(layoutToInflate, parent, false);
+            return new ProfileViewHolder(view);
         }
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(layoutToInflate, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view, viewType);
-
-        return viewHolder;
+        return null;
     }
 
     @Override
     public void onBindViewHolder(HomeDrawerAdapter.ViewHolder holder, int position) {
-        if (holder.holderId == 1) {
-            holder.title.setText(this.mTitles.get(position - 1).getTitle());
-            holder.icon.setImageResource(this.mTitles.get(position - 1).getIcon());
-        } else {
-            holder.avatar.setImageResource(this.mProfile.getAvatar());
-            holder.name.setText(this.mProfile.getName());
-            holder.email.setText(this.mProfile.getEmail());
+        if (holder instanceof ProfileViewHolder) {
+            this.onBindViewHolder((ProfileViewHolder) holder, position);
+        } else if (holder instanceof TitleViewHolder) {
+            this.onBindViewHolder((TitleViewHolder) holder, position);
         }
+    }
+
+    private void onBindViewHolder(HomeDrawerAdapter.TitleViewHolder holder, int position) {
+        holder.title.setText(this.mTitles.get(position - 1).getTitle());
+        holder.icon.setImageResource(this.mTitles.get(position - 1).getIcon());
+    }
+
+    private void onBindViewHolder(HomeDrawerAdapter.ProfileViewHolder holder, int position) {
+        holder.avatar.setImageResource(this.mProfile.getAvatar());
+        holder.name.setText(this.mProfile.getName());
+        holder.email.setText(this.mProfile.getEmail());
     }
 
     @Override
