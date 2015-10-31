@@ -2,14 +2,18 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.github.skittlesdev.kubrick.asyncs.SearchMovieTask;
 import com.github.skittlesdev.kubrick.interfaces.SearchListener;
+import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
+import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 
@@ -26,8 +30,20 @@ public class SearchActivity extends Activity implements SearchListener, View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        this.setActionBar((Toolbar) this.findViewById(R.id.toolBar));
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
+
+
         Button submitButton = (Button) findViewById(R.id.searchButton);
         submitButton.setOnClickListener(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        new ToolbarMenu(this).itemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
