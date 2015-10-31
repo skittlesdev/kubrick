@@ -24,8 +24,6 @@ import org.joda.time.Duration;
 import org.joda.time.format.*;
 
 public class MediaActivity extends Activity implements MediaListener {
-    private boolean isTv;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,12 +37,10 @@ public class MediaActivity extends Activity implements MediaListener {
         int mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
 
         if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
-            this.isTv = true;
             GetSeriesTask task = new GetSeriesTask(this);
             task.execute(mediaId);
         }
         else {
-            this.isTv = false;
             GetMovieTask task = new GetMovieTask(this);
             task.execute(mediaId);
         }
@@ -67,7 +63,7 @@ public class MediaActivity extends Activity implements MediaListener {
     private void showPoster(IdElement media) {
         String posterPath;
 
-        if (!this.isTv) {
+        if (media instanceof MovieDb) {
             posterPath = ((MovieDb) media).getPosterPath();
         }
         else {
@@ -83,7 +79,7 @@ public class MediaActivity extends Activity implements MediaListener {
 
     private void showTitle(IdElement media) {
         TextView titleView = (TextView) findViewById(R.id.title);
-        if (!this.isTv) {
+        if (media instanceof MovieDb) {
             String title = ((MovieDb) media).getTitle();
             String year = "(" + ((MovieDb) media).getReleaseDate().split("-")[0] + ")";
             titleView.setText(title + " " + year);
@@ -116,7 +112,7 @@ public class MediaActivity extends Activity implements MediaListener {
         TextView overviewView = (TextView) findViewById(R.id.overview);
 
         String overview;
-        if (!this.isTv) {
+        if (media instanceof MovieDb) {
             overview = ((MovieDb) media).getOverview();
         }
         else {
@@ -131,7 +127,7 @@ public class MediaActivity extends Activity implements MediaListener {
         showPoster(media);
         showTitle(media);
 
-        if (!this.isTv) {
+        if (media instanceof MovieDb) {
             showDuration((MovieDb) media);
         }
 
