@@ -2,6 +2,8 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.interfaces.MovieListener;
+import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.squareup.picasso.Picasso;
 import info.movito.themoviedbapi.model.MovieDb;
@@ -26,6 +29,8 @@ public class MovieActivity extends Activity implements MovieListener {
 
         this.setActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
         GetMovieTask task = new GetMovieTask(this);
         int movieId = this.getIntent().getIntExtra("ITEM_ID", -1);

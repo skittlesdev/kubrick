@@ -17,6 +17,7 @@ import android.widget.Toolbar;
 
 import com.github.skittlesdev.kubrick.adapters.HomeDrawerAdapter;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentHome;
+import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
@@ -49,57 +50,17 @@ public class HomeActivity extends Activity {
         this.mToolbar = (Toolbar) this.findViewById(R.id.toolBar);
         this.setActionBar(this.mToolbar);
 
-        this.mRecyclerView = (RecyclerView) findViewById(R.id.homeRecyclerView);
-        this.mRecyclerView.setHasFixedSize(true); // for a better performance
-        this.mHomeDrawerAdapter = new HomeDrawerAdapter(this.generateTitles(), this.generateProfile());
-
-        this.mRecyclerView.setAdapter(this.mHomeDrawerAdapter);
-        this.mLayoutManager = new LinearLayoutManager(this);
-        this.mRecyclerView.setLayoutManager(mLayoutManager);
-
-        this.mDrawerLayout = (DrawerLayout) findViewById(R.id.homeDrawerLayout);
-        //this.mDrawerToggle = new ActionBarDrawerToggle(this, this.mDrawerLayout, R.drawable.ic_launcher,  R.string.openDrawer, R.string.closeDrawer){
-        this.mDrawerToggle = new ActionBarDrawerToggle(this, this. mDrawerLayout, R.string.openDrawer, R.string.closeDrawer) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                // code to execute when the drawer is opened
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                // code to execute when the drawer is closed
-            }
-        };
-
-        this.mDrawerLayout.setDrawerListener(this.mDrawerToggle);
-        this.mDrawerToggle.syncState();
+        new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
     }
 
-    private List<RowElement> generateTitles() {
-        List<RowElement> titles = new ArrayList<>();
 
-        for (int i = 0; i < 6; i++) {
-            titles.add(new RowElement(R.drawable.ic_row_element, "Menu " + i));
-        }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_home, menu);
 
-        return titles;
+        return true;
     }
-
-    private ProfileElement generateProfile() {
-        ProfileElement profileElement = new ProfileElement(R.drawable.default_profile_avatar, "Kubrick", "kubrick@kubrick.com");
-
-        return profileElement;
-    }
-
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.menu_home, menu);
-
-            return true;
-        }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
