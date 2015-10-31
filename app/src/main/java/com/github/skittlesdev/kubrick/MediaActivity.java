@@ -122,6 +122,11 @@ public class MediaActivity extends Activity implements MediaListener {
         overviewView.setText(overview);
     }
 
+    private void showStats(TvSeries media) {
+        TextView durationView = (TextView) findViewById(R.id.duration);
+        durationView.setText(media.getNumberOfSeasons() + " seasons, " + media.getNumberOfEpisodes() + " episodes");
+    }
+
     @Override
     public void onMediaRetrieved(IdElement media) {
         showPoster(media);
@@ -129,6 +134,9 @@ public class MediaActivity extends Activity implements MediaListener {
 
         if (media instanceof MovieDb) {
             showDuration((MovieDb) media);
+        }
+        else {
+            showStats((TvSeries) media);
         }
 
         showOverview(media);
