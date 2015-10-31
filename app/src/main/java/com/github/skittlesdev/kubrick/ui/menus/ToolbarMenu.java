@@ -3,9 +3,7 @@ package com.github.skittlesdev.kubrick.ui.menus;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.SearchActivity;
 

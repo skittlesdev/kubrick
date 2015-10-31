@@ -1,7 +1,6 @@
 package com.github.skittlesdev.kubrick.ui.menus;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,7 +45,8 @@ public class DrawerMenu {
                 // code to execute when the drawer is closed
             }
         };
-        toggle.setDrawerIndicatorEnabled(false);
+
+        //toggle.setDrawerIndicatorEnabled(false);
         this.layout.setDrawerListener(toggle);
         toggle.syncState();
     }
