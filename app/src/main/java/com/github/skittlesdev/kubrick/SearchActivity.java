@@ -1,12 +1,15 @@
 package com.github.skittlesdev.kubrick;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import com.github.skittlesdev.kubrick.asyncs.SearchMovieTask;
 import com.github.skittlesdev.kubrick.interfaces.SearchListener;
@@ -32,9 +35,37 @@ public class SearchActivity extends Activity implements SearchListener, View.OnC
 
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
+        this.setActionListener();
 
-        Button submitButton = (Button) findViewById(R.id.searchButton);
+        ImageButton submitButton = (ImageButton) findViewById(R.id.searchButton);
         submitButton.setOnClickListener(this);
+    }
+
+    public void executeSearchTask(TextView searchInput, SearchActivity searchActivity) {
+        SearchMovieTask searchTask = new SearchMovieTask(searchActivity);
+        searchTask.execute(searchInput.getText().toString());
+    }
+
+    private void setActionListener() {
+        final EditText searchInput = (EditText) findViewById(R.id.search);
+        searchInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView searchInput, int actionId, KeyEvent event) {
+                boolean handled = false;
+
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    Context context = searchInput.getContext();
+
+                    if (context instanceof SearchActivity) {
+                        SearchActivity searchActivity = (SearchActivity) context;
+                        searchActivity.executeSearchTask(searchInput, searchActivity);
+                        handled = true;
+                    }
+                }
+
+                return handled;
+            }
+        });
     }
 
     @Override
@@ -57,10 +88,8 @@ public class SearchActivity extends Activity implements SearchListener, View.OnC
     }
 
     @Override
-    public void onClick(View v) {
-        EditText searchInput = (EditText) findViewById(R.id.search);
-        SearchMovieTask searchTask = new SearchMovieTask(this);
-        searchTask.execute(searchInput.getText().toString());
+    public void onClick(View view) {
+        this.executeSearchTask((EditText) findViewById(R.id.search), this);
     }
 
     @Override

@@ -8,4 +8,5 @@
 
     <!-- our colors -->
     <color name="light_orange">#FF9800</color>
+    <color name="profile">#FFFFFF</color>
 </resources>

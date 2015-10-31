@@ -25,11 +25,10 @@
     <!-- side menu -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/homeRecyclerView"
-        android:layout_width="@dimen/drawer_width"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="left"
+        android:layout_gravity="start"
         android:background="@color/colorPrimaryDark"
         android:scrollbars="vertical">
-
     </android.support.v7.widget.RecyclerView>
 </android.support.v4.widget.DrawerLayout>
