@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.github.skittlesdev.kubrick.MovieActivity;
+import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.squareup.picasso.Picasso;
 
@@ -73,8 +73,9 @@ public class HomeActivityRecyclerAdapter extends
         @Override
         public void onClick(View view) {
             Context context = view.getContext();
-            Intent intent = new Intent(context, MovieActivity.class);
-            intent.putExtra("ITEM_ID", this.element.getId());
+            Intent intent = new Intent(context, MediaActivity.class);
+            intent.putExtra("MEDIA_ID", this.element.getId());
+            intent.putExtra("MEDIA_TYPE", "movie");
             context.startActivity(intent);
         }
     }

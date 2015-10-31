@@ -5,30 +5,30 @@ import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
 import info.movito.themoviedbapi.TmdbApi;
-import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.tv.TvSeries;
 
-public class GetMovieTask extends AsyncTask<Integer, Void, MovieDb> {
+public class GetSeriesTask extends AsyncTask<Integer, Void, TvSeries> {
     private MediaListener listener;
 
-    public GetMovieTask(MediaListener listener) {
+    public GetSeriesTask(MediaListener listener) {
         this.listener = listener;
     }
 
     @Override
-    protected MovieDb doInBackground(Integer... params) {
+    protected TvSeries doInBackground(Integer... params) {
         if (params[0] == null) {
             return null;
         }
 
         TmdbApi api = new TmdbApi(KubrickApplication.getContext().getString(R.string.tmdb_api_key));
-        return api.getMovies().getMovie(params[0], "en");
+        return api.getTvSeries().getSeries(params[0], "en");
     }
 
     @Override
-    protected void onPostExecute(MovieDb movieDb) {
-        super.onPostExecute(movieDb);
-        if (movieDb != null) {
-            this.listener.onMediaRetrieved(movieDb);
+    protected void onPostExecute(TvSeries tvSeries) {
+        super.onPostExecute(tvSeries);
+        if (tvSeries != null) {
+            this.listener.onMediaRetrieved(tvSeries);
         }
     }
 }

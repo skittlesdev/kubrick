@@ -95,8 +95,9 @@ public class SearchActivity extends Activity implements SearchListener, View.OnC
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         MovieDb item = this.results.getResults().get(position);
-        Intent intent = new Intent(this, MovieActivity.class);
-        intent.putExtra("ITEM_ID", item.getId());
+        Intent intent = new Intent(this, MediaActivity.class);
+        intent.putExtra("MEDIA_ID", item.getId());
+        intent.putExtra("MEDIA_TYPE", "movie");
         startActivity(intent);
     }
 }
