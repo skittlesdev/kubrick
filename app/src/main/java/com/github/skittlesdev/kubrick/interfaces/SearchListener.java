@@ -1,7 +1,7 @@
 package com.github.skittlesdev.kubrick.interfaces;
 
-import info.movito.themoviedbapi.model.core.MovieResultsPage;
+import info.movito.themoviedbapi.TmdbSearch;
 
 public interface SearchListener {
-    void onSearchResults(MovieResultsPage results);
+    void onSearchResults(TmdbSearch.MultiListResultsPage results);
 }

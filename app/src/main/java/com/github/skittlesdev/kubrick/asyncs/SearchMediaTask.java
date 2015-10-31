@@ -6,30 +6,31 @@ import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.interfaces.SearchListener;
 import info.movito.themoviedbapi.TmdbApi;
+import info.movito.themoviedbapi.TmdbSearch;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 
-public class SearchMovieTask extends AsyncTask<String, Void, MovieResultsPage> {
+public class SearchMediaTask extends AsyncTask<String, Void, TmdbSearch.MultiListResultsPage> {
     private SearchListener listener;
 
-    public SearchMovieTask(SearchListener listener) {
+    public SearchMediaTask(SearchListener listener) {
         this.listener = listener;
     }
 
     @Override
-    protected MovieResultsPage doInBackground(String... params) {
+    protected TmdbSearch.MultiListResultsPage doInBackground(String... params) {
         if (TextUtils.isEmpty(params[0])) {
             return null;
         }
 
         TmdbApi api = new TmdbApi(KubrickApplication.getContext().getString(R.string.tmdb_api_key));
-        return api.getSearch().searchMovie(params[0], 0, null, false, 0);
+        return api.getSearch().searchMulti(params[0], "en", 0);
     }
 
     @Override
-    protected void onPostExecute(MovieResultsPage movieDbs) {
-        if (movieDbs != null) {
-            super.onPostExecute(movieDbs);
-            this.listener.onSearchResults(movieDbs);
+    protected void onPostExecute(TmdbSearch.MultiListResultsPage results) {
+        if (results != null) {
+            super.onPostExecute(results);
+            this.listener.onSearchResults(results);
         }
     }
 }
