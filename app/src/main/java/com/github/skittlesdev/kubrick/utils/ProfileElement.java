@@ -1,7 +1,5 @@
 package com.github.skittlesdev.kubrick.utils;
 
-import android.graphics.drawable.Drawable;
-
 /**
  * Created by lowgr on 10/30/2015.
  */
