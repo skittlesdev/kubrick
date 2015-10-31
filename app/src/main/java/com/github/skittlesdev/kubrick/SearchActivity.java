@@ -3,10 +3,8 @@ package com.github.skittlesdev.kubrick;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
@@ -19,7 +17,6 @@ import info.movito.themoviedbapi.model.core.MovieResultsPage;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 
 public class SearchActivity extends Activity implements SearchListener, View.OnClickListener, AdapterView.OnItemClickListener {
