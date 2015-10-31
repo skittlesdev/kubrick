@@ -3,11 +3,16 @@ package com.github.skittlesdev.kubrick;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.interfaces.MovieListener;
+import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.squareup.picasso.Picasso;
 import info.movito.themoviedbapi.model.MovieDb;
 import org.joda.time.Duration;
@@ -19,9 +24,26 @@ public class MovieActivity extends Activity implements MovieListener {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_movie);
 
+        this.setActionBar((Toolbar) this.findViewById(R.id.toolBar));
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         GetMovieTask task = new GetMovieTask(this);
         int movieId = this.getIntent().getIntExtra("ITEM_ID", -1);
         task.execute(movieId);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_home, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        new ToolbarMenu(this).itemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -17,6 +17,7 @@ import android.widget.Toolbar;
 
 import com.github.skittlesdev.kubrick.adapters.HomeDrawerAdapter;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentHome;
+import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
 
@@ -92,47 +93,17 @@ public class HomeActivity extends Activity {
         return profileElement;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_home, menu);
+        @Override
+        public boolean onCreateOptionsMenu(Menu menu) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_home, menu);
 
-        return true;
-    }
+            return true;
+        }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final int id = item.getItemId();
-
-        String tmpStringToShowItWorks;
-
-        switch (id) {
-            case R.id.action_search:
-                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
-                tmpStringToShowItWorks = "Search";
-                break;
-            case R.id.action_user:
-                tmpStringToShowItWorks = "User";
-                break;
-            case R.id.action_settings:
-                tmpStringToShowItWorks = "Settings";
-                break;
-            case R.id.action_about:
-                tmpStringToShowItWorks = "About";
-                break;
-            case R.id.action_help:
-                tmpStringToShowItWorks = "Help";
-                break;
-            case R.id.action_refresh:
-                tmpStringToShowItWorks = "Refresh";
-                break;
-            default:
-                tmpStringToShowItWorks = "WTF?";
-                break;
-        }
-
-        Toast.makeText(this, tmpStringToShowItWorks, Toast.LENGTH_SHORT).show();
-
+        new ToolbarMenu(this).itemSelected(item);
         return super.onOptionsItemSelected(item);
     }
 }
