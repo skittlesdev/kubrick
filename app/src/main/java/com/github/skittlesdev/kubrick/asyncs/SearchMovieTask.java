@@ -27,7 +27,9 @@ public class SearchMovieTask extends AsyncTask<String, Void, MovieResultsPage> {
 
     @Override
     protected void onPostExecute(MovieResultsPage movieDbs) {
-        super.onPostExecute(movieDbs);
-        this.listener.onSearchResults(movieDbs);
+        if (movieDbs != null) {
+            super.onPostExecute(movieDbs);
+            this.listener.onSearchResults(movieDbs);
+        }
     }
 }

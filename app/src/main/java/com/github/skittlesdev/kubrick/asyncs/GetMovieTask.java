@@ -26,7 +26,9 @@ public class GetMovieTask extends AsyncTask<Integer, Void, MovieDb> {
 
     @Override
     protected void onPostExecute(MovieDb movieDb) {
-        super.onPostExecute(movieDb);
-        this.listener.onMovieRetrieved(movieDb);
+        if (movieDb != null) {
+            super.onPostExecute(movieDb);
+            this.listener.onMovieRetrieved(movieDb);
+        }
     }
 }
