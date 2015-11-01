@@ -7,21 +7,21 @@
         android:orderInCategory="100"
         android:title="@+id/action_search"
         android:icon="@drawable/ic_search"
-        android:showAsAction="ifRoom">
+        app:showAsAction="ifRoom">
     </item>
     <item
         android:id="@+id/action_user"
         android:orderInCategory="200"
         android:title="@+id/action_user"
         android:icon="@drawable/ic_user"
-        android:showAsAction="ifRoom">
+        app:showAsAction="ifRoom">
     </item>
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="300"
         android:title="@string/action_refresh"
         android:icon="@drawable/ic_refresh"
-        android:showAsAction="ifRoom">
+        app:showAsAction="ifRoom">
     </item>
     <item
         android:id="@+id/action_settings"

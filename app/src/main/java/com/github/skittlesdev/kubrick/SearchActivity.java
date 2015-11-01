@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Movie;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -22,12 +23,12 @@ import info.movito.themoviedbapi.model.Multi;
 import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import info.movito.themoviedbapi.model.tv.TvSeries;
-
+import android.support.v7.widget.Toolbar;
 import java.util.LinkedList;
 import java.util.List;
 
 
-public class SearchActivity extends Activity implements SearchListener, View.OnClickListener, AdapterView.OnItemClickListener {
+public class SearchActivity extends AppCompatActivity implements SearchListener, View.OnClickListener, AdapterView.OnItemClickListener {
     private TmdbSearch.MultiListResultsPage results;
 
     @Override
@@ -35,8 +36,8 @@ public class SearchActivity extends Activity implements SearchListener, View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        this.setActionBar((Toolbar) this.findViewById(R.id.toolBar));
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
