@@ -5,6 +5,7 @@ import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
 import info.movito.themoviedbapi.TmdbApi;
+import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.MovieDb;
 
 public class GetMovieTask extends AsyncTask<Integer, Void, MovieDb> {
@@ -21,7 +22,7 @@ public class GetMovieTask extends AsyncTask<Integer, Void, MovieDb> {
         }
 
         TmdbApi api = new TmdbApi(KubrickApplication.getContext().getString(R.string.tmdb_api_key));
-        return api.getMovies().getMovie(params[0], "en");
+        return api.getMovies().getMovie(params[0], "en", TmdbMovies.MovieMethod.credits);
     }
 
     @Override

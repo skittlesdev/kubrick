@@ -15,9 +15,11 @@ import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
+import com.github.skittlesdev.kubrick.utils.CastUtils;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
 import com.squareup.picasso.Picasso;
 
+import info.movito.themoviedbapi.model.Credits;
 import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
@@ -149,11 +151,26 @@ public class MediaActivity extends AppCompatActivity implements MediaListener {
         genresView.setText(GenresUtils.getGenrePrintableString(genres));
     }
 
+    private void showCast(IdElement media) {
+        TextView castView = (TextView) findViewById(R.id.cast);
+
+        Credits credits;
+        if (media instanceof MovieDb) {
+            credits = ((MovieDb) media).getCredits();
+            castView.setText("Cast : " + CastUtils.getCastPrintableString(credits.getCast()) + "\n" + "Crew : " + CastUtils.getCrewPrintableString(credits.getCrew()));
+
+        } else {
+            castView.setText(((TvSeries) media).getCreatedBy().toString());
+        }
+
+    }
+
     @Override
     public void onMediaRetrieved(IdElement media) {
         showPoster(media);
         showTitle(media);
         showGenres(media);
+        showCast(media);
 
         if (media instanceof MovieDb) {
             showDuration((MovieDb) media);
