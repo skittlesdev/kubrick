@@ -41,6 +41,8 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
+    compile 'com.parse.bolts:bolts-android:1.+'
+    compile 'com.parse:parse-android:1.+'
     compile group: 'info.movito', name: 'themoviedbapi', version:'1.2' // TheMovieDB API
     compile "com.squareup.picasso:picasso:2.5.2" // Picasso
     compile 'de.hdodenhof:circleimageview:1.2.1' // CircleImageView
