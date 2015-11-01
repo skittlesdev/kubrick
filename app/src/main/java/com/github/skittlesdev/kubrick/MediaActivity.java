@@ -15,13 +15,18 @@ import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
+import com.github.skittlesdev.kubrick.utils.GenresUtils;
 import com.squareup.picasso.Picasso;
+
+import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 import org.joda.time.Duration;
 import org.joda.time.format.*;
 import com.vlonjatg.progressactivity.ProgressActivity;
+
+import java.util.List;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener {
     @Override
@@ -129,10 +134,26 @@ public class MediaActivity extends AppCompatActivity implements MediaListener {
         durationView.setText(media.getNumberOfSeasons() + " seasons, " + media.getNumberOfEpisodes() + " episodes");
     }
 
+    private void showGenres(IdElement media){
+
+        TextView genresView = (TextView) findViewById(R.id.genres);
+
+        List<Genre> genres;
+        if (media instanceof MovieDb) {
+            genres = ((MovieDb) media).getGenres();
+        }
+        else {
+            genres = ((TvSeries) media).getGenres();
+        }
+
+        genresView.setText(GenresUtils.getGenrePrintableString(genres));
+    }
+
     @Override
     public void onMediaRetrieved(IdElement media) {
         showPoster(media);
         showTitle(media);
+        showGenres(media);
 
         if (media instanceof MovieDb) {
             showDuration((MovieDb) media);

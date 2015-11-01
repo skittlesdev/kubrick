@@ -48,6 +48,13 @@
                             android:paddingRight="16dp"/>
 
                     <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/genres" android:textSize="16sp" android:layout_marginBottom="4dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"/>
+
+                    <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/duration" android:textSize="16sp" android:layout_marginBottom="4dp"
