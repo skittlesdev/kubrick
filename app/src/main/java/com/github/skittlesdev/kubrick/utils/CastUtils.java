@@ -11,6 +11,8 @@ import info.movito.themoviedbapi.model.people.PersonCrew;
  */
 public class CastUtils {
 
+    // TODO : Implement a generics
+
     public static String getCastPrintableString(List<PersonCast> castList){
         String result = "";
         for(PersonCast item : castList){

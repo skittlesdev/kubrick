@@ -160,7 +160,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener {
             castView.setText("Cast : " + CastUtils.getCastPrintableString(credits.getCast()) + "\n" + "Crew : " + CastUtils.getCrewPrintableString(credits.getCrew()));
 
         } else {
-            castView.setText(((TvSeries) media).getCreatedBy().toString());
+            credits = ((TvSeries) media).getCredits();
+            castView.setText("Cast : " + CastUtils.getCastPrintableString(credits.getCast()) + "\n");
         }
 
     }
