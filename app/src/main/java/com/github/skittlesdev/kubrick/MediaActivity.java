@@ -21,6 +21,7 @@ import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 import org.joda.time.Duration;
 import org.joda.time.format.*;
+import com.vlonjatg.progressactivity.ProgressActivity;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener {
     @Override
@@ -32,6 +33,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
+
+        ((ProgressActivity) findViewById(R.id.progressActivity)).showLoading();
 
         int mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
 
@@ -139,5 +142,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener {
         }
 
         showOverview(media);
+
+        ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
     }
 }
