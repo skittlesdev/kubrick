@@ -3,11 +3,9 @@ package com.github.skittlesdev.kubrick;
 import android.app.Application;
 import android.content.Context;
 import com.parse.Parse;
+import com.parse.ParseFacebookUtils;
 import net.danlew.android.joda.JodaTimeAndroid;
 
-/**
- * Created by lowgr on 10/29/2015.
- */
 public class KubrickApplication extends Application {
     private static Context sContext;
 
@@ -19,6 +17,8 @@ public class KubrickApplication extends Application {
 
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "rej9XtKMoEPuEkULwnROypntYF5Bg9aKEQhQgYtr", "6kyMBoKJgKsMyQB72IvUWVq1UBZSJsXArxBIvMy3");
+
+        ParseFacebookUtils.initialize(getApplicationContext());
     }
 
     public static Context getContext() {
