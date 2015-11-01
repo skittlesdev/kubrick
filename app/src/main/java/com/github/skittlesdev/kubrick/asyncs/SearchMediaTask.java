@@ -7,7 +7,6 @@ import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.interfaces.SearchListener;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbSearch;
-import info.movito.themoviedbapi.model.core.MovieResultsPage;
 
 public class SearchMediaTask extends AsyncTask<String, Void, TmdbSearch.MultiListResultsPage> {
     private SearchListener listener;

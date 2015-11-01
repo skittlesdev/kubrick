@@ -1,7 +1,5 @@
 package com.github.skittlesdev.kubrick;
 
-import android.app.Activity;
-import android.graphics.Movie;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
