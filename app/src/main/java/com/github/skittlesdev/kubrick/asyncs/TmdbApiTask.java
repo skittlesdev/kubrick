@@ -5,10 +5,14 @@ import android.text.TextUtils;
 
 import com.github.skittlesdev.kubrick.interfaces.DataListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
+import info.movito.themoviedbapi.TmdbTV;
+import info.movito.themoviedbapi.TmdbTvSeasons;
+import info.movito.themoviedbapi.TvResultsPage;
 import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 
@@ -26,10 +30,18 @@ public class TmdbApiTask extends AsyncTask<String, Integer, List<? extends IdEle
     protected List<? extends IdElement> doInBackground(String... params) {
         if (!TextUtils.isEmpty(params[0])) {
             TmdbApi tmdbApi = new TmdbApi(params[0]);
+
             TmdbMovies tmdbMovies = tmdbApi.getMovies();
             MovieResultsPage movieResultsPage = tmdbMovies.getPopularMovieList("en", 1);
 
-            return movieResultsPage.getResults();
+            TmdbTV tmdbTvSeasons = tmdbApi.getTvSeries();
+            TvResultsPage tvResultsPage = tmdbTvSeasons.getPopular("en", 1);
+
+            ArrayList<IdElement> itemList = new ArrayList<>();
+            itemList.addAll(movieResultsPage.getResults());
+            itemList.addAll(tvResultsPage.getResults());
+
+            return itemList;
         }
 
         return null;

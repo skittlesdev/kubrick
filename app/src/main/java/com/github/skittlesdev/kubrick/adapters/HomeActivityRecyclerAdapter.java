@@ -16,6 +16,7 @@ import java.util.List;
 
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
+import info.movito.themoviedbapi.model.tv.TvSeries;
 
 /**
  * Created by lowgr on 10/29/2015.
@@ -43,8 +44,18 @@ public class HomeActivityRecyclerAdapter extends
     public void onBindViewHolder(ViewHolder holder, int position) {
         IdElement element = this.mElements.get(position);
         ImageView poster = holder.moviePoster;
-        String posterPath = ((MovieDb) element).getPosterPath();
+        String posterPath = "";
+
+        if(element instanceof MovieDb){
+            posterPath = ((MovieDb) element).getPosterPath();
+        }
+
+        if(element instanceof TvSeries){
+            posterPath = ((TvSeries) element).getPosterPath();
+        }
+
         holder.element = element;
+
 
         Picasso.with(this.mContext)
                 .load("http://image.tmdb.org/t/p/w500" + posterPath)
@@ -65,7 +76,6 @@ public class HomeActivityRecyclerAdapter extends
 
         public ViewHolder(View itemView) {
             super(itemView);
-
             this.moviePoster = (ImageView) itemView.findViewById(R.id.moviePoster);
             this.moviePoster.setOnClickListener(this);
         }
@@ -73,9 +83,19 @@ public class HomeActivityRecyclerAdapter extends
         @Override
         public void onClick(View view) {
             Context context = view.getContext();
+
             Intent intent = new Intent(context, MediaActivity.class);
+
+            if(this.element instanceof MovieDb){
+                intent.putExtra("MEDIA_TYPE", "movie");
+            }
+
+            if(this.element instanceof TvSeries){
+                intent.putExtra("MEDIA_TYPE", "tv");
+            }
+
             intent.putExtra("MEDIA_ID", this.element.getId());
-            intent.putExtra("MEDIA_TYPE", "movie");
+
             context.startActivity(intent);
         }
     }
