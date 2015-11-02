@@ -226,10 +226,12 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 if (this.media instanceof MovieDb) {
                     favorite.put("tmdb_movie_id", this.mediaId);
                     favorite.put("title", ((MovieDb) this.media).getTitle());
+                    favorite.put("poster_path", ((MovieDb) this.media).getPosterPath());
                 }
                 else {
                     favorite.put("tmdb_series_id", this.mediaId);
                     favorite.put("title", ((TvSeries) this.media).getName());
+                    favorite.put("poster_path", ((TvSeries) this.media).getPosterPath());
                 }
 
                 favorite.setACL(acl);
