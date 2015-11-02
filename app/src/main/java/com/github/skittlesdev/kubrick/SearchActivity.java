@@ -6,9 +6,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import com.github.skittlesdev.kubrick.asyncs.SearchMediaTask;
@@ -44,6 +42,14 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
         submitButton.setOnClickListener(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_home, menu);
+
+        return true;
+    }
+
     public void executeSearchTask(TextView searchInput, SearchActivity searchActivity) {
         SearchMediaTask searchTask = new SearchMediaTask(searchActivity);
         searchTask.execute(searchInput.getText().toString());
@@ -70,6 +76,7 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
             }
         });
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

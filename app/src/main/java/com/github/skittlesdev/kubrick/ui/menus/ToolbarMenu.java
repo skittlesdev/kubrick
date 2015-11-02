@@ -3,6 +3,8 @@ package com.github.skittlesdev.kubrick.ui.menus;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.MenuItem;
 import com.github.skittlesdev.kubrick.AboutActivity;
 import com.github.skittlesdev.kubrick.R;
@@ -21,7 +23,8 @@ public class ToolbarMenu {
         }
 
         if (item.getItemId() == android.R.id.home) {
-            ((Activity) context).finish();
+            DrawerLayout drawer = (DrawerLayout) ((Activity) context).findViewById(R.id.homeDrawerLayout);
+            drawer.openDrawer(Gravity.LEFT);
         }
 
         if (item.getItemId() == R.id.action_about) {
