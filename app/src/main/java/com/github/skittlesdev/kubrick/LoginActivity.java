@@ -10,6 +10,7 @@ import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.vlonjatg.progressactivity.ProgressActivity;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     @Override
@@ -21,6 +22,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+        ((ProgressActivity) findViewById(R.id.progressActivity)).showLoading();
+
         String username = ((TextView) findViewById(R.id.username)).getText().toString();
         String password = ((TextView) findViewById(R.id.password)).getText().toString();
 
@@ -32,6 +35,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     finish();
                 }
                 else {
+                    ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
                     Toast.makeText(KubrickApplication.getContext(), "Login failed", Toast.LENGTH_SHORT).show();
                 }
             }
