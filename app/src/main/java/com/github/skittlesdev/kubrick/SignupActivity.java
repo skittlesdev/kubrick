@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -33,7 +34,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(KubrickApplication.getContext(), ParseUser.getCurrentUser().getUsername(), Toast.LENGTH_SHORT).show();
+                    KubrickApplication.getEventBus().post(new LoginEvent(ParseUser.getCurrentUser()));
                     finish();
                 }
                 else {

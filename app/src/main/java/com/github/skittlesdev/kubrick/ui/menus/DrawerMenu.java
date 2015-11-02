@@ -13,9 +13,12 @@ import com.github.skittlesdev.kubrick.LoginActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.SignupActivity;
 import com.github.skittlesdev.kubrick.adapters.HomeDrawerAdapter;
+import com.github.skittlesdev.kubrick.events.LoginEvent;
+import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,8 @@ public class DrawerMenu {
         this.activity = activity;
         this.layout = layout;
         this.view = view;
+
+        KubrickApplication.getEventBus().register(this);
     }
 
     public void draw() {
@@ -76,8 +81,21 @@ public class DrawerMenu {
             }
         });
 
-        titles.add(loginElement);
-        titles.add(signupElement);
+        RowElement logoutElement = new RowElement(R.drawable.ic_row_element, "Logout", new Callback(this.activity) {
+            @Override
+            public void execute() {
+                ParseUser.logOut();
+                KubrickApplication.getEventBus().post(new LogoutEvent());
+            }
+        });
+
+        if (ParseUser.getCurrentUser() == null) {
+            titles.add(loginElement);
+            titles.add(signupElement);
+        }
+        else {
+            titles.add(logoutElement);
+        }
 
         return titles;
     }
@@ -88,4 +106,11 @@ public class DrawerMenu {
         return profileElement;
     }
 
+    public void onEvent(LoginEvent event) {
+        draw();
+    }
+
+    public void onEvent(LogoutEvent event) {
+        draw();
+    }
 }

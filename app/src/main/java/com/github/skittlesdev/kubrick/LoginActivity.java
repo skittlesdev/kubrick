@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -27,6 +28,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (parseUser != null) {
+                    KubrickApplication.getEventBus().post(new LoginEvent(parseUser));
                     finish();
                 }
                 else {
