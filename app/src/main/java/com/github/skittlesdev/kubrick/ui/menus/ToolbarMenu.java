@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
+import com.github.skittlesdev.kubrick.AboutActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.SearchActivity;
 
@@ -21,6 +22,10 @@ public class ToolbarMenu {
 
         if (item.getItemId() == android.R.id.home) {
             ((Activity) context).finish();
+        }
+
+        if (item.getItemId() == R.id.action_about) {
+            context.startActivity(new Intent(context, AboutActivity.class));
         }
     }
 }
