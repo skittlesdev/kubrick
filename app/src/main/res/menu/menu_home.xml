@@ -10,28 +10,6 @@
         app:showAsAction="ifRoom">
     </item>
     <item
-        android:id="@+id/action_user"
-        android:orderInCategory="200"
-        android:title="@+id/action_user"
-        android:icon="@drawable/ic_user"
-        app:showAsAction="ifRoom">
-    </item>
-    <item
-        android:id="@+id/action_refresh"
-        android:orderInCategory="300"
-        android:title="@string/action_refresh"
-        android:icon="@drawable/ic_refresh"
-        app:showAsAction="ifRoom">
-    </item>
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings">
-    </item>
-    <item
-        android:id="@+id/action_help"
-        android:title="@string/action_help">
-    </item>
-    <item
         android:id="@+id/action_about"
         android:title="@string/action_about">
     </item>
