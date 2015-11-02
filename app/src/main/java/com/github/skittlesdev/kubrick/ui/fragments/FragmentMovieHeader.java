@@ -141,20 +141,6 @@ public class FragmentMovieHeader extends Fragment {
         }
     }
 
-    private void showOverview(IdElement media) {
-        TextView overviewView = (TextView) r.findViewById(R.id.overview);
-
-        String overview;
-        if (media instanceof MovieDb) {
-            overview = ((MovieDb) media).getOverview();
-        }
-        else {
-            overview = ((TvSeries) media).getOverview();
-        }
-
-        overviewView.setText(overview);
-    }
-
     private void showStats() {
         if (this.mMedia instanceof TvSeries) {
             TvSeries tvSeries = (TvSeries) this.mMedia;

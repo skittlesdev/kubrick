@@ -22,6 +22,7 @@ import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieHeader;
+import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieOverview;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.CastUtils;
@@ -271,8 +272,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         showCast(media);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        FragmentMovieHeader f = new FragmentMovieHeader(media);
-        transaction.add(R.id.movieHeaderContainer, f);
+        transaction.add(R.id.movieHeaderContainer, new FragmentMovieHeader(media));
+        transaction.add(R.id.movieOverviewContainer, new FragmentMovieOverview(media));
         transaction.commit();
 
         if (media instanceof MovieDb) {
