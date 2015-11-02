@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#212121</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
 
     <color name="black_overlay">#66000000</color>
 
     <!-- our colors -->
-    <color name="light_orange">#FF9800</color>
-    <color name="profile">#FFFFFF</color>
+    <color name="light_orange">#ff9800</color>
+    <color name="profile">#ffffff</color>
+    <color name="light_grey">#e0e0e0</color>
+    <color name="grey">#616161</color>
+    <color name="almost_white">#fafafa</color>
 </resources>

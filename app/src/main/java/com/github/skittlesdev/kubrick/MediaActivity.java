@@ -73,6 +73,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             GetMovieTask task = new GetMovieTask(this);
             task.execute(this.mediaId);
         }
+
+        View child = this.findViewById(R.id.movieHeaderContainer);
+        child.setZ(10000);
     }
 
     @Override
@@ -265,10 +268,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     @Override
     public void onMediaRetrieved(IdElement media) {
         this.media = media;
-
-        showPoster(media);
-        showTitle(media);
-        showGenres(media);
         showCast(media);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -277,7 +276,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         transaction.commit();
 
         if (media instanceof MovieDb) {
-            showDuration((MovieDb) media);
             getFavoriteStatus();
         }
         else {

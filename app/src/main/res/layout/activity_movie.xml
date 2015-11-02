@@ -30,7 +30,11 @@
                         android:stackFromBottom="true"
                         android:transcriptMode="alwaysScroll" >
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/infoContainer"
+                    android:clipChildren="false">
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
