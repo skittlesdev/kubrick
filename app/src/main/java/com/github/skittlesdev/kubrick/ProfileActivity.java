@@ -6,12 +6,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import com.github.skittlesdev.kubrick.ui.fragments.FavoritesOverviewFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
+import com.github.skittlesdev.kubrick.utils.ProfileElement;
+import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
@@ -22,9 +28,27 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
+        buildProfile();
+
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.fragments, new FavoritesOverviewFragment());
         transaction.commit();
+    }
+
+    private void buildProfile() {
+        ProfileElement profile = new ProfileElement(ParseUser.getCurrentUser());
+
+        TextView name = (TextView) findViewById(R.id.name);
+        CircleImageView image = (CircleImageView) findViewById(R.id.circleView);
+
+        name.setText(profile.getName());
+        if (!TextUtils.isEmpty(profile.getAvatarUrl())) {
+            Picasso.with(KubrickApplication.getContext())
+                .load(profile.getAvatarUrl())
+                .placeholder(R.drawable.poster_default_placeholder)
+                .error(R.drawable.poster_default_error)
+                .into(image);
+        }
     }
 
     @Override

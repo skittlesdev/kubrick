@@ -14,6 +14,8 @@
                 android:id="@+id/toolBar"
                 layout="@layout/tool_bar">
         </include>
+
+        <include layout="@layout/header_home"/>
         
         <LinearLayout
                 android:layout_width="fill_parent"
