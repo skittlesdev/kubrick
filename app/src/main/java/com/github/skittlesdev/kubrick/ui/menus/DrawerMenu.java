@@ -6,8 +6,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.HomeDrawerAdapter;
+import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
 
@@ -47,16 +50,29 @@ public class DrawerMenu {
         };
 
         //toggle.setDrawerIndicatorEnabled(false);
-        this.layout.setDrawerListener(toggle);
+        // this.layout.setDrawerListener(toggle);
         toggle.syncState();
     }
 
     private List<RowElement> generateTitles() {
         List<RowElement> titles = new ArrayList<>();
 
-        for (int i = 0; i < 6; i++) {
-            titles.add(new RowElement(R.drawable.ic_row_element, "Menu " + i));
-        }
+        RowElement loginElement = new RowElement(R.drawable.ic_row_element, "Login", new Callback() {
+            @Override
+            public void execute() {
+                Toast.makeText(KubrickApplication.getContext(), "Login", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        RowElement signupElement = new RowElement(R.drawable.ic_row_element, "Signup", new Callback() {
+            @Override
+            public void execute() {
+                Toast.makeText(KubrickApplication.getContext(), "Signup", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        titles.add(loginElement);
+        titles.add(signupElement);
 
         return titles;
     }

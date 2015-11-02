@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
+import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
 
@@ -50,6 +51,7 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
     public static class TitleViewHolder extends HomeDrawerAdapter.ViewHolder implements View.OnClickListener {
         public TextView title;
         public ImageView icon;
+        public Callback callback;
 
         public TitleViewHolder(View itemView) {
             super(itemView);
@@ -62,7 +64,9 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(KubrickApplication.getContext(), "Title clicked!", Toast.LENGTH_SHORT).show();
+            if (callback != null) {
+                callback.execute();
+            }
         }
     }
 
@@ -107,6 +111,7 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
     private void onBindViewHolder(HomeDrawerAdapter.TitleViewHolder holder, int position) {
         holder.title.setText(this.mTitles.get(position - 1).getTitle());
         holder.icon.setImageResource(this.mTitles.get(position - 1).getIcon());
+        holder.callback = this.mTitles.get(position - 1).getCallback();
     }
 
     private void onBindViewHolder(HomeDrawerAdapter.ProfileViewHolder holder, int position) {
