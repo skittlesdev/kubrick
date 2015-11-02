@@ -35,7 +35,7 @@ public class DrawerMenu {
 
     public void draw() {
         view.setHasFixedSize(true); // for a better performance
-        HomeDrawerAdapter mHomeDrawerAdapter = new HomeDrawerAdapter(generateTitles(), generateProfile());
+        HomeDrawerAdapter mHomeDrawerAdapter = new HomeDrawerAdapter(this.activity, generateTitles(), generateProfile());
 
         this.view.setAdapter(mHomeDrawerAdapter);
         this.view.setLayoutManager(new LinearLayoutManager(activity));
