@@ -3,7 +3,6 @@ package com.github.skittlesdev.kubrick;
 import android.app.Application;
 import android.content.Context;
 import com.parse.Parse;
-import com.parse.ParseFacebookUtils;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 public class KubrickApplication extends Application {
@@ -17,8 +16,6 @@ public class KubrickApplication extends Application {
 
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "rej9XtKMoEPuEkULwnROypntYF5Bg9aKEQhQgYtr", "6kyMBoKJgKsMyQB72IvUWVq1UBZSJsXArxBIvMy3");
-
-        ParseFacebookUtils.initialize(getApplicationContext());
     }
 
     public static Context getContext() {
