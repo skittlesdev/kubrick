@@ -13,12 +13,13 @@ import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.FavoritesOverviewAdapter;
 import com.github.skittlesdev.kubrick.events.ParseResultListEvent;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 import com.parse.*;
 
 import java.util.List;
 
 public class FavoritesOverviewFragment extends Fragment {
-    private RecyclerView view;
+    private SuperRecyclerView view;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,9 +33,8 @@ public class FavoritesOverviewFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View layout = inflater.inflate(R.layout.fragment_favorites_overview, container, false);
 
-        this.view = (RecyclerView) layout.findViewById(R.id.recyclerView);
-        this.view.setHasFixedSize(true);
-        this.view.setLayoutManager(new GridLayoutManager(this.getActivity(), 3));
+        this.view = (SuperRecyclerView) layout.findViewById(R.id.recyclerView);
+        this.view.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
         query.whereEqualTo("user", ParseUser.getCurrentUser());
