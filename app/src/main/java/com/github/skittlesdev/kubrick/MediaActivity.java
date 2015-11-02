@@ -7,16 +7,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
+import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
+import com.github.skittlesdev.kubrick.events.LoginEvent;
+import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.CastUtils;
+import com.github.skittlesdev.kubrick.utils.FavoriteState;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
+import com.parse.*;
 import com.squareup.picasso.Picasso;
 
 import info.movito.themoviedbapi.model.Credits;
@@ -30,7 +38,11 @@ import com.vlonjatg.progressactivity.ProgressActivity;
 
 import java.util.List;
 
-public class MediaActivity extends AppCompatActivity implements MediaListener {
+public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener {
+    private int mediaId;
+
+    private FavoriteState favoriteState;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,17 +53,21 @@ public class MediaActivity extends AppCompatActivity implements MediaListener {
 
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
+        KubrickApplication.getEventBus().register(this);
         ((ProgressActivity) findViewById(R.id.progressActivity)).showLoading();
 
-        int mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
+        final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
+        toggleView.setOnClickListener(this);
+
+        this.mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
 
         if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
             GetSeriesTask task = new GetSeriesTask(this);
-            task.execute(mediaId);
+            task.execute(this.mediaId);
         }
         else {
             GetMovieTask task = new GetMovieTask(this);
-            task.execute(mediaId);
+            task.execute(this.mediaId);
         }
     }
 
@@ -166,6 +182,81 @@ public class MediaActivity extends AppCompatActivity implements MediaListener {
 
     }
 
+    private void getFavoriteStatus() {
+        if (ParseUser.getCurrentUser() == null) {
+            return;
+        }
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
+        query.whereEqualTo("tmdb_movie_id", this.mediaId);
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (object == null) {
+                    KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.OFF));
+                }
+                else {
+                    KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.ON));
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.favoriteToggle) {
+            if (this.favoriteState == FavoriteState.OFF) {
+                ParseObject favorite = new ParseObject("Favorite");
+                ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
+                acl.setPublicReadAccess(true);
+                acl.setPublicWriteAccess(false);
+
+                favorite.put("user", ParseUser.getCurrentUser());
+                favorite.put("tmdb_movie_id", this.mediaId);
+                favorite.setACL(acl);
+                favorite.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.ON));
+                        }
+                        else {
+                            Toast.makeText(KubrickApplication.getContext(), "Failed to favorite movie", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+            else {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
+                query.whereEqualTo("user", ParseUser.getCurrentUser());
+                query.whereEqualTo("tmdb_movie_id", this.mediaId);
+                query.getFirstInBackground(new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject object, ParseException e) {
+                        if (object == null) {
+                            Toast.makeText(KubrickApplication.getContext(), "Failed to remove from favorites", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            object.deleteInBackground(new DeleteCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e != null) {
+                                        Toast.makeText(KubrickApplication.getContext(), "Failed to remove from favorites", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.OFF));
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    }
+
     @Override
     public void onMediaRetrieved(IdElement media) {
         showPoster(media);
@@ -175,6 +266,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener {
 
         if (media instanceof MovieDb) {
             showDuration((MovieDb) media);
+            getFavoriteStatus();
         }
         else {
             showStats((TvSeries) media);
@@ -183,5 +275,27 @@ public class MediaActivity extends AppCompatActivity implements MediaListener {
         showOverview(media);
 
         ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
+    }
+
+    public void onEvent(FavoriteStateEvent event) {
+        final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
+        if (event.getFavoriteState() == FavoriteState.OFF) {
+            this.favoriteState = FavoriteState.OFF;
+            toggleView.setText("Add to favorites");
+        }
+        if (event.getFavoriteState() == FavoriteState.ON) {
+            this.favoriteState = FavoriteState.ON;
+            toggleView.setText("Delete from favorites");
+        }
+        toggleView.setVisibility(View.VISIBLE);
+    }
+
+    public void onEvent(LoginEvent event) {
+        getFavoriteStatus();
+    }
+
+    public void onEvent(LogoutEvent event) {
+        final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
+        toggleView.setVisibility(View.GONE);
     }
 }
