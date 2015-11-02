@@ -1,5 +1,7 @@
 package com.github.skittlesdev.kubrick;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +21,7 @@ import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
+import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieHeader;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.CastUtils;
@@ -266,6 +269,11 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         showTitle(media);
         showGenres(media);
         showCast(media);
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentMovieHeader f = new FragmentMovieHeader(media);
+        transaction.add(R.id.movieHeaderContainer, f);
+        transaction.commit();
 
         if (media instanceof MovieDb) {
             showDuration((MovieDb) media);

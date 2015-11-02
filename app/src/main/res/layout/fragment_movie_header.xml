@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:id="@+id/movieHeader"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/movieBackDropPicture"
+        android:background="@drawable/poster_default_placeholder" />
+    <ImageView
+        android:id="@+id/moviePosterPicture"
+        android:contentDescription="poster"
+        android:adjustViewBounds="true"
+        android:elevation="5dp"
+        android:layout_width="112dp"
+        android:layout_height="170dp"
+        android:src="@drawable/poster_default_placeholder"
+        android:layout_marginTop="37dp"
+        android:layout_marginLeft="20dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/movieAndDateLayout"
+        android:layout_above="@+id/movieDurationAndGenresLayout"
+        android:layout_alignLeft="@+id/movieDurationAndGenresLayout"
+        android:layout_alignStart="@+id/movieDurationAndGenresLayout">
+        <TextView
+            android:id="@+id/movieTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:elegantTextHeight="false"
+            android:text="Movie Title"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:textSize="20sp"
+            android:elevation="9dp"
+            android:shadowColor="#000000"
+            android:textStyle="bold"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:maxWidth="190dp" />
+
+        <TextView
+            android:id="@+id/movieReleaseDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|bottom"
+            android:paddingStart="5dp"
+            android:textColor="#FFFFFF"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:text="(Date)"
+            android:textSize="15sp"
+            android:shadowColor="#000000"
+            android:layout_alignParentTop="false"
+            android:layout_toRightOf="@+id/movieTitle"
+            android:layout_toEndOf="@+id/movieTitle"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="2dp"
+            android:maxWidth="50dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/movieBackDropPicture"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="140dp"
+        android:id="@+id/movieDurationAndGenresLayout">
+
+        <TextView
+            android:id="@+id/movieDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:textColor="#9d9d9d"
+            android:text="0:0"
+            android:textSize="15sp"
+            android:layout_gravity="left"
+            android:shadowColor="#000000"
+            android:maxWidth="50dp" />
+
+        <TextView
+            android:id="@+id/movieGenres"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:textColor="#9d9d9d"
+            android:text="Genres"
+            android:textSize="15sp"
+            android:shadowColor="#000000"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/movieDuration"
+            android:layout_toEndOf="@+id/movieDuration"
+            android:layout_marginStart="5dp"
+            android:maxWidth="185dp" />
+    </RelativeLayout>
+
+</RelativeLayout>
