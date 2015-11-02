@@ -9,7 +9,7 @@
     <!-- our colors -->
     <color name="light_orange">#ff9800</color>
     <color name="profile">#ffffff</color>
-    <color name="light_grey">#e0e0e0</color>
-    <color name="grey">#616161</color>
-    <color name="almost_white">#fafafa</color>
+    <color name="category_color_3">#e0e0e0</color>
+    <color name="category_color_2">#616161</color>
+    <color name="category_color_1">#fafafa</color>
 </resources>

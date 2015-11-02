@@ -1,6 +1,5 @@
 package com.github.skittlesdev.kubrick;
 
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -11,8 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
@@ -21,26 +18,17 @@ import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
+import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieCast;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieHeader;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieOverview;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
-import com.github.skittlesdev.kubrick.utils.CastUtils;
 import com.github.skittlesdev.kubrick.utils.FavoriteState;
-import com.github.skittlesdev.kubrick.utils.GenresUtils;
 import com.parse.*;
-import com.squareup.picasso.Picasso;
 
-import info.movito.themoviedbapi.model.Credits;
-import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
-import info.movito.themoviedbapi.model.tv.TvSeries;
-import org.joda.time.Duration;
-import org.joda.time.format.*;
 import com.vlonjatg.progressactivity.ProgressActivity;
-
-import java.util.List;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener {
     private int mediaId;
@@ -92,102 +80,10 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         return super.onOptionsItemSelected(item);
     }
 
-    private void showPoster(IdElement media) {
-        String posterPath;
-
-        if (media instanceof MovieDb) {
-            posterPath = ((MovieDb) media).getPosterPath();
-        }
-        else {
-            posterPath = ((TvSeries) media).getPosterPath();
-        }
-
-        Picasso.with(getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + posterPath)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) findViewById(R.id.poster));
-    }
-
-    private void showTitle(IdElement media) {
-        TextView titleView = (TextView) findViewById(R.id.title);
-        if (media instanceof MovieDb) {
-            String title = ((MovieDb) media).getTitle();
-            String year = "(" + ((MovieDb) media).getReleaseDate().split("-")[0] + ")";
-            titleView.setText(title + " " + year);
-        }
-        else {
-            String title = ((TvSeries) media).getName();
-            String firstYear = ((TvSeries) media).getFirstAirDate().split("-")[0];
-            String lastYear = ((TvSeries) media).getLastAirDate().split("-")[0];
-            titleView.setText(title + " (" + firstYear + " - " + lastYear + ")");
-        }
-    }
-
-    private void showDuration(MovieDb movie) {
-        TextView durationView = (TextView) findViewById(R.id.duration);
-
-        Duration duration = new Duration(movie.getRuntime() * 1000 * 60);
-        PeriodFormatter formatter = new PeriodFormatterBuilder()
-                .appendHours()
-                .appendSuffix(":")
-                .minimumPrintedDigits(2)
-                .appendMinutes()
-                .toFormatter();
-
-        String durationDisplay = formatter.print(duration.toPeriod());
-
-        durationView.setText(durationDisplay);
-    }
-
-    private void showOverview(IdElement media) {
-        TextView overviewView = (TextView) findViewById(R.id.overview);
-
-        String overview;
-        if (media instanceof MovieDb) {
-            overview = ((MovieDb) media).getOverview();
-        }
-        else {
-            overview = ((TvSeries) media).getOverview();
-        }
-
-        overviewView.setText(overview);
-    }
-
-    private void showStats(TvSeries media) {
+    /*private void showStats(TvSeries media) {
         TextView durationView = (TextView) findViewById(R.id.duration);
         durationView.setText(media.getNumberOfSeasons() + " seasons, " + media.getNumberOfEpisodes() + " episodes");
-    }
-
-    private void showGenres(IdElement media){
-
-        TextView genresView = (TextView) findViewById(R.id.genres);
-
-        List<Genre> genres;
-        if (media instanceof MovieDb) {
-            genres = ((MovieDb) media).getGenres();
-        }
-        else {
-            genres = ((TvSeries) media).getGenres();
-        }
-
-        genresView.setText(GenresUtils.getGenrePrintableString(genres));
-    }
-
-    private void showCast(IdElement media) {
-        TextView castView = (TextView) findViewById(R.id.cast);
-
-        Credits credits;
-        if (media instanceof MovieDb) {
-            credits = ((MovieDb) media).getCredits();
-            castView.setText("Cast : " + CastUtils.getCastPrintableString(credits.getCast()) + "\n" + "Crew : " + CastUtils.getCrewPrintableString(credits.getCrew()));
-
-        } else {
-            credits = ((TvSeries) media).getCredits();
-            castView.setText("Cast : " + CastUtils.getCastPrintableString(credits.getCast()) + "\n");
-        }
-
-    }
+    }*/
 
     private void getFavoriteStatus() {
         if (ParseUser.getCurrentUser() == null) {
@@ -268,9 +164,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     @Override
     public void onMediaRetrieved(IdElement media) {
         this.media = media;
-        showCast(media);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.movieCastContainer, new FragmentMovieCast(media));
         transaction.add(R.id.movieHeaderContainer, new FragmentMovieHeader(media));
         transaction.add(R.id.movieOverviewContainer, new FragmentMovieOverview(media));
         transaction.commit();
@@ -279,10 +175,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             getFavoriteStatus();
         }
         else {
-            showStats((TvSeries) media);
+            //showStats((TvSeries) media);
         }
-
-        showOverview(media);
 
         ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
     }

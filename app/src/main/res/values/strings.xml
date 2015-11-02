@@ -23,4 +23,6 @@
     <string name="movie_title">Movie Title</string>
     <string name="movie_poster_picture_content_description">Movie poster</string>
     <string name="movie_backdrop_picture_content_description">Movie backdrop picture</string>
+    <string name="movie_cast_content">-</string>
+    <string name="movie_cast_title">Cast</string>
 </resources>

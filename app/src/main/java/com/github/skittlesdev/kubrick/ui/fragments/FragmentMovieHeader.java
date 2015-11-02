@@ -141,13 +141,13 @@ public class FragmentMovieHeader extends Fragment {
         }
     }
 
-    private void showStats() {
+    /*private void showStats() {
         if (this.mMedia instanceof TvSeries) {
             TvSeries tvSeries = (TvSeries) this.mMedia;
             TextView durationView = (TextView) r.findViewById(R.id.duration);
             durationView.setText(tvSeries.getNumberOfSeasons() + " seasons, " + tvSeries.getNumberOfEpisodes() + " episodes");
         }
-    }
+    }*/
 
     private void showGenres(){
         TextView genresView = (TextView) r.findViewById(R.id.movieGenres);

@@ -7,18 +7,18 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/movieOverviewContent"
+        android:layout_alignBottom="@+id/movieCastContent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/movieOverviewTitleLayout"
+        android:id="@+id/movieCastTitleLayout"
         android:background="@color/category_color_2">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/movie_overview_title"
-            android:id="@+id/movieOverviewTitle"
+            android:text="@string/movie_cast_title"
+            android:id="@+id/movieCastTitle"
             android:layout_marginLeft="@dimen/default_margin_text_view"
             android:layout_marginRight="@dimen/default_margin_text_view"
             android:textStyle="bold"
@@ -30,18 +30,18 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/movieOverviewTitleLayout"
-        android:layout_alignLeft="@+id/movieOverviewContent"
-        android:layout_alignStart="@+id/movieOverviewContent"
+        android:layout_below="@+id/movieCastTitleLayout"
+        android:layout_alignLeft="@+id/movieCastContent"
+        android:layout_alignStart="@+id/movieCastContent"
         android:background="@color/category_color_1"
-        android:id="@+id/movieOverviewContentLayout">
+        android:id="@+id/movieCastContentLayout">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/movie_overview_content"
-            android:id="@+id/movieOverviewContent"
+            android:text="@string/movie_cast_content"
+            android:id="@+id/movieCastContent"
             android:layout_marginLeft="@dimen/default_margin_text_view"
             android:layout_marginRight="@dimen/default_margin_text_view"
             android:layout_marginTop="@dimen/default_margin_text_view"
