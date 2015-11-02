@@ -1,6 +1,7 @@
 package com.github.skittlesdev.kubrick.ui.menus;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,7 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 import com.github.skittlesdev.kubrick.KubrickApplication;
+import com.github.skittlesdev.kubrick.LoginActivity;
 import com.github.skittlesdev.kubrick.R;
+import com.github.skittlesdev.kubrick.SignupActivity;
 import com.github.skittlesdev.kubrick.adapters.HomeDrawerAdapter;
 import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
@@ -57,17 +60,19 @@ public class DrawerMenu {
     private List<RowElement> generateTitles() {
         List<RowElement> titles = new ArrayList<>();
 
-        RowElement loginElement = new RowElement(R.drawable.ic_row_element, "Login", new Callback() {
+        RowElement loginElement = new RowElement(R.drawable.ic_row_element, "Login", new Callback(this.activity) {
             @Override
             public void execute() {
-                Toast.makeText(KubrickApplication.getContext(), "Login", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                getContext().startActivity(intent);
             }
         });
 
-        RowElement signupElement = new RowElement(R.drawable.ic_row_element, "Signup", new Callback() {
+        RowElement signupElement = new RowElement(R.drawable.ic_row_element, "Signup", new Callback(this.activity) {
             @Override
             public void execute() {
-                Toast.makeText(KubrickApplication.getContext(), "Signup", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), SignupActivity.class);
+                getContext().startActivity(intent);
             }
         });
 

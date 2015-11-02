@@ -24,6 +24,8 @@
         </activity>
         <activity android:name=".MediaActivity" />
         <activity android:name=".SearchActivity" />
+        <activity android:name=".SignupActivity" />
+        <activity android:name=".LoginActivity" />
     </application>
 
 </manifest>
