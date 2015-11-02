@@ -1,25 +1,32 @@
 package com.github.skittlesdev.kubrick.utils;
 
+import android.text.TextUtils;
+import com.parse.ParseUser;
+import com.timgroup.jgravatar.Gravatar;
+import com.timgroup.jgravatar.GravatarDefaultImage;
+
 /**
  * Created by lowgr on 10/30/2015.
  */
 public class ProfileElement {
-    private int mAvatar;
+    private String mAvatarUrl;
     private String mName;
     private String mEmail;
 
-    public ProfileElement(int avatar, String name, String email) {
-        this.mAvatar = avatar;
-        this.mName = name;
-        this.mEmail = email;
+    public ProfileElement() {}
+
+    public ProfileElement(ParseUser user) {
+        setName(user.getUsername());
+        setEmail(user.getEmail());
     }
 
-    public void setAvatar(int avatar) {
-        this.mAvatar = avatar;
-    }
-
-    public int getAvatar() {
-        return this.mAvatar;
+    public String getAvatarUrl() {
+        if (!TextUtils.isEmpty(getEmail())) {
+            return new Gravatar().setSize(100).setDefaultImage(GravatarDefaultImage.IDENTICON).getUrl(getEmail());
+        }
+        else {
+            return "";
+        }
     }
 
     public void setName(String name) {

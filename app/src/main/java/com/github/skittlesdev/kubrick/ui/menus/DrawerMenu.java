@@ -101,7 +101,14 @@ public class DrawerMenu {
     }
 
     private ProfileElement generateProfile() {
-        ProfileElement profileElement = new ProfileElement(R.drawable.default_profile_avatar, "Kubrick", "kubrick@kubrick.com");
+        ProfileElement profileElement;
+
+        if (ParseUser.getCurrentUser() == null) {
+            profileElement = new ProfileElement();
+        }
+        else {
+            profileElement = new ProfileElement(ParseUser.getCurrentUser());
+        }
 
         return profileElement;
     }

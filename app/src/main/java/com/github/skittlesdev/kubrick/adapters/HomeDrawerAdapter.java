@@ -1,6 +1,7 @@
 package com.github.skittlesdev.kubrick.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -115,7 +117,13 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
     }
 
     private void onBindViewHolder(HomeDrawerAdapter.ProfileViewHolder holder, int position) {
-        holder.avatar.setImageResource(this.mProfile.getAvatar());
+        if (!TextUtils.isEmpty(this.mProfile.getAvatarUrl())) {
+            Picasso.with(KubrickApplication.getContext())
+                .load(this.mProfile.getAvatarUrl())
+                .placeholder(R.drawable.poster_default_placeholder)
+                .error(R.drawable.poster_default_error)
+                .into(holder.avatar);
+        }
         holder.name.setText(this.mProfile.getName());
         holder.email.setText(this.mProfile.getEmail());
     }
