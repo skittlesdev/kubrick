@@ -60,8 +60,17 @@ public class FavoritesActivity extends AppCompatActivity implements AdapterView.
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ParseObject item = this.favorites.get(position);
         Intent intent = new Intent(this, MediaActivity.class);
-        intent.putExtra("MEDIA_ID", item.getInt("tmdb_id"));
-        intent.putExtra("MEDIA_TYPE", "movie");
-        startActivity(intent);
+
+        if (item.has("tmdb_movie_id")) {
+            intent.putExtra("MEDIA_ID", item.getInt("tmdb_movie_id"));
+            intent.putExtra("MEDIA_TYPE", "movie");
+            startActivity(intent);
+        }
+
+        if (item.has("tmdb_series_id")) {
+            intent.putExtra("MEDIA_ID", item.getInt("tmdb_series_id"));
+            intent.putExtra("MEDIA_TYPE", "tv");
+            startActivity(intent);
+        }
     }
 }

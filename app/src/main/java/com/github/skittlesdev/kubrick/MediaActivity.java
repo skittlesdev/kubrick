@@ -1,5 +1,6 @@
 package com.github.skittlesdev.kubrick;
 
+import android.graphics.Movie;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -189,7 +190,14 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
         query.whereEqualTo("user", ParseUser.getCurrentUser());
-        query.whereEqualTo("tmdb_id", this.mediaId);
+
+        if (this.media instanceof MovieDb) {
+            query.whereEqualTo("tmdb_movie_id", this.mediaId);
+        }
+        else {
+            query.whereEqualTo("tmdb_series_id", this.mediaId);
+        }
+
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
@@ -214,8 +222,16 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 acl.setPublicWriteAccess(false);
 
                 favorite.put("user", ParseUser.getCurrentUser());
-                favorite.put("tmdb_id", this.mediaId);
-                favorite.put("title", ((MovieDb) this.media).getTitle());
+
+                if (this.media instanceof MovieDb) {
+                    favorite.put("tmdb_movie_id", this.mediaId);
+                    favorite.put("title", ((MovieDb) this.media).getTitle());
+                }
+                else {
+                    favorite.put("tmdb_series_id", this.mediaId);
+                    favorite.put("title", ((TvSeries) this.media).getName());
+                }
+
                 favorite.setACL(acl);
                 favorite.saveInBackground(new SaveCallback() {
                     @Override
@@ -232,7 +248,14 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             else {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
                 query.whereEqualTo("user", ParseUser.getCurrentUser());
-                query.whereEqualTo("tmdb_id", this.mediaId);
+
+                if (this.media instanceof MovieDb) {
+                    query.whereEqualTo("tmdb_movie_id", this.mediaId);
+                }
+                else {
+                    query.whereEqualTo("tmdb_series_id", this.mediaId);
+                }
+
                 query.getFirstInBackground(new GetCallback<ParseObject>() {
                     @Override
                     public void done(ParseObject object, ParseException e) {
@@ -269,13 +292,13 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         if (media instanceof MovieDb) {
             showDuration((MovieDb) media);
-            getFavoriteStatus();
         }
         else {
             showStats((TvSeries) media);
         }
 
         showOverview(media);
+        getFavoriteStatus();
 
         ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
     }
