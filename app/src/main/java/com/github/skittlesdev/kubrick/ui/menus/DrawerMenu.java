@@ -8,10 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
-import com.github.skittlesdev.kubrick.KubrickApplication;
-import com.github.skittlesdev.kubrick.LoginActivity;
-import com.github.skittlesdev.kubrick.R;
-import com.github.skittlesdev.kubrick.SignupActivity;
+import com.github.skittlesdev.kubrick.*;
 import com.github.skittlesdev.kubrick.adapters.HomeDrawerAdapter;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
@@ -81,6 +78,14 @@ public class DrawerMenu {
             }
         });
 
+        RowElement favoritesElement = new RowElement(R.drawable.ic_row_element, "Favorites", new Callback(this.activity) {
+            @Override
+            public void execute() {
+                Intent intent = new Intent(getContext(), FavoritesActivity.class);
+                getContext().startActivity(intent);
+            }
+        });
+
         RowElement logoutElement = new RowElement(R.drawable.ic_row_element, "Logout", new Callback(this.activity) {
             @Override
             public void execute() {
@@ -94,6 +99,7 @@ public class DrawerMenu {
             titles.add(signupElement);
         }
         else {
+            titles.add(favoritesElement);
             titles.add(logoutElement);
         }
 

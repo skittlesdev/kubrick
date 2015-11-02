@@ -40,7 +40,7 @@ import java.util.List;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener {
     private int mediaId;
-
+    private IdElement media;
     private FavoriteState favoriteState;
 
     @Override
@@ -189,7 +189,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
         query.whereEqualTo("user", ParseUser.getCurrentUser());
-        query.whereEqualTo("tmdb_movie_id", this.mediaId);
+        query.whereEqualTo("tmdb_id", this.mediaId);
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
@@ -214,7 +214,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 acl.setPublicWriteAccess(false);
 
                 favorite.put("user", ParseUser.getCurrentUser());
-                favorite.put("tmdb_movie_id", this.mediaId);
+                favorite.put("tmdb_id", this.mediaId);
+                favorite.put("title", ((MovieDb) this.media).getTitle());
                 favorite.setACL(acl);
                 favorite.saveInBackground(new SaveCallback() {
                     @Override
@@ -231,7 +232,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             else {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
                 query.whereEqualTo("user", ParseUser.getCurrentUser());
-                query.whereEqualTo("tmdb_movie_id", this.mediaId);
+                query.whereEqualTo("tmdb_id", this.mediaId);
                 query.getFirstInBackground(new GetCallback<ParseObject>() {
                     @Override
                     public void done(ParseObject object, ParseException e) {
@@ -259,6 +260,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
     @Override
     public void onMediaRetrieved(IdElement media) {
+        this.media = media;
+
         showPoster(media);
         showTitle(media);
         showGenres(media);
