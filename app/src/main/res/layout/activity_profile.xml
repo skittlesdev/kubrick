@@ -15,13 +15,18 @@
                 layout="@layout/tool_bar">
         </include>
 
-        <include layout="@layout/header_home"/>
-        
-        <LinearLayout
-                android:layout_width="fill_parent"
+        <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:id="@+id/fragments"
-                android:orientation="vertical"/>
+                android:fillViewport="true"
+                android:stackFromBottom="true"
+                android:transcriptMode="alwaysScroll" >
+            <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
+                <include layout="@layout/header_home"/>
+                <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/fragment_movies" />
+                <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/fragment_series" />
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
             android:id="@+id/homeRecyclerView"

@@ -30,8 +30,19 @@ public class ProfileActivity extends AppCompatActivity {
 
         buildProfile();
 
+        FavoritesOverviewFragment movieFavorites = new FavoritesOverviewFragment();
+        Bundle movieFavoritesArgs = new Bundle();
+        movieFavoritesArgs.putString("MEDIA_TYPE", "movie");
+        movieFavorites.setArguments(movieFavoritesArgs);
+
+        FavoritesOverviewFragment seriesFavorites = new FavoritesOverviewFragment();
+        Bundle seriesFavoritesArgs = new Bundle();
+        seriesFavoritesArgs.putString("MEDIA_TYPE", "tv");
+        seriesFavorites.setArguments(seriesFavoritesArgs);
+
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.fragments, new FavoritesOverviewFragment());
+        transaction.add(R.id.fragment_movies, movieFavorites, "movies");
+        transaction.add(R.id.fragment_series, seriesFavorites, "series");
         transaction.commit();
     }
 
