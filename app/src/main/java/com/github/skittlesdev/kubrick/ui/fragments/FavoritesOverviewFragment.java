@@ -8,11 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.FavoritesOverviewAdapter;
+import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.parse.*;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FavoritesOverviewFragment extends Fragment {
@@ -23,6 +26,7 @@ public class FavoritesOverviewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mediaType = getArguments().getString("MEDIA_TYPE");
+        KubrickApplication.getEventBus().register(this);
     }
 
     @Nullable
@@ -43,6 +47,12 @@ public class FavoritesOverviewFragment extends Fragment {
         this.view = (UltimateRecyclerView) layout.findViewById(R.id.recyclerView);
         this.view.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
+        fetchItems();
+
+        return layout;
+    }
+
+    public void fetchItems() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
         query.whereEqualTo("user", ParseUser.getCurrentUser());
 
@@ -61,10 +71,14 @@ public class FavoritesOverviewFragment extends Fragment {
                 }
             }
         });
-        return layout;
     }
 
     public void onResults(List<ParseObject> results) {
+        Collections.reverse(results);
         this.view.setAdapter(new FavoritesOverviewAdapter(results));
+    }
+
+    public void onEvent(FavoriteStateEvent event) {
+        fetchItems();
     }
 }

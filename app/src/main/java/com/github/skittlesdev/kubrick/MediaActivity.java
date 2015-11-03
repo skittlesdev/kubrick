@@ -316,6 +316,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             toggleView.setText("Delete from favorites");
         }
         toggleView.setVisibility(View.VISIBLE);
+        KubrickApplication.getEventBus().post(event);
     }
 
     public void onEvent(LoginEvent event) {
