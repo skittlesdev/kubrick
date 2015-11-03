@@ -4,12 +4,12 @@
     android:id="@+id/movieHeader"
     android:layout_marginBottom="-7dp"
     android:layout_height="match_parent">
-    <ImageView
+    <!--<ImageView
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:id="@+id/movieBackDropPicture"
         android:background="@drawable/poster_default_placeholder"
-        android:contentDescription="@string/movie_backdrop_picture_content_description" />
+        android:contentDescription="@string/movie_backdrop_picture_content_description" />-->
     <ImageView
         android:id="@+id/moviePosterPicture"
         android:contentDescription="@string/movie_poster_picture_content_description"
@@ -71,7 +71,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/movieBackDropPicture"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="140dp"
         android:id="@+id/movieDurationAndGenresLayout">

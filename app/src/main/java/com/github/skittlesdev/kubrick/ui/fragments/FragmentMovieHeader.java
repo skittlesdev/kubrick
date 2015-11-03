@@ -59,7 +59,7 @@ public class FragmentMovieHeader extends Fragment {
         this.showTitle();
         this.showDuration();
         this.showGenres();
-        this.showBackdrop();
+        //this.showBackdrop();
         this.showReleaseDate();
     }
 

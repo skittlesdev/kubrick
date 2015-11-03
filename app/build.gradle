@@ -44,7 +44,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.parse.bolts:bolts-android:1.2.1'
     compile 'com.parse:parse-android:1.10.3'
-    compile group: 'info.movito', name: 'themoviedbapi', version:'1.2' // TheMovieDB API
+    compile group: 'info.movito', name: 'themoviedbapi', version: '1.2' // TheMovieDB API
     compile "com.squareup.picasso:picasso:2.5.2" // Picasso
     compile 'de.hdodenhof:circleimageview:1.2.1' // CircleImageView
     compile 'com.timgroup:jgravatar:1.0'
@@ -54,4 +54,5 @@ dependencies {
     compile 'com.android.support:design:23.1.0'
     compile 'com.android.support:recyclerview-v7:23.1.0' // RecyvlerView
     compile 'com.github.vlonjatg:progress-activity:v1.0.3'
+    compile 'com.android.support:cardview-v7:23.1.0'
 }

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.support.v7.widget.Toolbar;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
@@ -28,6 +29,9 @@ import com.parse.*;
 
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
+import info.movito.themoviedbapi.model.tv.TvSeries;
+
+import com.squareup.picasso.Picasso;
 import com.vlonjatg.progressactivity.ProgressActivity;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener {
@@ -46,7 +50,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
         KubrickApplication.getEventBus().register(this);
-        ((ProgressActivity) findViewById(R.id.progressActivity)).showLoading();
+//        ((ProgressActivity) findViewById(R.id.progressActivity)).showLoading();
 
         final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
         toggleView.setOnClickListener(this);
@@ -161,9 +165,28 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         }
     }
 
+    private void showBackdrop(IdElement mMedia) {
+        String backdrop;
+
+        if (mMedia instanceof MovieDb) {
+            backdrop = ((MovieDb) mMedia).getBackdropPath();
+        }
+        else {
+            backdrop = ((TvSeries) mMedia).getBackdropPath();
+        }
+
+        Picasso.with(this)
+                .load("http://image.tmdb.org/t/p/w500" + backdrop)
+                .placeholder(R.drawable.poster_default_placeholder)
+                .error(R.drawable.poster_default_error)
+                .into((ImageView) this.findViewById(R.id.movieBackDropPicture));
+    }
+
     @Override
     public void onMediaRetrieved(IdElement media) {
         this.media = media;
+
+        this.showBackdrop(this.media);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.movieCastContainer, new FragmentMovieCast(media));
@@ -178,7 +201,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             //showStats((TvSeries) media);
         }
 
-        ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
+        //((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
     }
 
     public void onEvent(FavoriteStateEvent event) {
