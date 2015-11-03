@@ -11,11 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.skittlesdev.kubrick.KubrickApplication;
+import com.github.skittlesdev.kubrick.LoginActivity;
 import com.github.skittlesdev.kubrick.ProfileActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -50,7 +52,13 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(this.context, ProfileActivity.class);
+            Intent intent;
+            if (ParseUser.getCurrentUser() != null) {
+                intent = new Intent(this.context, ProfileActivity.class);
+            }
+            else {
+                intent = new Intent(this.context, LoginActivity.class);
+            }
             this.context.startActivity(intent);
         }
 

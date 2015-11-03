@@ -46,7 +46,7 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home, menu);
-
+        new ToolbarMenu(this).filterItems(menu);
         return true;
     }
 
