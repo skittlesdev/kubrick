@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import com.github.skittlesdev.kubrick.events.ParseResultListEvent;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.parse.*;
@@ -34,15 +33,13 @@ public class FavoritesActivity extends AppCompatActivity implements AdapterView.
 
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
-        KubrickApplication.getEventBus().register(this);
-
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
         query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
-                    KubrickApplication.getEventBus().post(new ParseResultListEvent(objects));
+                    onResults(objects);
                 }
             }
         });
@@ -62,8 +59,8 @@ public class FavoritesActivity extends AppCompatActivity implements AdapterView.
         return super.onOptionsItemSelected(item);
     }
 
-    public void onEvent(ParseResultListEvent event) {
-        this.favorites = event.getResults();
+    public void onResults(List<ParseObject> results) {
+        this.favorites = results;
         List<String> titles = new LinkedList<>();
         for (ParseObject item: this.favorites) {
             titles.add(item.getString("title"));

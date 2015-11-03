@@ -202,10 +202,10 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             @Override
             public void done(ParseObject object, ParseException e) {
                 if (object == null) {
-                    KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.OFF));
+                    favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
                 }
                 else {
-                    KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.ON));
+                    favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
                 }
             }
         });
@@ -239,7 +239,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
-                            KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.ON));
+                            favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
                         }
                         else {
                             Toast.makeText(KubrickApplication.getContext(), "Failed to favorite movie", Toast.LENGTH_SHORT).show();
@@ -272,7 +272,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                                         Toast.makeText(KubrickApplication.getContext(), "Failed to remove from favorites", Toast.LENGTH_SHORT).show();
                                     }
                                     else {
-                                        KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.OFF));
+                                        favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
                                     }
                                 }
                             });
@@ -305,7 +305,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
     }
 
-    public void onEvent(FavoriteStateEvent event) {
+    public void favoriteStateChange(FavoriteStateEvent event) {
         final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
         if (event.getFavoriteState() == FavoriteState.OFF) {
             this.favoriteState = FavoriteState.OFF;
