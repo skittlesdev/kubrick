@@ -55,4 +55,5 @@ dependencies {
     compile 'com.android.support:design:23.1.0'
     compile 'com.android.support:recyclerview-v7:23.1.0' // RecyvlerView
     compile 'com.github.vlonjatg:progress-activity:v1.0.3'
+    compile 'com.prolificinteractive:material-calendarview:1.1.0' // https://github.com/prolificinteractive/material-calendarview
 }

@@ -1,6 +1,7 @@
 package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,20 +16,25 @@ import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
+import com.github.skittlesdev.kubrick.asyncs.GetSeriesInfo;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
 import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
+import com.github.skittlesdev.kubrick.interfaces.TvSeriesSeasonsListener;
 import com.github.skittlesdev.kubrick.ui.fragments.CreditsOverviewFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
+import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewSeriesPlanningDecorator;
 import com.github.skittlesdev.kubrick.utils.CastUtils;
 import com.github.skittlesdev.kubrick.utils.FavoriteState;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
 import com.parse.*;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.squareup.picasso.Picasso;
 
+import info.movito.themoviedbapi.TmdbTvSeasons;
 import info.movito.themoviedbapi.model.Credits;
 import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
@@ -40,10 +46,11 @@ import com.vlonjatg.progressactivity.ProgressActivity;
 
 import java.util.List;
 
-public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener {
+public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener {
     private int mediaId;
     private IdElement media;
     private FavoriteState favoriteState;
+    private MaterialCalendarView calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +78,13 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             GetMovieTask task = new GetMovieTask(this);
             task.execute(this.mediaId);
         }
+
+        calendar = (MaterialCalendarView)  findViewById(R.id.seriesPlanningCalendarView);
+
+        /*calendar.addDecorators(
+                new CalendarViewSeriesPlanningDecorator(Color.WHITE, Color.GRAY, Color.RED, null)
+        );*/
+
     }
 
     @Override
@@ -218,14 +232,24 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             public void done(ParseObject object, ParseException e) {
                 if (object == null) {
                     favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
-                }
-                else {
+                } else {
                     favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
                 }
             }
         });
     }
 
+    public void displaySerieEpisodesCalendar(TvSeries tvSeries){
+
+        GetSeriesInfo task = new GetSeriesInfo(this);
+        task.execute(this.mediaId);
+
+    }
+
+    @Override
+    public void onTvSeriesSeasonsRetrieved(TmdbTvSeasons tmdbTvSeasons) {
+
+    }
 
     @Override
     public void onClick(View v) {
@@ -312,6 +336,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         }
         else {
             showStats((TvSeries) media);
+            displaySerieEpisodesCalendar((TvSeries) media);
         }
 
         showOverview(media);
