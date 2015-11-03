@@ -1,6 +1,6 @@
 package com.github.skittlesdev.kubrick;
 
-import android.graphics.Movie;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +20,7 @@ import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
+import com.github.skittlesdev.kubrick.ui.fragments.CreditsOverviewFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.CastUtils;
@@ -47,7 +48,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_movie);
+        this.setContentView(R.layout.activity_media);
 
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -154,7 +155,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     }
 
     private void showGenres(IdElement media){
-
         TextView genresView = (TextView) findViewById(R.id.genres);
 
         List<Genre> genres;
@@ -169,9 +169,22 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     }
 
     private void showCast(IdElement media) {
-        TextView castView = (TextView) findViewById(R.id.cast);
+        CreditsOverviewFragment castFragment = new CreditsOverviewFragment();
+        Bundle castFragmentArgs = new Bundle();
 
-        Credits credits;
+        if (media instanceof MovieDb) {
+            castFragmentArgs.putSerializable("credits", ((MovieDb) media).getCredits());
+        }
+        else {
+            castFragmentArgs.putSerializable("credits", ((TvSeries) media).getCredits());
+        }
+        castFragment.setArguments(castFragmentArgs);
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.fragment_cast, castFragment);
+        transaction.commit();
+
+        /*Credits credits;
         if (media instanceof MovieDb) {
             credits = ((MovieDb) media).getCredits();
             castView.setText("Cast : " + CastUtils.getCastPrintableString(credits.getCast()) + "\n" + "Crew : " + CastUtils.getCrewPrintableString(credits.getCrew()));
@@ -179,7 +192,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         } else {
             credits = ((TvSeries) media).getCredits();
             castView.setText("Cast : " + CastUtils.getCastPrintableString(credits.getCast()) + "\n");
-        }
+        }*/
 
     }
 

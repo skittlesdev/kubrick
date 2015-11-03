@@ -6,7 +6,7 @@
 
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
               android:id="@+id/type"
-              android:paddingLeft="8dp" android:paddingRight="8dp" android:layout_marginBottom="6dp"/>
+              android:paddingLeft="12dp" android:paddingRight="12dp" android:layout_marginBottom="6dp"/>
 
     <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
             android:layout_width="match_parent"
