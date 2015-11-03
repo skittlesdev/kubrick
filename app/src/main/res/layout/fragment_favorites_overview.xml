@@ -8,13 +8,8 @@
               android:id="@+id/type"
               android:paddingLeft="8dp" android:paddingRight="8dp" android:layout_marginBottom="6dp"/>
 
-    <com.malinskiy.superrecyclerview.SuperRecyclerView
-            android:id="@+id/recyclerView"
+    <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            app:recyclerClipToPadding="false"
-            app:recyclerPaddingLeft="8dp"
-            app:recyclerPaddingRight="8dp"
-            app:mainLayoutId="@layout/layout_recyclerview_verticalscroll"
-            app:scrollbarStyle="insideInset"/>
+            android:id="@+id/recyclerView"/>
 </LinearLayout>

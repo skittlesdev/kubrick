@@ -14,19 +14,18 @@ import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.FavoritesOverviewAdapter;
 import com.github.skittlesdev.kubrick.events.ParseResultListEvent;
-import com.malinskiy.superrecyclerview.SuperRecyclerView;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.parse.*;
 
 import java.util.List;
 
 public class FavoritesOverviewFragment extends Fragment {
-    private SuperRecyclerView view;
+    private UltimateRecyclerView view;
     private String mediaType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        KubrickApplication.getEventBus().register(this);
         this.mediaType = getArguments().getString("MEDIA_TYPE");
     }
 
@@ -45,7 +44,7 @@ public class FavoritesOverviewFragment extends Fragment {
             typeView.setText("Favorite series");
         }
 
-        this.view = (SuperRecyclerView) layout.findViewById(R.id.recyclerView);
+        this.view = (UltimateRecyclerView) layout.findViewById(R.id.recyclerView);
         this.view.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
@@ -62,14 +61,14 @@ public class FavoritesOverviewFragment extends Fragment {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
-                    KubrickApplication.getEventBus().post(new ParseResultListEvent(objects));
+                    onResults(objects);
                 }
             }
         });
         return layout;
     }
 
-    public void onEvent(ParseResultListEvent event) {
-        this.view.setAdapter(new FavoritesOverviewAdapter(event.getResults()));
+    public void onResults(List<ParseObject> results) {
+        this.view.setAdapter(new FavoritesOverviewAdapter(results));
     }
 }
