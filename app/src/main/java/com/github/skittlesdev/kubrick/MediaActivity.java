@@ -170,30 +170,32 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
     private void showCast(IdElement media) {
         CreditsOverviewFragment castFragment = new CreditsOverviewFragment();
+        CreditsOverviewFragment crewFragment = new CreditsOverviewFragment();
+
         Bundle castFragmentArgs = new Bundle();
+        castFragmentArgs.putString("type", "cast");
+
+        Bundle crewFragmentArgs = new Bundle();
+        crewFragmentArgs.putString("type", "crew");
 
         if (media instanceof MovieDb) {
             castFragmentArgs.putSerializable("credits", ((MovieDb) media).getCredits());
+            crewFragmentArgs.putSerializable("credits", ((MovieDb) media).getCredits());
         }
         else {
             castFragmentArgs.putSerializable("credits", ((TvSeries) media).getCredits());
+            crewFragmentArgs.putSerializable("credits", ((TvSeries) media).getCredits());
         }
+
         castFragment.setArguments(castFragmentArgs);
+        crewFragment.setArguments(crewFragmentArgs);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_cast, castFragment);
-        transaction.commit();
-
-        /*Credits credits;
+        transaction.add(R.id.fragment_cast, castFragment, "cast");
         if (media instanceof MovieDb) {
-            credits = ((MovieDb) media).getCredits();
-            castView.setText("Cast : " + CastUtils.getCastPrintableString(credits.getCast()) + "\n" + "Crew : " + CastUtils.getCrewPrintableString(credits.getCrew()));
-
-        } else {
-            credits = ((TvSeries) media).getCredits();
-            castView.setText("Cast : " + CastUtils.getCastPrintableString(credits.getCast()) + "\n");
-        }*/
-
+            transaction.add(R.id.fragment_crew, crewFragment, "crew");
+        }
+        transaction.commit();
     }
 
     private void getFavoriteStatus() {

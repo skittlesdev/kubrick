@@ -76,6 +76,7 @@
                             android:paddingRight="16dp"/>
 
                     <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/fragment_cast" />
+                    <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/fragment_crew" />
                 </LinearLayout>
             </ScrollView>
         </com.vlonjatg.progressactivity.ProgressActivity>

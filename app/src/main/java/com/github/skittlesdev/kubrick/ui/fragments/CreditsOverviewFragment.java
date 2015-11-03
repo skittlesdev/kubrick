@@ -14,6 +14,7 @@ import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import info.movito.themoviedbapi.model.Credits;
 import info.movito.themoviedbapi.model.people.Person;
 import info.movito.themoviedbapi.model.people.PersonCast;
+import info.movito.themoviedbapi.model.people.PersonCrew;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,18 +28,35 @@ public class CreditsOverviewFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View layout = inflater.inflate(R.layout.fragment_favorites_overview, container, false);
 
+        String type = getArguments().getString("type");
         TextView typeView = (TextView) layout.findViewById(R.id.type);
-        typeView.setText("Cast");
+
+        if (type.compareTo("cast") == 0) {
+            typeView.setText("Cast");
+        }
+        else {
+            typeView.setText("Crew");
+        }
 
         this.view = (UltimateRecyclerView) layout.findViewById(R.id.recyclerView);
         this.view.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         Credits credits = (Credits) getArguments().getSerializable("credits");
-        List<Person> cast = new LinkedList<>();
-        for (PersonCast item: credits.getCast()) {
-            cast.add(item);
+
+        List<Person> people = new LinkedList<>();
+
+        if (type.compareTo("cast") == 0) {
+            for (PersonCast item: credits.getCast()) {
+                people.add(item);
+            }
         }
-        this.view.setAdapter(new CreditsOverviewAdapter(cast));
+        else {
+            for (PersonCrew item: credits.getCrew()) {
+                people.add(item);
+            }
+        }
+
+        this.view.setAdapter(new CreditsOverviewAdapter(people));
 
         return layout;
     }
