@@ -7,6 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.MenuItem;
 import com.github.skittlesdev.kubrick.AboutActivity;
+import com.github.skittlesdev.kubrick.ProfileActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.SearchActivity;
 
@@ -25,6 +26,10 @@ public class ToolbarMenu {
         if (item.getItemId() == android.R.id.home) {
             DrawerLayout drawer = (DrawerLayout) ((Activity) context).findViewById(R.id.homeDrawerLayout);
             drawer.openDrawer(Gravity.LEFT);
+        }
+
+        if (item.getItemId() == R.id.action_user) {
+            context.startActivity(new Intent(context, ProfileActivity.class));
         }
 
         if (item.getItemId() == R.id.action_about) {
