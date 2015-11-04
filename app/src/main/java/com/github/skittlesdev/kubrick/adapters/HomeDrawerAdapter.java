@@ -141,6 +141,7 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
                 .load(this.mProfile.getAvatarUrl())
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
+                .fit()
                 .into(holder.avatar);
         }
         holder.name.setText(this.mProfile.getName());

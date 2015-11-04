@@ -58,6 +58,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .load(profile.getAvatarUrl())
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
+                .fit()
                 .into(image);
         }
     }

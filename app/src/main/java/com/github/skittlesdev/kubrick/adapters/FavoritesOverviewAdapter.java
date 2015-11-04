@@ -56,6 +56,7 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
                 .load("http://image.tmdb.org/t/p/w500" + item.getString("poster_path"))
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
+                .fit()
                 .into(this.poster);
         }
 
