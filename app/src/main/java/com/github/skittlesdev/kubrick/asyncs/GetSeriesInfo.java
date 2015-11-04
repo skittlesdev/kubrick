@@ -10,11 +10,13 @@ import java.util.List;
 
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbTV;
+import info.movito.themoviedbapi.TmdbTvEpisodes;
 import info.movito.themoviedbapi.TmdbTvSeasons;
+import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeason;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
-public class GetSeriesInfo extends AsyncTask<Integer, Void, TmdbTvSeasons> {
+public class GetSeriesInfo extends AsyncTask<Integer, Void, TvSeries> {
     private TvSeriesSeasonsListener listener;
 
     public GetSeriesInfo(TvSeriesSeasonsListener listener) {
@@ -22,28 +24,27 @@ public class GetSeriesInfo extends AsyncTask<Integer, Void, TmdbTvSeasons> {
     }
 
     @Override
-    protected TmdbTvSeasons doInBackground(Integer... params) {
+    protected TvSeries doInBackground(Integer... params) {
         if (params[0] == null) {
             return null;
         }
-
         TmdbApi api = new TmdbApi(KubrickApplication.getContext().getString(R.string.tmdb_api_key));
-        //return api.getTvSeries().getSeries(params[0], "en", TmdbTV.TvMethod.credits);
-        List<TvSeason> tvSeasonList = api.getTvSeries().getSeries(params[0], "en").getSeasons();
+        TvSeries tvSeries = api.getTvSeries().getSeries(params[0], "en");
+        List<TvSeason> tvSeasonList = tvSeries.getSeasons();
 
-        for(TvSeason tvSeason : tvSeasonList){
-            Object a = null;
+
+       for(TvSeason tvSeason : tvSeasonList){
+           tvSeason.setEpisodes(api.getTvSeasons().getSeason(params[0], tvSeason.getSeasonNumber(), "en").getEpisodes());
         }
 
-        Object obj = api.getTvEpisodes();
-        return null ;
+        return tvSeries ;
     }
 
     @Override
-    protected void onPostExecute(TmdbTvSeasons tmdbTvSeasons) {
-        super.onPostExecute(tmdbTvSeasons);
-        if (tmdbTvSeasons != null) {
-            this.listener.onTvSeriesSeasonsRetrieved(tmdbTvSeasons);
+    protected void onPostExecute(TvSeries tvSeries) {
+        super.onPostExecute(tvSeries);
+        if (tvSeries != null) {
+            this.listener.onTvSeriesSeasonsRetrieved(tvSeries);
         }
     }
 }

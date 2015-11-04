@@ -1,5 +1,6 @@
 package com.github.skittlesdev.kubrick;
 
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
@@ -23,22 +25,26 @@ import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
 import com.github.skittlesdev.kubrick.interfaces.TvSeriesSeasonsListener;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNextEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNoEpisode;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorToday;
 import com.github.skittlesdev.kubrick.ui.fragments.CreditsOverviewFragment;
+import com.github.skittlesdev.kubrick.ui.fragments.TvEpisodeFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
-import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewSeriesPlanningDecorator;
-import com.github.skittlesdev.kubrick.utils.CastUtils;
+import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewUtils;
 import com.github.skittlesdev.kubrick.utils.FavoriteState;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
 import com.parse.*;
+import com.prolificinteractive.materialcalendarview.CalendarUtils;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.squareup.picasso.Picasso;
 
-import info.movito.themoviedbapi.TmdbTvSeasons;
-import info.movito.themoviedbapi.model.Credits;
 import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
+import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 import org.joda.time.Duration;
 import org.joda.time.format.*;
@@ -46,7 +52,7 @@ import com.vlonjatg.progressactivity.ProgressActivity;
 
 import java.util.List;
 
-public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener {
+public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, CalendarView.OnDateChangeListener {
     private int mediaId;
     private IdElement media;
     private FavoriteState favoriteState;
@@ -79,11 +85,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             task.execute(this.mediaId);
         }
 
-        calendar = (MaterialCalendarView)  findViewById(R.id.seriesPlanningCalendarView);
-
-        /*calendar.addDecorators(
-                new CalendarViewSeriesPlanningDecorator(Color.WHITE, Color.GRAY, Color.RED, null)
-        );*/
+        calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
 
     }
 
@@ -247,8 +249,14 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     }
 
     @Override
-    public void onTvSeriesSeasonsRetrieved(TmdbTvSeasons tmdbTvSeasons) {
+    public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
 
+        calendar.addDecorators(
+                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
+        );
     }
 
     @Override
@@ -343,6 +351,17 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         getFavoriteStatus();
 
         ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
+    }
+
+    @Override
+    public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+
+        /*FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.addToBackStack("tweet_item_transaction"); // Needed to be able to go back to the tweet list with the back button, if not, app will go back to precedent activity, loginActivity in this case
+        fragmentTransaction.replace(R.id.homeDrawerLayout, TvEpisodeFragment.newInstance(tweet));
+        fragmentTransaction.commit();*/
+
     }
 
     public void favoriteStateChange(FavoriteStateEvent event) {

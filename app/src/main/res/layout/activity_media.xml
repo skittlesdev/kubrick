@@ -83,7 +83,7 @@
                         android:id="@+id/seriesPlanningCalendarView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:mcv_showOtherDates="all"
+                        app:mcv_showOtherDates="none"
                         app:mcv_firstDayOfWeek="monday"
                         app:mcv_arrowColor="#F8F8FF"
                         app:mcv_headerTextAppearance="?android:attr/textAppearanceMedium"
