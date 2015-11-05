@@ -250,7 +250,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
     @Override
     public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
-
+        calendar.setVisibility(View.VISIBLE);
         calendar.addDecorators(
                 new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
