@@ -254,6 +254,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
     @Override
     public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
+        calendar.setVisibility(View.VISIBLE);
 
         this.media = tvSeries;
 
