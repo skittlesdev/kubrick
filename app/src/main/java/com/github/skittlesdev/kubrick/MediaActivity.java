@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,7 +38,9 @@ import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewUtils;
 import com.github.skittlesdev.kubrick.utils.FavoriteState;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
 import com.parse.*;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarUtils;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.squareup.picasso.Picasso;
 
@@ -52,7 +55,7 @@ import com.vlonjatg.progressactivity.ProgressActivity;
 
 import java.util.List;
 
-public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, CalendarView.OnDateChangeListener {
+public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener {
     private int mediaId;
     private IdElement media;
     private FavoriteState favoriteState;
@@ -86,6 +89,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         }
 
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
+        calendar.setOnDateChangedListener(this);
 
     }
 
@@ -251,6 +255,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     @Override
     public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
 
+        this.media = tvSeries;
+
         calendar.addDecorators(
                 new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
@@ -353,15 +359,18 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
     }
 
+
     @Override
-    public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+    public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
+        Log.d("onSelectedDayChange", "day changed");
 
-        /*FragmentManager fragmentManager = getFragmentManager();
+       TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, (TvSeries) media);
+
+        FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.addToBackStack("tweet_item_transaction"); // Needed to be able to go back to the tweet list with the back button, if not, app will go back to precedent activity, loginActivity in this case
-        fragmentTransaction.replace(R.id.homeDrawerLayout, TvEpisodeFragment.newInstance(tweet));
-        fragmentTransaction.commit();*/
-
+        fragmentTransaction.addToBackStack("calendar_episode_transaction");
+        fragmentTransaction.replace(R.id.homeDrawerLayout, TvEpisodeFragment.newInstance(tvEpisode));
+        fragmentTransaction.commit();
     }
 
     public void favoriteStateChange(FavoriteStateEvent event) {

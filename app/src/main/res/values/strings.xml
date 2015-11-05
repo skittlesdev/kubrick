@@ -15,4 +15,5 @@
     <string name="search_hint">Search terms</string>
     <string name="navigation_drawer_icon">Icon</string>
     <string name="navigation_drawer_title">Title</string>
+    <string name="tvEpisodeBundleOverview">tvEpisodeBundleOverview</string>
 </resources>
