@@ -32,16 +32,10 @@ public class FragmentMovieHeader extends Fragment {
     private IdElement mMedia;
     private View r;
 
-    public FragmentMovieHeader() {
-    }
-
-    public FragmentMovieHeader(IdElement mMedia) {
-        this.mMedia = mMedia;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.mMedia = (IdElement) getArguments().getSerializable("media");
     }
 
     @Override

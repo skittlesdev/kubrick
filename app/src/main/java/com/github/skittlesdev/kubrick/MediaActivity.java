@@ -77,6 +77,14 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         this.mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
 
+        calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
+        calendar.setOnDateChangedListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
             GetSeriesTask task = new GetSeriesTask(this);
             task.execute(this.mediaId);
@@ -85,9 +93,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             GetMovieTask task = new GetMovieTask(this);
             task.execute(this.mediaId);
         }
-
-        calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
-        calendar.setOnDateChangedListener(this);
     }
 
     @Override
@@ -268,8 +273,17 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        transaction.add(R.id.movieHeaderContainer, new FragmentMovieHeader(media));
-        transaction.add(R.id.movieOverviewContainer, new FragmentMovieOverview(media));
+        Bundle options = new Bundle();
+        options.putSerializable("media", this.media);
+
+        FragmentMovieHeader header = new FragmentMovieHeader();
+        header.setArguments(options);
+
+        FragmentMovieOverview overview = new FragmentMovieOverview();
+        overview.setArguments(options);
+
+        transaction.add(R.id.movieHeaderContainer, header);
+        transaction.add(R.id.movieOverviewContainer, overview);
 
         CreditsOverviewFragment movieCast = new CreditsOverviewFragment();
         Bundle movieCastOptions = new Bundle();
