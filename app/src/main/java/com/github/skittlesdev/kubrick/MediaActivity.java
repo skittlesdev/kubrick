@@ -283,6 +283,15 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         movieCast.setArguments(movieCastOptions);
         transaction.add(R.id.movieCastContainer, movieCast, "movieCast");
 
+        if (media instanceof MovieDb) {
+            CreditsOverviewFragment movieCrew = new CreditsOverviewFragment();
+            Bundle movieCrewOptions = new Bundle();
+            movieCrewOptions.putString("type", "crew");
+            movieCrewOptions.putSerializable("credits", ((MovieDb) this.media).getCredits());
+            movieCrew.setArguments(movieCrewOptions);
+            transaction.add(R.id.movieCrewContainer, movieCrew, "movieCrew");
+        }
+
         transaction.commit();
 
         if (media instanceof TvSeries) {
