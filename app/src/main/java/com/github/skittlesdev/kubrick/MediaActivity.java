@@ -271,7 +271,14 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         this.showBackdrop(this.media);
 
-        getSupportActionBar().setTitle(((MovieDb) this.media).getTitle());
+        if (media instanceof MovieDb) {
+            getSupportActionBar().setTitle(((MovieDb) this.media).getTitle());
+        }
+        else {
+            getSupportActionBar().setTitle(((TvSeries) this.media).getName());
+        }
+
+
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
