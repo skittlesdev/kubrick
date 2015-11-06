@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -340,14 +341,15 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         this.showBackdrop(this.media);
 
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitleEnabled(true);
+
         if (media instanceof MovieDb) {
-            getSupportActionBar().setTitle(((MovieDb) this.media).getTitle());
+            collapsingToolbar.setTitle(((MovieDb) this.media).getTitle());
         }
         else {
-            getSupportActionBar().setTitle(((TvSeries) this.media).getName());
+            collapsingToolbar.setTitle(((TvSeries) this.media).getName());
         }
-
-
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
