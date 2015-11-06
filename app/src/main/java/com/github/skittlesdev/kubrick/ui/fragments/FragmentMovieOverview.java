@@ -30,16 +30,10 @@ public class FragmentMovieOverview extends Fragment {
     private IdElement mMedia;
     private View r;
 
-    public FragmentMovieOverview() {
-    }
-
-    public FragmentMovieOverview(IdElement mMedia) {
-        this.mMedia = mMedia;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.mMedia = (IdElement) getArguments().getSerializable("media");
     }
 
     @Override
