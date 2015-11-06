@@ -1,14 +1,15 @@
 package com.github.skittlesdev.kubrick;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.view.View;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import com.github.skittlesdev.kubrick.asyncs.SearchMediaTask;
@@ -44,6 +45,14 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
         submitButton.setOnClickListener(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_home, menu);
+        new ToolbarMenu(this).filterItems(menu);
+        return true;
+    }
+
     public void executeSearchTask(TextView searchInput, SearchActivity searchActivity) {
         SearchMediaTask searchTask = new SearchMediaTask(searchActivity);
         searchTask.execute(searchInput.getText().toString());
@@ -51,6 +60,28 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
 
     private void setActionListener() {
         final EditText searchInput = (EditText) findViewById(R.id.search);
+
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 2){
+                    Context context = ((ContextWrapper) searchInput.getContext()).getBaseContext();
+                    SearchActivity searchActivity =(SearchActivity) context;
+                    TextView tv = new TextView(context);
+                    tv.setText(s);
+                    searchActivity.executeSearchTask(tv, searchActivity);
+                }
+            }
+        });
+
         searchInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView searchInput, int actionId, KeyEvent event) {
@@ -70,6 +101,7 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
             }
         });
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

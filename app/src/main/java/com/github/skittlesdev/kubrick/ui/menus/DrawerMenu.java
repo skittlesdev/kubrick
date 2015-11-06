@@ -6,6 +6,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 import com.github.skittlesdev.kubrick.*;
@@ -35,7 +36,7 @@ public class DrawerMenu {
 
     public void draw() {
         view.setHasFixedSize(true); // for a better performance
-        HomeDrawerAdapter mHomeDrawerAdapter = new HomeDrawerAdapter(generateTitles(), generateProfile());
+        HomeDrawerAdapter mHomeDrawerAdapter = new HomeDrawerAdapter(this.activity, generateTitles(), generateProfile());
 
         this.view.setAdapter(mHomeDrawerAdapter);
         this.view.setLayoutManager(new LinearLayoutManager(activity));
@@ -91,6 +92,8 @@ public class DrawerMenu {
             public void execute() {
                 ParseUser.logOut();
                 KubrickApplication.getEventBus().post(new LogoutEvent());
+                DrawerLayout drawer = (DrawerLayout) ((Activity) getContext()).findViewById(R.id.homeDrawerLayout);
+                drawer.closeDrawer(Gravity.LEFT);
             }
         });
 

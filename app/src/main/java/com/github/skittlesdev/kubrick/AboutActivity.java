@@ -1,42 +1,28 @@
 package com.github.skittlesdev.kubrick;
 
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.support.v7.widget.Toolbar;
-
-import com.github.skittlesdev.kubrick.ui.fragments.FragmentHome;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 
-public class HomeActivity extends AppCompatActivity {
-    private Toolbar mToolbar;
-
+public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_about);
 
-        this.setContentView(R.layout.activity_home);
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        FragmentHome fragmentHome = new FragmentHome();
-
-        transaction.add(R.id.homeContainer, fragmentHome);
-        transaction.commit();
-
-        this.mToolbar = (Toolbar) this.findViewById(R.id.toolBar);
-        this.setSupportActionBar(this.mToolbar);
-        if (this.getSupportActionBar() != null) this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

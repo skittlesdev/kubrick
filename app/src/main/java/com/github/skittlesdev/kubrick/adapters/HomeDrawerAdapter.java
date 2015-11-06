@@ -1,5 +1,7 @@
 package com.github.skittlesdev.kubrick.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -7,13 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.skittlesdev.kubrick.KubrickApplication;
+import com.github.skittlesdev.kubrick.LoginActivity;
+import com.github.skittlesdev.kubrick.ProfileActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -24,6 +28,7 @@ import java.util.List;
 public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.ViewHolder> {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
+    private final Context context;
 
     private List<RowElement> mTitles;
     private ProfileElement mProfile;
@@ -32,6 +37,7 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
         public ImageView avatar;
         public TextView name;
         public TextView email;
+        private Context context;
 
         public ProfileViewHolder(View itemView) {
             super(itemView);
@@ -46,7 +52,18 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(KubrickApplication.getContext(), "Profile clicked!", Toast.LENGTH_SHORT).show();
+            Intent intent;
+            if (ParseUser.getCurrentUser() != null) {
+                intent = new Intent(this.context, ProfileActivity.class);
+            }
+            else {
+                intent = new Intent(this.context, LoginActivity.class);
+            }
+            this.context.startActivity(intent);
+        }
+
+        public void setContext(Context context) {
+            this.context = context;
         }
     }
 
@@ -78,7 +95,8 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
         }
     }
 
-    public HomeDrawerAdapter(List<RowElement> titles, ProfileElement profile) {
+    public HomeDrawerAdapter(Context context, List<RowElement> titles, ProfileElement profile) {
+        this.context = context;
         this.mTitles = titles;
         this.mProfile = profile;
     }
@@ -117,11 +135,13 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
     }
 
     private void onBindViewHolder(HomeDrawerAdapter.ProfileViewHolder holder, int position) {
+        holder.setContext(this.context);
         if (!TextUtils.isEmpty(this.mProfile.getAvatarUrl())) {
             Picasso.with(KubrickApplication.getContext())
                 .load(this.mProfile.getAvatarUrl())
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
+                .fit()
                 .into(holder.avatar);
         }
         holder.name.setText(this.mProfile.getName());

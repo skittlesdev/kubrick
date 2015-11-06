@@ -1,49 +1,72 @@
 package com.github.skittlesdev.kubrick;
 
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
+import com.github.skittlesdev.kubrick.asyncs.GetSeriesInfo;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
 import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
+import com.github.skittlesdev.kubrick.interfaces.TvSeriesSeasonsListener;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNextEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNoEpisode;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorToday;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieCast;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieHeader;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieOverview;
+import com.github.skittlesdev.kubrick.ui.fragments.TvEpisodeFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
+import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewUtils;
+import com.github.skittlesdev.kubrick.utils.CastUtils;
 import com.github.skittlesdev.kubrick.utils.FavoriteState;
+import com.github.skittlesdev.kubrick.utils.GenresUtils;
 import com.parse.*;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.squareup.picasso.Picasso;
 
+import info.movito.themoviedbapi.model.Credits;
+import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
+import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
-
-import com.squareup.picasso.Picasso;
+import org.joda.time.Duration;
+import org.joda.time.format.*;
 import com.vlonjatg.progressactivity.ProgressActivity;
 
-public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener {
+import java.util.List;
+
+public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener {
     private int mediaId;
     private IdElement media;
     private FavoriteState favoriteState;
+    // private MaterialCalendarView calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_movie);
+        this.setContentView(R.layout.activity_media);
 
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -65,13 +88,16 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             GetMovieTask task = new GetMovieTask(this);
             task.execute(this.mediaId);
         }
+
+        // calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
+        // calendar.setOnDateChangedListener(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home, menu);
-
+        new ToolbarMenu(this).filterItems(menu);
         return true;
     }
 
@@ -81,7 +107,22 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         return super.onOptionsItemSelected(item);
     }
 
-    /*private void showStats(TvSeries media) {
+    private void showTitle(IdElement media) {
+        TextView titleView = (TextView) findViewById(R.id.title);
+        if (media instanceof MovieDb) {
+            String title = ((MovieDb) media).getTitle();
+            String year = "(" + ((MovieDb) media).getReleaseDate().split("-")[0] + ")";
+            titleView.setText(title + " " + year);
+        }
+        else {
+            String title = ((TvSeries) media).getName();
+            String firstYear = ((TvSeries) media).getFirstAirDate().split("-")[0];
+            String lastYear = ((TvSeries) media).getLastAirDate().split("-")[0];
+            titleView.setText(title + " (" + firstYear + " - " + lastYear + ")");
+        }
+    }
+
+    /* private void showStats(TvSeries media) {
         TextView durationView = (TextView) findViewById(R.id.duration);
         durationView.setText(media.getNumberOfSeasons() + " seasons, " + media.getNumberOfEpisodes() + " episodes");
     }*/
@@ -93,18 +134,43 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
         query.whereEqualTo("user", ParseUser.getCurrentUser());
-        query.whereEqualTo("tmdb_id", this.mediaId);
+
+        if (this.media instanceof MovieDb) {
+            query.whereEqualTo("tmdb_movie_id", this.mediaId);
+        }
+        else {
+            query.whereEqualTo("tmdb_series_id", this.mediaId);
+        }
+
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
                 if (object == null) {
-                    KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.OFF));
-                }
-                else {
-                    KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.ON));
+                    favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
+                } else {
+                    favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
                 }
             }
         });
+    }
+
+    public void displaySerieEpisodesCalendar(TvSeries tvSeries){
+        GetSeriesInfo task = new GetSeriesInfo(this);
+        task.execute(this.mediaId);
+    }
+
+    @Override
+    public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
+        // calendar.setVisibility(View.VISIBLE);
+
+        this.media = tvSeries;
+
+        /* calendar.addDecorators(
+                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
+        );*/
     }
 
     @Override
@@ -117,14 +183,24 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 acl.setPublicWriteAccess(false);
 
                 favorite.put("user", ParseUser.getCurrentUser());
-                favorite.put("tmdb_id", this.mediaId);
-                favorite.put("title", ((MovieDb) this.media).getTitle());
+
+                if (this.media instanceof MovieDb) {
+                    favorite.put("tmdb_movie_id", this.mediaId);
+                    favorite.put("title", ((MovieDb) this.media).getTitle());
+                    favorite.put("poster_path", ((MovieDb) this.media).getPosterPath());
+                }
+                else {
+                    favorite.put("tmdb_series_id", this.mediaId);
+                    favorite.put("title", ((TvSeries) this.media).getName());
+                    favorite.put("poster_path", ((TvSeries) this.media).getPosterPath());
+                }
+
                 favorite.setACL(acl);
                 favorite.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
-                            KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.ON));
+                            favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
                         }
                         else {
                             Toast.makeText(KubrickApplication.getContext(), "Failed to favorite movie", Toast.LENGTH_SHORT).show();
@@ -135,7 +211,14 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             else {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
                 query.whereEqualTo("user", ParseUser.getCurrentUser());
-                query.whereEqualTo("tmdb_id", this.mediaId);
+
+                if (this.media instanceof MovieDb) {
+                    query.whereEqualTo("tmdb_movie_id", this.mediaId);
+                }
+                else {
+                    query.whereEqualTo("tmdb_series_id", this.mediaId);
+                }
+
                 query.getFirstInBackground(new GetCallback<ParseObject>() {
                     @Override
                     public void done(ParseObject object, ParseException e) {
@@ -150,7 +233,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                                         Toast.makeText(KubrickApplication.getContext(), "Failed to remove from favorites", Toast.LENGTH_SHORT).show();
                                     }
                                     else {
-                                        KubrickApplication.getEventBus().post(new FavoriteStateEvent(FavoriteState.OFF));
+                                        favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
                                     }
                                 }
                             });
@@ -190,15 +273,28 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         transaction.add(R.id.movieOverviewContainer, new FragmentMovieOverview(media));
         transaction.commit();
 
-        if (media instanceof MovieDb) {
-            getFavoriteStatus();
+        if (media instanceof TvSeries) {
+            displaySerieEpisodesCalendar((TvSeries) media);
         }
-        else {
-            //showStats((TvSeries) media);
-        }
+        
+        getFavoriteStatus();
     }
 
-    public void onEvent(FavoriteStateEvent event) {
+
+    @Override
+    public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
+        Log.d("onSelectedDayChange", "day changed");
+
+       TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, (TvSeries) media);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.addToBackStack("calendar_episode_transaction");
+        fragmentTransaction.replace(R.id.homeDrawerLayout, TvEpisodeFragment.newInstance(tvEpisode));
+        fragmentTransaction.commit();
+    }
+
+    public void favoriteStateChange(FavoriteStateEvent event) {
         final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
         if (event.getFavoriteState() == FavoriteState.OFF) {
             this.favoriteState = FavoriteState.OFF;

@@ -25,4 +25,5 @@
     <string name="movie_backdrop_picture_content_description">Movie backdrop picture</string>
     <string name="movie_cast_content">-</string>
     <string name="movie_cast_title">Cast</string>
+    <string name="tvEpisodeBundleOverview">tvEpisodeBundleOverview</string>
 </resources>
