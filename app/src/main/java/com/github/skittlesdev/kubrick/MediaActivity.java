@@ -1,6 +1,7 @@
 package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
+import com.github.skittlesdev.kubrick.ui.dialog.PosterFullScreenDialog;
 import com.github.skittlesdev.kubrick.ui.fragments.CreditsOverviewFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
@@ -102,6 +104,22 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
                 .into((ImageView) findViewById(R.id.poster));
+        final ImageView imageView=(ImageView) findViewById(R.id.poster);
+        Picasso.with(getApplicationContext())
+                .load("http://image.tmdb.org/t/p/w500" + posterPath)
+                .placeholder(R.drawable.poster_default_placeholder)
+                .error(R.drawable.poster_default_error)
+                .into(imageView);
+
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Drawable drawable = imageView.getDrawable();
+                PosterFullScreenDialog posterDialog = new PosterFullScreenDialog(MediaActivity.this, drawable);
+                posterDialog.show();
+            }
+        });
     }
 
     private void showTitle(IdElement media) {
