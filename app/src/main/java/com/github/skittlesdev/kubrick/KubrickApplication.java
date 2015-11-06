@@ -3,6 +3,7 @@ package com.github.skittlesdev.kubrick;
 import android.app.Application;
 import android.content.Context;
 import com.parse.Parse;
+import com.parse.ParseCrashReporting;
 import de.greenrobot.event.EventBus;
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -17,6 +18,7 @@ public class KubrickApplication extends Application {
         KubrickApplication.sContext = this.getApplicationContext();
         this.eventBus = new EventBus();
 
+        ParseCrashReporting.enable(this);
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "rej9XtKMoEPuEkULwnROypntYF5Bg9aKEQhQgYtr", "6kyMBoKJgKsMyQB72IvUWVq1UBZSJsXArxBIvMy3");
     }

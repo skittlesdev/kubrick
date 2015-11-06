@@ -61,7 +61,7 @@ public class HomeActivityRecyclerAdapter extends
                 .load("http://image.tmdb.org/t/p/w500" + posterPath)
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
-                //.resize(holder.avatar.getMaxHeight(), holder.avatar.getMaxWidth())
+                .fit()
                 .into(poster);
     }
 

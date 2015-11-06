@@ -54,6 +54,7 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
                     .load("http://image.tmdb.org/t/p/w500" + item.getProfilePath())
                     .placeholder(R.drawable.poster_default_placeholder)
                     .error(R.drawable.poster_default_error)
+                    .fit()
                     .into(this.profile);
         }
 
