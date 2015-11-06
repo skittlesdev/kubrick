@@ -89,8 +89,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         }
 
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
-        calendar.setOnDateChangedListener(this);
-
+        // calendar.setOnDateChangedListener(this);
     }
 
     @Override
