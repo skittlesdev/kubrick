@@ -107,14 +107,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 .into(imageView);
 
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Drawable drawable = imageView.getDrawable();
-                PosterFullScreenDialog posterDialog = new PosterFullScreenDialog(MediaActivity.this, drawable);
-                posterDialog.show();
-            }
-        });
+        imageView.setOnClickListener(this);
     }
 
     private void showTitle(IdElement media) {
@@ -211,6 +204,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         transaction.commit();
     }
 
+
     private void getFavoriteStatus() {
         if (ParseUser.getCurrentUser() == null) {
             return;
@@ -231,8 +225,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             public void done(ParseObject object, ParseException e) {
                 if (object == null) {
                     favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
-                }
-                else {
+                } else {
                     favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
                 }
             }
@@ -308,6 +301,12 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                     }
                 });
             }
+        }
+        else if(v.getId()==R.id.poster){
+            final ImageView imageView=(ImageView) findViewById(R.id.poster);
+            Drawable drawable = imageView.getDrawable();
+            PosterFullScreenDialog posterDialog = new PosterFullScreenDialog(MediaActivity.this, drawable);
+            posterDialog.show();
         }
     }
 
