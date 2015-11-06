@@ -45,7 +45,6 @@ dependencies {
     compile 'com.parse.bolts:bolts-android:1.2.1'
     compile 'com.parse:parse-android:1.10.3'
     compile group: 'info.movito', name: 'themoviedbapi', version: '1.2' // TheMovieDB API
-    compile fileTree(dir: 'libs', include: 'ParseCrashReporting-*.jar')
     compile "com.squareup.picasso:picasso:2.5.2" // Picasso
     compile 'de.hdodenhof:circleimageview:1.2.1' // CircleImageView
     compile 'com.marshalchen.ultimaterecyclerview:library:0.3.18'

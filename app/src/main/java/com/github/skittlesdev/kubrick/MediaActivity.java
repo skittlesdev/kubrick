@@ -29,10 +29,7 @@ import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesP
 import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNoEpisode;
 import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
 import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorToday;
-import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieCast;
-import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieHeader;
-import com.github.skittlesdev.kubrick.ui.fragments.FragmentMovieOverview;
-import com.github.skittlesdev.kubrick.ui.fragments.TvEpisodeFragment;
+import com.github.skittlesdev.kubrick.ui.fragments.*;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewUtils;
@@ -268,9 +265,24 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         this.showBackdrop(this.media);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.movieCastContainer, new FragmentMovieCast(media));
+
         transaction.add(R.id.movieHeaderContainer, new FragmentMovieHeader(media));
         transaction.add(R.id.movieOverviewContainer, new FragmentMovieOverview(media));
+
+        CreditsOverviewFragment movieCast = new CreditsOverviewFragment();
+        Bundle movieCastOptions = new Bundle();
+        movieCastOptions.putString("type", "cast");
+
+        if (media instanceof MovieDb) {
+            movieCastOptions.putSerializable("credits", ((MovieDb) media).getCredits());
+        }
+        else {
+            movieCastOptions.putSerializable("credits", ((TvSeries) media).getCredits());
+        }
+
+        movieCast.setArguments(movieCastOptions);
+        transaction.add(R.id.movieCastContainer, movieCast, "movieCast");
+
         transaction.commit();
 
         if (media instanceof TvSeries) {
