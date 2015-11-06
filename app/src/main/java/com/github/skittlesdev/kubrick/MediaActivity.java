@@ -1,10 +1,12 @@
 package com.github.skittlesdev.kubrick;
 
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -34,26 +36,17 @@ import com.github.skittlesdev.kubrick.ui.fragments.*;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewUtils;
-import com.github.skittlesdev.kubrick.utils.CastUtils;
 import com.github.skittlesdev.kubrick.utils.FavoriteState;
-import com.github.skittlesdev.kubrick.utils.GenresUtils;
 import com.parse.*;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.squareup.picasso.Picasso;
 
-import info.movito.themoviedbapi.model.Credits;
-import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
-import org.joda.time.Duration;
-import org.joda.time.format.*;
-import com.vlonjatg.progressactivity.ProgressActivity;
-
-import java.util.List;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener {
     private int mediaId;
@@ -95,6 +88,17 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             GetMovieTask task = new GetMovieTask(this);
             task.execute(this.mediaId);
         }
+
+        FloatingActionButton favoriteFab = (FloatingActionButton) this.findViewById(R.id.favoriteFab);
+        favoriteFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Context context = v.getContext();
+
+                if (context instanceof MediaActivity) {
+                    ((MediaActivity) context).handleFavorite(v);
+                }
+            }
+        });
     }
 
     @Override
@@ -125,11 +129,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             titleView.setText(title + " (" + firstYear + " - " + lastYear + ")");
         }
     }
-
-    /* private void showStats(TvSeries media) {
-        TextView durationView = (TextView) findViewById(R.id.duration);
-        durationView.setText(media.getNumberOfSeasons() + " seasons, " + media.getNumberOfEpisodes() + " episodes");
-    }*/
 
     private void getFavoriteStatus() {
         if (ParseUser.getCurrentUser() == null) {
@@ -175,6 +174,76 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorToday(Color.RED)
         );
+    }
+
+    public void handleFavorite(View v) {
+        if (v.getId() == R.id.favoriteFab) {
+            if (this.favoriteState == FavoriteState.OFF) {
+                ParseObject favorite = new ParseObject("Favorite");
+                ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
+                acl.setPublicReadAccess(true);
+                acl.setPublicWriteAccess(false);
+
+                favorite.put("user", ParseUser.getCurrentUser());
+
+                if (this.media instanceof MovieDb) {
+                    favorite.put("tmdb_movie_id", this.mediaId);
+                    favorite.put("title", ((MovieDb) this.media).getTitle());
+                    favorite.put("poster_path", ((MovieDb) this.media).getPosterPath());
+                }
+                else {
+                    favorite.put("tmdb_series_id", this.mediaId);
+                    favorite.put("title", ((TvSeries) this.media).getName());
+                    favorite.put("poster_path", ((TvSeries) this.media).getPosterPath());
+                }
+
+                favorite.setACL(acl);
+                favorite.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            setFavoriteFabIcon(new FavoriteStateEvent(FavoriteState.ON));
+                        }
+                        else {
+                            Toast.makeText(KubrickApplication.getContext(), "Failed to favorite movie", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+            else {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
+                query.whereEqualTo("user", ParseUser.getCurrentUser());
+
+                if (this.media instanceof MovieDb) {
+                    query.whereEqualTo("tmdb_movie_id", this.mediaId);
+                }
+                else {
+                    query.whereEqualTo("tmdb_series_id", this.mediaId);
+                }
+
+                query.getFirstInBackground(new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject object, ParseException e) {
+                        if (object == null) {
+                            Toast.makeText(KubrickApplication.getContext(), "Failed to remove from favorites", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            object.deleteInBackground(new DeleteCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e != null) {
+                                        Toast.makeText(KubrickApplication.getContext(), "Failed to remove from favorites", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        setFavoriteFabIcon(new FavoriteStateEvent(FavoriteState.OFF));
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -322,7 +391,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         if (media instanceof TvSeries) {
             displaySerieEpisodesCalendar((TvSeries) media);
         }
-        
+
         getFavoriteStatus();
     }
 
@@ -345,6 +414,20 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             startActivity(intent);
 
         }
+    }
+
+    public void setFavoriteFabIcon(FavoriteStateEvent event) {
+        final FloatingActionButton toggleView = (FloatingActionButton) findViewById(R.id.favoriteFab);
+        if (event.getFavoriteState() == FavoriteState.OFF) {
+            this.favoriteState = FavoriteState.OFF;
+            toggleView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_heart));
+        }
+        if (event.getFavoriteState() == FavoriteState.ON) {
+            this.favoriteState = FavoriteState.ON;
+            toggleView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_heart_broken));
+        }
+
+        toggleView.setVisibility(View.VISIBLE);
     }
 
 
