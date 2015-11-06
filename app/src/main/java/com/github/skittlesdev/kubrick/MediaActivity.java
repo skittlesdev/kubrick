@@ -98,12 +98,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         else {
             posterPath = ((TvSeries) media).getPosterPath();
         }
-
-        Picasso.with(getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + posterPath)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) findViewById(R.id.poster));
+        
         final ImageView imageView=(ImageView) findViewById(R.id.poster);
         Picasso.with(getApplicationContext())
                 .load("http://image.tmdb.org/t/p/w500" + posterPath)
