@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -79,6 +80,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
         calendar.setOnDateChangedListener(this);
+        calendar.setSelectionColor(Color.YELLOW);
     }
 
     @Override
@@ -168,10 +170,10 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         this.media = tvSeries;
 
         calendar.addDecorators(
-                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.BLACK, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GREEN, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
+                new CalendarViewSeriesPlanningDecoratorToday(Color.RED)
         );
     }
 
@@ -322,14 +324,22 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
         Log.d("onSelectedDayChange", "day changed");
 
-       TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, (TvSeries) media);
+        TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, (TvSeries) media);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.addToBackStack("calendar_episode_transaction");
-        fragmentTransaction.replace(R.id.homeDrawerLayout, TvEpisodeFragment.newInstance(tvEpisode));
-        fragmentTransaction.commit();
+        if (tvEpisode != null) {
+
+            Intent intent = new Intent(getApplicationContext(), SerieEpisodeActivity.class);
+            Bundle bundle = new Bundle();
+
+            bundle.putSerializable("tvEpisode", tvEpisode);
+
+            intent.putExtras(bundle);
+
+            startActivity(intent);
+
+        }
     }
+
 
     public void favoriteStateChange(FavoriteStateEvent event) {
         final Button toggleView = (Button) findViewById(R.id.favoriteToggle);

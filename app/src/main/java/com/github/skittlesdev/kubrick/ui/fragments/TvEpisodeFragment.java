@@ -10,11 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 
 import info.movito.themoviedbapi.model.tv.TvEpisode;
-import info.movito.themoviedbapi.model.tv.TvSeries;
 
 /**
  * Created by louis on 04/11/2015.
@@ -53,7 +51,7 @@ public class TvEpisodeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_tv_episode, container, false);
+        View rootView = inflater.inflate(R.layout.activity_tv_episode, container, false);
 
         ImageView poster = (ImageView) rootView.findViewById(R.id.tvEpisodePoster);
         TextView name = (TextView) rootView.findViewById(R.id.tvEpisodeName);

@@ -30,13 +30,17 @@ public class CalendarViewUtils {
 
     public static TvEpisode getEpisodeFromDate(CalendarDay day, TvSeries tvSeries){
 
-        for(TvSeason tvSeason : tvSeries.getSeasons()){
-            for(TvEpisode tvEpisode : tvSeason.getEpisodes()) {
-                String[] split = tvEpisode.getAirDate().split("-");
-                if(day.getYear() == Integer.valueOf(split[0])){
-                    if(day.getMonth() == Integer.valueOf(split[1])){
-                        if(day.getDay() == Integer.valueOf(split[2])){
-                            return tvEpisode;
+        if(tvSeries.getSeasons() != null && tvSeries.getSeasons().size() != 0 ) {
+            for (TvSeason tvSeason : tvSeries.getSeasons()) {
+                if (tvSeason.getEpisodes() != null && tvSeason.getEpisodes().size() != 0) {
+                    for (TvEpisode tvEpisode : tvSeason.getEpisodes()) {
+                        String[] split = tvEpisode.getAirDate().split("-");
+                        if (day.getYear() == Integer.valueOf(split[0])) {
+                            if (day.getMonth() == Integer.valueOf(split[1])) {
+                                if (day.getDay() == Integer.valueOf(split[2])) {
+                                    return tvEpisode;
+                                }
+                            }
                         }
                     }
                 }
