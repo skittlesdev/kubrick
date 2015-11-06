@@ -102,6 +102,19 @@
                             android:visibility="gone"
                             android:id="@+id/favoriteToggle"
                             android:layout_gravity="center_horizontal"/>
+
+                        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                                android:id="@+id/seriesPlanningCalendarView"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                app:mcv_showOtherDates="none"
+                                app:mcv_firstDayOfWeek="monday"
+                                app:mcv_arrowColor="#F8F8FF"
+                                app:mcv_headerTextAppearance="?android:attr/textAppearanceMedium"
+                                app:mcv_weekDayTextAppearance="?android:attr/textAppearanceMedium"
+                                />
+
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
             </FrameLayout>

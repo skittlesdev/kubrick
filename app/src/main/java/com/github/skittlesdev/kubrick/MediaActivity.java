@@ -58,7 +58,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     private int mediaId;
     private IdElement media;
     private FavoriteState favoriteState;
-    // private MaterialCalendarView calendar;
+    private MaterialCalendarView calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +86,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             task.execute(this.mediaId);
         }
 
-        // calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
-        // calendar.setOnDateChangedListener(this);
+        calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
+        calendar.setOnDateChangedListener(this);
     }
 
     @Override
@@ -158,16 +158,16 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
     @Override
     public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
-        // calendar.setVisibility(View.VISIBLE);
+        calendar.setVisibility(View.VISIBLE);
 
         this.media = tvSeries;
 
-        /* calendar.addDecorators(
+        calendar.addDecorators(
                 new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
-        );*/
+        );
     }
 
     @Override
