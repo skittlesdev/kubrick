@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -50,7 +51,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
         KubrickApplication.getEventBus().register(this);
-//        ((ProgressActivity) findViewById(R.id.progressActivity)).showLoading();
 
         final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
         toggleView.setOnClickListener(this);
@@ -65,9 +65,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             GetMovieTask task = new GetMovieTask(this);
             task.execute(this.mediaId);
         }
-
-        View child = this.findViewById(R.id.movieHeaderContainer);
-        child.setZ(10000);
     }
 
     @Override
@@ -109,7 +106,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             }
         });
     }
-
 
     @Override
     public void onClick(View v) {
@@ -200,8 +196,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         else {
             //showStats((TvSeries) media);
         }
-
-        //((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
     }
 
     public void onEvent(FavoriteStateEvent event) {
