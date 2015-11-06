@@ -264,6 +264,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         this.showBackdrop(this.media);
 
+        getSupportActionBar().setTitle(((MovieDb) this.media).getTitle());
+
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         transaction.add(R.id.movieHeaderContainer, new FragmentMovieHeader(media));

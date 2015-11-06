@@ -1,7 +1,9 @@
 package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,29 +57,13 @@ public class FragmentMovieHeader extends Fragment {
     public void onStart() {
         super.onStart();
 
+        ((CardView) r.findViewById(R.id.headerCardView)).setCardBackgroundColor(Color.BLACK);
+
         this.showPoster();
         this.showTitle();
         this.showDuration();
         this.showGenres();
-        //this.showBackdrop();
         this.showReleaseDate();
-    }
-
-    private void showBackdrop() {
-        String backdrop;
-
-        if (mMedia instanceof MovieDb) {
-            backdrop = ((MovieDb) mMedia).getBackdropPath();
-        }
-        else {
-            backdrop = ((TvSeries) mMedia).getBackdropPath();
-        }
-
-        Picasso.with(getActivity().getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + backdrop)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) r.findViewById(R.id.movieBackDropPicture));
     }
 
     private void showPoster() {
