@@ -1,11 +1,14 @@
 package com.github.skittlesdev.kubrick;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
@@ -57,6 +60,28 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
 
     private void setActionListener() {
         final EditText searchInput = (EditText) findViewById(R.id.search);
+
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 2){
+                    Context context = ((ContextWrapper) searchInput.getContext()).getBaseContext();
+                    SearchActivity searchActivity =(SearchActivity) context;
+                    TextView tv = new TextView(context);
+                    tv.setText(s);
+                    searchActivity.executeSearchTask(tv, searchActivity);
+                }
+            }
+        });
+
         searchInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView searchInput, int actionId, KeyEvent event) {
