@@ -1,14 +1,18 @@
 package com.github.skittlesdev.kubrick;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -65,7 +69,26 @@ public class SerieEpisodeActivity extends AppCompatActivity {
                         .into(poster);
             }
         }
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FloatingActionButton watchFab = (FloatingActionButton) this.findViewById(R.id.watchFab);
+        watchFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Context context = v.getContext();
+
+                if (context instanceof SerieEpisodeActivity) {
+                    ((SerieEpisodeActivity) context).handleWatch(v);
+                }
+            }
+        });
+    }
+
+    public void handleWatch(View v) {
+        Toast.makeText(v.getContext(), "YOU LOST. >:3", Toast.LENGTH_SHORT).show();
     }
 
     @Override
