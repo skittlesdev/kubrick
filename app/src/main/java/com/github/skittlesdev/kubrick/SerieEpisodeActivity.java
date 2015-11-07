@@ -12,15 +12,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-<<<<<<< HEAD
 import com.github.skittlesdev.kubrick.ui.fragments.FragmenTvEpisodeOverview;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeHeader;
-=======
 import com.bumptech.glide.Glide;
-import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
-import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisode;
-import com.github.skittlesdev.kubrick.utils.FavoriteState;
->>>>>>> origin/master
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;

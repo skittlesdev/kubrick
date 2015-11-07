@@ -8,18 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.skittlesdev.kubrick.R;
-<<<<<<< HEAD
-=======
-import com.github.skittlesdev.kubrick.utils.GenresUtils;
 
-import org.joda.time.Duration;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
-
-import java.util.List;
-
-import info.movito.themoviedbapi.model.Genre;
->>>>>>> origin/master
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvSeries;
