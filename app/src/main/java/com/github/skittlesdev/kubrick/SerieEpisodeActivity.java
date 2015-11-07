@@ -1,5 +1,6 @@
 package com.github.skittlesdev.kubrick;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisode;
 import com.squareup.picasso.Picasso;
 
 import info.movito.themoviedbapi.model.tv.TvEpisode;
@@ -34,39 +36,38 @@ public class SerieEpisodeActivity extends AppCompatActivity {
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CardView cardView = (CardView) this.findViewById(R.id.overviewTVEpisodeCardView);
-        cardView.setBackgroundColor(Color.BLACK);
-
-        ImageView poster = (ImageView) findViewById(R.id.tvEpisodePoster);
-        ImageView backdrop = (ImageView) findViewById(R.id.episodeBackDropPicture);
-        TextView name = (TextView) findViewById(R.id.tvEpisodeName);
-        TextView overview = (TextView) findViewById(R.id.tvEpisodeOverview);
-
         tvEpisode = (TvEpisode) getIntent().getSerializableExtra("tvEpisode");
-        name.setText(tvEpisode.getName());
-        overview.setText(tvEpisode.getOverview());
 
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        Bundle options = new Bundle();
+        options.putSerializable("tvEpisode", tvEpisode);
+
+        FragmentTvEpisode header = new FragmentTvEpisode();
+        header.setArguments(options);
+
+        transaction.add(R.id.episodeHeaderContainer, header);
+        transaction.commit();
+
+        this.showBackdrop();
+        this.showTitle();
+    }
+
+    private void showTitle() {
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitleEnabled(true);
         collapsingToolbar.setTitle(tvEpisode.getName());
+    }
 
+    private void showBackdrop() {
         if (tvEpisode.getImages() != null) {
             if (tvEpisode.getImages().getBackdrops() != null && tvEpisode.getImages().getBackdrops().get(0) != null) {
-                Picasso.with(this)
+                Picasso.with(this.getApplicationContext())
                         .load("http://image.tmdb.org/t/p/w500" + tvEpisode.getImages().getBackdrops().get(0))
                         .placeholder(R.drawable.poster_default_placeholder)
                         .error(R.drawable.poster_default_error)
                         .fit()
-                        .into(backdrop);
-            }
-
-            if (tvEpisode.getImages().getPosters() != null && tvEpisode.getImages().getPosters().get(0) != null) {
-                Picasso.with(this)
-                        .load("http://image.tmdb.org/t/p/w500" + tvEpisode.getImages().getPosters().get(0))
-                        .placeholder(R.drawable.poster_default_placeholder)
-                        .error(R.drawable.poster_default_error)
-                        .fit()
-                        .into(poster);
+                        .into((ImageView) this.findViewById(R.id.episodeBackDropPicture));
             }
         }
     }

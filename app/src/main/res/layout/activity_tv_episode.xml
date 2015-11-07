@@ -60,59 +60,17 @@ android:layout_height="match_parent">
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.CardView
-                android:layout_height="wrap_content"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:id="@+id/overviewTVEpisodeCardView"
-                card_view:cardBackgroundColor="@android:color/black"
-                app:cardElevation="7dp"
-                app:cardUseCompatPadding="true" >
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <RelativeLayout
-                    android:id="@+id/tvEpisodeRootLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" >
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tvEpisodePoster"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginLeft="0dp"
-                        android:adjustViewBounds="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="0dp"
-                        android:contentDescription="@string/tv_episode_poster" />
-
-                    <TextView
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/category_color_1"
-                        android:shadowColor="#000000"
-                        android:textStyle="bold"
-                        android:text="Large Text"
-                        android:id="@+id/tvEpisodeName"
-                        android:layout_below="@+id/tvEpisodePoster"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true" />
-
-                    <TextView
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/category_color_1"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="1"
-                        android:textSize="15sp"
-                        android:shadowColor="#000000"
-                        android:text="Large Text"
-                        android:id="@+id/tvEpisodeOverview"
-                        android:layout_below="@+id/tvEpisodeName" />
+                    android:layout_height="match_parent"
+                    android:id="@+id/episodeHeaderContainer">
                 </RelativeLayout>
-            </android.support.v7.widget.CardView>
+            </LinearLayout>
         </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
 
