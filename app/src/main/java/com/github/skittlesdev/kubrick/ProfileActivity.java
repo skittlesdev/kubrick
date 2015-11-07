@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.ui.fragments.FavoritesOverviewFragment;
@@ -17,7 +18,7 @@ import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.parse.ParseUser;
-import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class ProfileActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
         ProfileElement profile = new ProfileElement(ParseUser.getCurrentUser());
 
         TextView name = (TextView) findViewById(R.id.name);
-        CircleImageView image = (CircleImageView) findViewById(R.id.circleView);
+        ImageView image = (ImageView) findViewById(R.id.circleView);
 
         name.setText(profile.getName());
         if (!TextUtils.isEmpty(profile.getAvatarUrl())) {
@@ -58,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .load(profile.getAvatarUrl())
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
+                .bitmapTransform(new CropCircleTransformation(KubrickApplication.getContext()))
                 .into(image);
         }
     }
