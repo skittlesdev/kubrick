@@ -22,7 +22,7 @@
                 android:stackFromBottom="true"
                 android:transcriptMode="alwaysScroll" >
             <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
-                <include layout="@layout/header_home"/>
+                <include layout="@layout/header_profile"/>
                 <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/fragment_movies" />
                 <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/fragment_series" />
             </LinearLayout>
