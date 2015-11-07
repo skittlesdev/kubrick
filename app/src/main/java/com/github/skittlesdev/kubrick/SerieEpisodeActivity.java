@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisode;
 import com.github.skittlesdev.kubrick.utils.FavoriteState;
@@ -23,7 +24,6 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.squareup.picasso.Picasso;
 
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
@@ -70,11 +70,10 @@ public class SerieEpisodeActivity extends AppCompatActivity {
     private void showBackdrop() {
         if (tvEpisode.getImages() != null) {
             if (tvEpisode.getImages().getBackdrops() != null && tvEpisode.getImages().getBackdrops().get(0) != null) {
-                Picasso.with(this.getApplicationContext())
+                Glide.with(this.getApplicationContext())
                         .load("http://image.tmdb.org/t/p/w500" + tvEpisode.getImages().getBackdrops().get(0))
                         .placeholder(R.drawable.poster_default_placeholder)
                         .error(R.drawable.poster_default_error)
-                        .fit()
                         .into((ImageView) this.findViewById(R.id.episodeBackDropPicture));
             }
         }

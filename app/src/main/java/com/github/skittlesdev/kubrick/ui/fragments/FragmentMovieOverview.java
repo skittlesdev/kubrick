@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
-import com.squareup.picasso.Picasso;
 
 import org.joda.time.Duration;
 import org.joda.time.format.PeriodFormatter;

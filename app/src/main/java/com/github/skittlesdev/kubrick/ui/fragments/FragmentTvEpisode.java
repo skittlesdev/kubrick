@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.R;
-import com.squareup.picasso.Picasso;
 
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 
@@ -47,11 +47,10 @@ public class FragmentTvEpisode extends Fragment {
     private void showPoster() {
         if (tvEpisode.getImages() != null) {
             if (tvEpisode.getImages().getPosters() != null && tvEpisode.getImages().getPosters().get(0) != null) {
-                Picasso.with(getActivity().getApplicationContext())
+                Glide.with(getActivity().getApplicationContext())
                         .load("http://image.tmdb.org/t/p/w500" + tvEpisode.getImages().getPosters().get(0))
                         .placeholder(R.drawable.poster_default_placeholder)
                         .error(R.drawable.poster_default_error)
-                        .fit()
                         .into((ImageView) this.rootView.findViewById(R.id.tvEpisodePoster));
             }
         }

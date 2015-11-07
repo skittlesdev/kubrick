@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.LoginActivity;
 import com.github.skittlesdev.kubrick.ProfileActivity;
@@ -18,7 +19,6 @@ import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
 import com.parse.ParseUser;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -137,11 +137,10 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
     private void onBindViewHolder(HomeDrawerAdapter.ProfileViewHolder holder, int position) {
         holder.setContext(this.context);
         if (!TextUtils.isEmpty(this.mProfile.getAvatarUrl())) {
-            Picasso.with(KubrickApplication.getContext())
+            Glide.with(KubrickApplication.getContext())
                 .load(this.mProfile.getAvatarUrl())
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
-                .fit()
                 .into(holder.avatar);
         }
         holder.name.setText(this.mProfile.getName());

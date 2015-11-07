@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesInfo;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
@@ -43,7 +44,6 @@ import com.parse.*;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
-import com.squareup.picasso.Picasso;
 
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
@@ -330,8 +330,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             backdrop = ((TvSeries) mMedia).getBackdropPath();
         }
 
-        Picasso.with(this)
-                .load("http://image.tmdb.org/t/p/w500" + backdrop)
+        Glide.with(this)
+                .load("http://image.tmdb.org/t/p/w780" + backdrop)
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
                 .into((ImageView) this.findViewById(R.id.movieBackDropPicture));

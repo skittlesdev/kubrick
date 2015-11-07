@@ -11,12 +11,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.ui.fragments.FavoritesOverviewFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.parse.ParseUser;
-import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -54,11 +54,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         name.setText(profile.getName());
         if (!TextUtils.isEmpty(profile.getAvatarUrl())) {
-            Picasso.with(KubrickApplication.getContext())
+            Glide.with(KubrickApplication.getContext())
                 .load(profile.getAvatarUrl())
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
-                .fit()
                 .into(image);
         }
     }
