@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesInfo;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
@@ -43,7 +44,6 @@ import com.parse.*;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
-import com.squareup.picasso.Picasso;
 
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
@@ -69,8 +69,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         KubrickApplication.getEventBus().register(this);
 
-        final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
-        toggleView.setOnClickListener(this);
+        FloatingActionButton favoriteFab = (FloatingActionButton) this.findViewById(R.id.favoriteFab);
+        favoriteFab.setOnClickListener(this);
 
         this.mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
 
@@ -91,17 +91,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             GetMovieTask task = new GetMovieTask(this);
             task.execute(this.mediaId);
         }
-
-        FloatingActionButton favoriteFab = (FloatingActionButton) this.findViewById(R.id.favoriteFab);
-        favoriteFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Context context = v.getContext();
-
-                if (context instanceof MediaActivity) {
-                    ((MediaActivity) context).handleFavorite(v);
-                }
-            }
-        });
     }
 
     @Override
@@ -152,9 +141,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             @Override
             public void done(ParseObject object, ParseException e) {
                 if (object == null) {
-                    favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
+                    setFavoriteFabIcon(new FavoriteStateEvent(FavoriteState.OFF));
                 } else {
-                    favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
+                    setFavoriteFabIcon(new FavoriteStateEvent(FavoriteState.ON));
                 }
             }
         });
@@ -179,7 +168,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         );
     }
 
-    public void handleFavorite(View v) {
+    @Override
+    public void onClick(View v) {
         if (v.getId() == R.id.favoriteFab) {
             if (this.favoriteState == FavoriteState.OFF) {
                 ParseObject favorite = new ParseObject("Favorite");
@@ -249,77 +239,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.favoriteToggle) {
-            if (this.favoriteState == FavoriteState.OFF) {
-                ParseObject favorite = new ParseObject("Favorite");
-                ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
-                acl.setPublicReadAccess(true);
-                acl.setPublicWriteAccess(false);
-
-                favorite.put("user", ParseUser.getCurrentUser());
-
-                if (this.media instanceof MovieDb) {
-                    favorite.put("tmdb_movie_id", this.mediaId);
-                    favorite.put("title", ((MovieDb) this.media).getTitle());
-                    favorite.put("poster_path", ((MovieDb) this.media).getPosterPath());
-                }
-                else {
-                    favorite.put("tmdb_series_id", this.mediaId);
-                    favorite.put("title", ((TvSeries) this.media).getName());
-                    favorite.put("poster_path", ((TvSeries) this.media).getPosterPath());
-                }
-
-                favorite.setACL(acl);
-                favorite.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
-                        }
-                        else {
-                            Toast.makeText(KubrickApplication.getContext(), "Failed to favorite movie", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-            else {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
-                query.whereEqualTo("user", ParseUser.getCurrentUser());
-
-                if (this.media instanceof MovieDb) {
-                    query.whereEqualTo("tmdb_movie_id", this.mediaId);
-                }
-                else {
-                    query.whereEqualTo("tmdb_series_id", this.mediaId);
-                }
-
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject object, ParseException e) {
-                        if (object == null) {
-                            Toast.makeText(KubrickApplication.getContext(), "Failed to remove from favorites", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            object.deleteInBackground(new DeleteCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    if (e != null) {
-                                        Toast.makeText(KubrickApplication.getContext(), "Failed to remove from favorites", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else {
-                                        favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        }
-    }
-
     private void showBackdrop(IdElement mMedia) {
         String backdrop;
 
@@ -330,8 +249,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             backdrop = ((TvSeries) mMedia).getBackdropPath();
         }
 
-        Picasso.with(this)
-                .load("http://image.tmdb.org/t/p/w500" + backdrop)
+        Glide.with(this)
+                .load("http://image.tmdb.org/t/p/w300" + backdrop)
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
                 .into((ImageView) this.findViewById(R.id.movieBackDropPicture));
@@ -434,6 +353,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
     public void setFavoriteFabIcon(FavoriteStateEvent event) {
         final FloatingActionButton toggleView = (FloatingActionButton) findViewById(R.id.favoriteFab);
+        toggleView.setVisibility(View.VISIBLE);
         if (event.getFavoriteState() == FavoriteState.OFF) {
             this.favoriteState = FavoriteState.OFF;
             toggleView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_heart));
@@ -446,26 +366,12 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         toggleView.setVisibility(View.VISIBLE);
     }
 
-
-    public void favoriteStateChange(FavoriteStateEvent event) {
-        final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
-        if (event.getFavoriteState() == FavoriteState.OFF) {
-            this.favoriteState = FavoriteState.OFF;
-            toggleView.setText("Add to favorites");
-        }
-        if (event.getFavoriteState() == FavoriteState.ON) {
-            this.favoriteState = FavoriteState.ON;
-            toggleView.setText("Delete from favorites");
-        }
-        toggleView.setVisibility(View.VISIBLE);
-    }
-
     public void onEvent(LoginEvent event) {
         getFavoriteStatus();
     }
 
     public void onEvent(LogoutEvent event) {
-        final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
+        final FloatingActionButton toggleView = (FloatingActionButton) findViewById(R.id.favoriteFab);
         toggleView.setVisibility(View.GONE);
     }
 }

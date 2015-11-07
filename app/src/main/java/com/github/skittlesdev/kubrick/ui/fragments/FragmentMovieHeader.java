@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
-import com.squareup.picasso.Picasso;
 
 import org.joda.time.Duration;
 import org.joda.time.format.PeriodFormatter;
@@ -66,8 +66,8 @@ public class FragmentMovieHeader extends Fragment {
             posterPath = ((TvSeries) mMedia).getPosterPath();
         }
 
-        Picasso.with(getActivity().getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + posterPath)
+        Glide.with(getActivity().getApplicationContext())
+                .load("http://image.tmdb.org/t/p/w342" + posterPath)
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
                 .into((ImageView) r.findViewById(R.id.moviePosterPicture));
