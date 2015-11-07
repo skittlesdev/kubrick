@@ -11,6 +11,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.R;
 
+import java.util.List;
+
+import info.movito.themoviedbapi.model.Artwork;
+import info.movito.themoviedbapi.model.MovieImages;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 
 /**
@@ -36,13 +40,22 @@ public class FragmentTvEpisodeHeader extends Fragment {
     }
 
     private void showPoster() {
-        if (tvEpisode.getImages() != null) {
-            if (tvEpisode.getImages().getPosters() != null && tvEpisode.getImages().getPosters().get(0) != null) {
-                Glide.with(getActivity().getApplicationContext())
-                        .load("http://image.tmdb.org/t/p/w500" + tvEpisode.getImages().getPosters().get(0))
-                        .placeholder(R.drawable.poster_default_placeholder)
-                        .error(R.drawable.poster_default_error)
-                        .into((ImageView) this.rootView.findViewById(R.id.tvEpisodePoster));
+        MovieImages images = tvEpisode.getImages();
+
+        if (images != null) {
+            List<Artwork> posters = tvEpisode.getImages().getPosters();
+            if (posters != null) {
+                Artwork artwork = posters.get(0);
+
+                if (artwork != null) {
+                    Glide.with(getActivity().getApplicationContext())
+                            .load("http://image.tmdb.org/t/p/w500" + artwork)
+                            .placeholder(R.drawable.poster_default_placeholder)
+                            .error(R.drawable.poster_default_error)
+                            .into((ImageView) this.rootView.findViewById(R.id.tvEpisodePoster));
+                } else {
+                    // get serie poster
+                }
             }
         }
     }

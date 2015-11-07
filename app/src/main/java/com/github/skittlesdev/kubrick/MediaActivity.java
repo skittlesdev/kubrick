@@ -247,7 +247,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         }
 
         Glide.with(this)
-                .load("http://image.tmdb.org/t/p/w300" + backdrop)
+                .load("http://image.tmdb.org/t/p/w500" + backdrop)
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
                 .into((ImageView) this.findViewById(R.id.movieBackDropPicture));
