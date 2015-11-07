@@ -1,9 +1,7 @@
 package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,8 +48,6 @@ public class FragmentMovieHeader extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        ((CardView) r.findViewById(R.id.headerCardView)).setCardBackgroundColor(Color.BLACK);
 
         this.showPoster();
         this.showTitle();

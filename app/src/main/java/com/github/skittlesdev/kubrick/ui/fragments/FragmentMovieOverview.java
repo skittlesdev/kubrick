@@ -1,25 +1,14 @@
 package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.skittlesdev.kubrick.R;
-import com.github.skittlesdev.kubrick.utils.GenresUtils;
 
-import org.joda.time.Duration;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
-
-import java.util.List;
-
-import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvSeries;
@@ -49,8 +38,6 @@ public class FragmentMovieOverview extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        ((CardView) r.findViewById(R.id.overviewCardView)).setCardBackgroundColor(Color.BLACK);
 
         this.showOverview();
     }

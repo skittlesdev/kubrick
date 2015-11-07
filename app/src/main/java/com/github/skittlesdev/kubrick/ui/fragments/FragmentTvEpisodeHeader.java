@@ -1,12 +1,7 @@
 package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
-import android.graphics.Color;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +16,7 @@ import info.movito.themoviedbapi.model.tv.TvEpisode;
 /**
  * Created by louis on 04/11/2015.
  */
-public class FragmentTvEpisode extends Fragment {
+public class FragmentTvEpisodeHeader extends Fragment {
     private TvEpisode tvEpisode;
     private View rootView;
 
@@ -36,12 +31,8 @@ public class FragmentTvEpisode extends Fragment {
     public void onStart() {
         super.onStart();
 
-        CardView cardView = (CardView) this.rootView.findViewById(R.id.overviewTVEpisodeCardView);
-        cardView.setBackgroundColor(Color.BLACK);
-
         this.showTitle();
         this.showPoster();
-        this.showOverview();
     }
 
     private void showPoster() {
@@ -61,14 +52,9 @@ public class FragmentTvEpisode extends Fragment {
                 .setText(this.tvEpisode.getName());
     }
 
-    private void showOverview() {
-        ((TextView) rootView.findViewById(R.id.tvEpisodeOverview))
-                .setText(this.tvEpisode.getOverview());
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        this.rootView = inflater.inflate(R.layout.fragment_tv_episode, container, false);
+        this.rootView = inflater.inflate(R.layout.fragment_tv_episode_header, container, false);
 
         return this.rootView;
     }

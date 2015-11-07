@@ -12,4 +12,5 @@
     <color name="category_color_3">#e0e0e0</color>
     <color name="category_color_2">#616161</color>
     <color name="category_color_1">#fafafa</color>
+    <color name="cardview_kubrick_default_color">#212121</color>
 </resources>
