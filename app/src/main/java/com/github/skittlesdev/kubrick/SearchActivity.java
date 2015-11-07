@@ -3,7 +3,6 @@ package com.github.skittlesdev.kubrick;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,24 +12,18 @@ import android.text.TextWatcher;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
-import com.github.skittlesdev.kubrick.asyncs.SearchMediaTask;
-import com.github.skittlesdev.kubrick.interfaces.SearchListener;
 import com.github.skittlesdev.kubrick.ui.fragments.MediaSearchFragment;
+import com.github.skittlesdev.kubrick.ui.fragments.ProfileSearchFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import info.movito.themoviedbapi.TmdbSearch;
-import info.movito.themoviedbapi.model.MovieDb;
-import info.movito.themoviedbapi.model.Multi;
-import info.movito.themoviedbapi.model.core.IdElement;
-import info.movito.themoviedbapi.model.tv.TvSeries;
 import android.support.v7.widget.Toolbar;
-import java.util.LinkedList;
-import java.util.List;
 
 
 public class SearchActivity extends AppCompatActivity implements View.OnClickListener {
     private TmdbSearch.MultiListResultsPage results;
     private MediaSearchFragment mediaSearch;
+    private ProfileSearchFragment profileSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +45,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     protected void onStart() {
         super.onStart();
         this.mediaSearch = new MediaSearchFragment();
+        this.profileSearch = new ProfileSearchFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.mediaSearchLayout, this.mediaSearch, "mediaSearch");
+        transaction.add(R.id.profileSearch, this.profileSearch, "profileSearch");
+        transaction.add(R.id.mediaSearch, this.mediaSearch, "mediaSearch");
         transaction.commit();
     }
 
@@ -123,6 +118,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
     public void executeSearchTask(TextView textView, Context context) {
         String terms = textView.getText().toString();
-        this.mediaSearch.executeSearchTask(terms);
+        this.profileSearch.search(terms);
+        this.mediaSearch.search(terms);
     }
 }
