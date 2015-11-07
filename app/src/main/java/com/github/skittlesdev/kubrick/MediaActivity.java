@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,11 +50,12 @@ import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
-public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener {
+public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener{
     private int mediaId;
     private IdElement media;
     private FavoriteState favoriteState;
     private MaterialCalendarView calendar;
+    private boolean backPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -388,15 +390,27 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             transaction.add(R.id.movieCrewContainer, movieCrew, "movieCrew");
         }
 
-        transaction.commit();
+        if(!backPressed){
+            transaction.commit();
 
-        if (media instanceof TvSeries) {
-            displaySerieEpisodesCalendar((TvSeries) media);
+            if (media instanceof TvSeries) {
+                displaySerieEpisodesCalendar((TvSeries) media);
+            }
         }
 
         getFavoriteStatus();
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //do whatever you need for the hardware 'back' button
+            backPressed = true;
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     @Override
     public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
