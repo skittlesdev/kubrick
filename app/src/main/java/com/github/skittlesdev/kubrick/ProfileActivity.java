@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.github.skittlesdev.kubrick.events.LoginEvent;
+import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.ui.fragments.FavoritesOverviewFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
@@ -35,6 +37,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
+
+        KubrickApplication.getEventBus().register(this);
 
         final Button toggle = (Button) findViewById(R.id.followToggle);
         toggle.setOnClickListener(this);
@@ -104,6 +108,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void getFollowStatus() {
+        if (ParseUser.getCurrentUser() == null) {
+            return;
+        }
+
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Follow");
         query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.whereEqualTo("other_user", this.user);
@@ -173,5 +181,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 }
             });
         }
+    }
+
+    public void onEvent(LoginEvent e) {
+        getFollowStatus();
+    }
+
+    public void onEvent(LogoutEvent e) {
+        final Button toggle = (Button) findViewById(R.id.followToggle);
+        toggle.setVisibility(View.INVISIBLE);
     }
 }
