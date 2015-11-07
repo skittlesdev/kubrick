@@ -27,5 +27,9 @@
     <string name="movie_cast_title">Cast</string>
     <string name="tv_episode_poster">TV Episode poster</string>
     <string name="tv_episode_toast_watched">This episode has been added as watched</string>
+    <string name="tv_episode_air_date">Air date</string>
+    <string name="tv_episode_poster_content_description">Episode poster</string>
+    <string name="tv_episode_title">Episode title</string>
+    <string name="tv_episode_number">S??E??</string>
 </resources>
 

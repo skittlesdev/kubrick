@@ -47,8 +47,8 @@ dependencies {
     compile 'com.parse:parse-android:1.10.3'
     compile group: 'info.movito', name: 'themoviedbapi', version: '1.2' // TheMovieDB API
     compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile 'jp.wasabeef:glide-transformations:1.2.1'
     compile 'com.android.support:support-v4:23.1.0'
-    compile 'de.hdodenhof:circleimageview:1.2.1' // CircleImageView
     compile 'com.marshalchen.ultimaterecyclerview:library:0.3.18'
     compile 'com.timgroup:jgravatar:1.0'
     compile 'net.danlew:android.joda:2.9.0'

@@ -21,6 +21,10 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.List;
+
+import info.movito.themoviedbapi.model.Artwork;
+import info.movito.themoviedbapi.model.MovieImages;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 
 /**
@@ -66,13 +70,22 @@ public class SerieEpisodeActivity extends AppCompatActivity {
     }
 
     private void showBackdrop() {
-        if (tvEpisode.getImages() != null) {
-            if (tvEpisode.getImages().getBackdrops() != null && tvEpisode.getImages().getBackdrops().get(0) != null) {
-                Glide.with(this.getApplicationContext())
-                        .load("http://image.tmdb.org/t/p/w500" + tvEpisode.getImages().getBackdrops().get(0))
-                        .placeholder(R.drawable.poster_default_placeholder)
-                        .error(R.drawable.poster_default_error)
-                        .into((ImageView) this.findViewById(R.id.episodeBackDropPicture));
+        MovieImages images = tvEpisode.getImages();
+
+        if (images != null) {
+            List<Artwork> backdrops = tvEpisode.getImages().getBackdrops();
+            if (backdrops != null) {
+                Artwork artwork = backdrops.get(0);
+
+                if (artwork != null) {
+                    Glide.with(this.getApplicationContext())
+                            .load("http://image.tmdb.org/t/p/w500" + artwork)
+                            .placeholder(R.drawable.poster_default_placeholder)
+                            .error(R.drawable.poster_default_error)
+                            .into((ImageView) this.findViewById(R.id.tvEpisodePoster));
+                } else {
+                    // get serie backdrop
+                }
             }
         }
     }

@@ -19,6 +19,7 @@ import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
 import com.parse.ParseUser;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import java.util.List;
 
@@ -142,6 +143,7 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
                 .load(this.mProfile.getAvatarUrl())
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
+                .bitmapTransform(new CropCircleTransformation(KubrickApplication.getContext()))
                 .into(holder.avatar);
         }
         holder.name.setText(this.mProfile.getName());

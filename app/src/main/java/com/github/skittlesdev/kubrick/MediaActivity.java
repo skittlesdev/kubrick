@@ -73,7 +73,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
         calendar.setOnDateChangedListener(this);
-        calendar.setSelectionColor(Color.YELLOW);
+        calendar.setSelectionColor(getResources().getColor(R.color.light_orange));
     }
 
     @Override
@@ -158,10 +158,10 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         this.media = tvSeries;
 
         calendar.addDecorators(
-                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.BLACK, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GREEN, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorToday(Color.RED)
+                new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
         );
     }
 
@@ -247,7 +247,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         }
 
         Glide.with(this)
-                .load("http://image.tmdb.org/t/p/w300" + backdrop)
+                .load("http://image.tmdb.org/t/p/w500" + backdrop)
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
                 .into((ImageView) this.findViewById(R.id.movieBackDropPicture));
