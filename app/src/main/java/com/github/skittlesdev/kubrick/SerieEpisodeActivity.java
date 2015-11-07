@@ -15,9 +15,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisode;
+import com.github.skittlesdev.kubrick.utils.FavoriteState;
+import com.parse.ParseACL;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 
+import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
@@ -90,6 +98,29 @@ public class SerieEpisodeActivity extends AppCompatActivity {
 
     public void handleWatch(View v) {
         Toast.makeText(v.getContext(), "YOU LOST. >:3", Toast.LENGTH_SHORT).show();
+
+        ParseObject favorite = new ParseObject("ViewedTvSeriesEpisodes");
+        ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
+        acl.setPublicReadAccess(true);
+        acl.setPublicWriteAccess(false);
+
+        favorite.put("User", ParseUser.getCurrentUser());
+        favorite.put("SerieId", this.tvEpisode.getSeriesId());
+        favorite.put("SeasonNumber", this.tvEpisode.getSeasonNumber());
+        favorite.put("EpisodeNumber", this.tvEpisode.getEpisodeNumber());
+        favorite.put("EpisodeId", this.tvEpisode.getId());
+
+        favorite.setACL(acl);
+        favorite.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Toast.makeText(KubrickApplication.getContext(), R.string.tv_episode_toast_watched, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(KubrickApplication.getContext(), "Failed to favorite movie", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override

@@ -25,6 +25,7 @@
     <string name="movie_backdrop_picture_content_description">Movie backdrop picture</string>
     <string name="movie_cast_content">-</string>
     <string name="movie_cast_title">Cast</string>
-    <string name="tvEpisodeBundleOverview">tvEpisodeBundleOverview</string>
     <string name="tv_episode_poster">TV Episode poster</string>
+    <string name="tv_episode_toast_watched">This episode has been added as watched</string>
 </resources>
+
