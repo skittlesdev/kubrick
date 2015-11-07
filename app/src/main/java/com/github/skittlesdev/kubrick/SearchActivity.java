@@ -1,5 +1,6 @@
 package com.github.skittlesdev.kubrick;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import com.github.skittlesdev.kubrick.asyncs.SearchMediaTask;
 import com.github.skittlesdev.kubrick.interfaces.SearchListener;
+import com.github.skittlesdev.kubrick.ui.fragments.MediaSearchFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import info.movito.themoviedbapi.TmdbSearch;
@@ -26,8 +28,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class SearchActivity extends AppCompatActivity implements SearchListener, View.OnClickListener, AdapterView.OnItemClickListener {
+public class SearchActivity extends AppCompatActivity implements View.OnClickListener {
     private TmdbSearch.MultiListResultsPage results;
+    private MediaSearchFragment mediaSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +49,20 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        this.mediaSearch = new MediaSearchFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.mediaSearchLayout, this.mediaSearch, "mediaSearch");
+        transaction.commit();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home, menu);
         new ToolbarMenu(this).filterItems(menu);
         return true;
-    }
-
-    public void executeSearchTask(TextView searchInput, SearchActivity searchActivity) {
-        SearchMediaTask searchTask = new SearchMediaTask(searchActivity);
-        searchTask.execute(searchInput.getText().toString());
     }
 
     private void setActionListener() {
@@ -109,59 +116,13 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
         return super.onOptionsItemSelected(item);
     }
 
-    /*@Override
-    public void onSearchResults(MovieResultsPage results) {
-        this.results = results;
-        List<String> titles = new LinkedList<>();
-        for(MovieDb item: results.getResults()) {
-            titles.add(item.getTitle());
-        }
-        ArrayAdapter<String> items = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, titles);
-        ListView view = (ListView) findViewById(R.id.results);
-        view.setAdapter(items);
-        view.setOnItemClickListener(this);
-    }*/
-
-    @Override
-    public void onSearchResults(TmdbSearch.MultiListResultsPage results) {
-        this.results = results;
-        List<String> titles = new LinkedList<>();
-        for (Multi item: results.getResults()) {
-            if (item.getMediaType() == Multi.MediaType.MOVIE) {
-                titles.add(((MovieDb) item).getTitle());
-            }
-            if (item.getMediaType() == Multi.MediaType.TV_SERIES) {
-                titles.add(((TvSeries) item).getName());
-            }
-        }
-        ArrayAdapter<String> items = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titles);
-        ListView view = (ListView) findViewById(R.id.results);
-        view.setAdapter(items);
-        view.setOnItemClickListener(this);
-    }
-
     @Override
     public void onClick(View view) {
         this.executeSearchTask((EditText) findViewById(R.id.search), this);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Multi item = this.results.getResults().get(position);
-        if (item.getMediaType() == Multi.MediaType.MOVIE) {
-            int movieId = ((IdElement) item).getId();
-            Intent intent = new Intent(this, MediaActivity.class);
-            intent.putExtra("MEDIA_ID", movieId);
-            intent.putExtra("MEDIA_TYPE", "movie");
-            startActivity(intent);
-        }
-
-        if (item.getMediaType() == Multi.MediaType.TV_SERIES) {
-            int seriesId = ((IdElement) item).getId();
-            Intent intent = new Intent(this, MediaActivity.class);
-            intent.putExtra("MEDIA_ID", seriesId);
-            intent.putExtra("MEDIA_TYPE", "tv");
-            startActivity(intent);
-        }
+    public void executeSearchTask(TextView textView, Context context) {
+        String terms = textView.getText().toString();
+        this.mediaSearch.executeSearchTask(terms);
     }
 }
