@@ -107,7 +107,6 @@
             android:id="@+id/favoriteFab"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            app:layout_anchor="@id/app_bar_layout"
             android:clickable="true"
             app:backgroundTint="@color/category_color_3"
             android:src="@drawable/ic_heart"

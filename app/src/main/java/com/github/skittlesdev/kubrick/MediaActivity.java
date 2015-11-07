@@ -6,17 +6,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -354,6 +351,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     public void setFavoriteFabIcon(FavoriteStateEvent event) {
         final FloatingActionButton toggleView = (FloatingActionButton) findViewById(R.id.favoriteFab);
         toggleView.setVisibility(View.VISIBLE);
+        CoordinatorLayout.LayoutParams toggleParams = (CoordinatorLayout.LayoutParams) toggleView.getLayoutParams();
+        toggleParams.setAnchorId(R.id.app_bar_layout);
+
         if (event.getFavoriteState() == FavoriteState.OFF) {
             this.favoriteState = FavoriteState.OFF;
             toggleView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_heart));
@@ -373,5 +373,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     public void onEvent(LogoutEvent event) {
         final FloatingActionButton toggleView = (FloatingActionButton) findViewById(R.id.favoriteFab);
         toggleView.setVisibility(View.GONE);
+        CoordinatorLayout.LayoutParams toggleParams = (CoordinatorLayout.LayoutParams) toggleView.getLayoutParams();
+        toggleParams.setAnchorId(View.NO_ID);
     }
 }
