@@ -10,12 +10,21 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.R;
+import com.github.skittlesdev.kubrick.utils.GenresUtils;
 
+import org.joda.time.Duration;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
+
+import java.text.DecimalFormat;
 import java.util.List;
 
 import info.movito.themoviedbapi.model.Artwork;
+import info.movito.themoviedbapi.model.Genre;
+import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.MovieImages;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
+import info.movito.themoviedbapi.model.tv.TvSeries;
 
 /**
  * Created by louis on 04/11/2015.
@@ -37,6 +46,8 @@ public class FragmentTvEpisodeHeader extends Fragment {
 
         this.showTitle();
         this.showPoster();
+        this.showAirDate();
+        this.showEpisodeNumber();
     }
 
     private void showPoster() {
@@ -70,5 +81,20 @@ public class FragmentTvEpisodeHeader extends Fragment {
         this.rootView = inflater.inflate(R.layout.fragment_tv_episode_header, container, false);
 
         return this.rootView;
+    }
+
+    private void showAirDate() {
+        TextView releaseDateContainer = (TextView) this.rootView.findViewById(R.id.episodeAirDate);
+        String releaseDate =  this.tvEpisode.getAirDate();
+        releaseDate = "Airdate: " + releaseDate;
+        releaseDateContainer.setText(releaseDate);
+    }
+
+    private void showEpisodeNumber() {
+        TextView episodeNumberContainer = (TextView) this.rootView.findViewById(R.id.episodeNumber);
+        String episodeNumber =  "S" +
+                new DecimalFormat("00").format(this.tvEpisode.getSeasonNumber()) + "E" +
+                new DecimalFormat("00").format(this.tvEpisode.getEpisodeNumber());
+        episodeNumberContainer.setText(episodeNumber);
     }
 }

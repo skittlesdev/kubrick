@@ -36,10 +36,11 @@
                 android:text="@string/movie_title"
                 android:shadowColor="#000000"
                 android:textStyle="bold"
-                android:layout_toRightOf="@+id/movieDuration"
-                android:layout_toEndOf="@+id/movieDuration"
-                android:layout_marginLeft="96dp"
-                android:layout_marginStart="96dp" />
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="117dp"
+                android:layout_marginStart="117dp" />
 
             <TextView
                 android:id="@+id/movieReleaseDate"
@@ -82,6 +83,8 @@
                 android:text="@string/movie_duration"
                 android:textSize="15sp"
                 android:layout_below="@+id/movieGenres"
+                android:layout_alignLeft="@+id/movieGenres"
+                android:layout_alignStart="@+id/movieGenres"
                 android:shadowColor="#000000" />
 
         </RelativeLayout>
