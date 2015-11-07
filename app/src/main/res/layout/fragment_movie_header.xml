@@ -25,7 +25,8 @@
             android:id="@+id/movieAndDateLayout"
             android:layout_above="@+id/movieDurationAndGenresLayout"
             android:layout_alignLeft="@+id/movieDurationAndGenresLayout"
-            android:layout_alignStart="@+id/movieDurationAndGenresLayout">
+            android:layout_alignStart="@+id/movieDurationAndGenresLayout"
+            android:background="@color/cardview_kubrick_default_color">
 
             <TextView
                 android:id="@+id/movieTitle"

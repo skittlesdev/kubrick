@@ -2,22 +2,18 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
-import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisode;
-import com.github.skittlesdev.kubrick.utils.FavoriteState;
+import com.github.skittlesdev.kubrick.ui.fragments.FragmenTvEpisodeOverview;
+import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeHeader;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -25,9 +21,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 
-import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
-import info.movito.themoviedbapi.model.tv.TvSeries;
 
 /**
  * Created by louis on 11/6/15.
@@ -51,10 +45,14 @@ public class SerieEpisodeActivity extends AppCompatActivity {
         Bundle options = new Bundle();
         options.putSerializable("tvEpisode", tvEpisode);
 
-        FragmentTvEpisode header = new FragmentTvEpisode();
+        FragmentTvEpisodeHeader header = new FragmentTvEpisodeHeader();
         header.setArguments(options);
 
+        FragmenTvEpisodeOverview overview = new FragmenTvEpisodeOverview();
+        overview.setArguments(options);
+
         transaction.add(R.id.episodeHeaderContainer, header);
+        transaction.add(R.id.episodeOverviewContainer, overview);
         transaction.commit();
 
         this.showBackdrop();

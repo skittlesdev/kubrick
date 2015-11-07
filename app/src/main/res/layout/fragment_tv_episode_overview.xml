@@ -14,10 +14,10 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/movieOverviewTitleLayout"
-        android:layout_alignLeft="@+id/movieOverviewContent"
-        android:layout_alignStart="@+id/movieOverviewContent"
-        android:id="@+id/movieOverviewContentLayout"
+        android:layout_below="@+id/episodeOverviewTitleLayout"
+        android:layout_alignLeft="@+id/episodeOverviewContent"
+        android:layout_alignStart="@+id/episodeOverviewContent"
+        android:id="@+id/episodeOverviewContentLayout"
         android:background="@color/cardview_kubrick_default_color">
 
         <TextView
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/movie_overview_content"
-            android:id="@+id/movieOverviewContent"
+            android:id="@+id/episodeOverviewContent"
             android:layout_marginLeft="@dimen/default_margin_text_view"
             android:layout_marginRight="@dimen/default_margin_text_view"
             android:layout_marginTop="@dimen/default_margin_text_view"
