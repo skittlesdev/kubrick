@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,10 +17,12 @@ import com.github.skittlesdev.kubrick.ui.fragments.FavoritesOverviewFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
-import com.parse.ParseUser;
+import com.parse.*;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
+    private ParseUser user;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
@@ -27,27 +30,39 @@ public class ProfileActivity extends AppCompatActivity {
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
-
-        buildProfile();
-
-        FavoritesOverviewFragment movieFavorites = new FavoritesOverviewFragment();
-        Bundle movieFavoritesArgs = new Bundle();
-        movieFavoritesArgs.putString("MEDIA_TYPE", "movie");
-        movieFavorites.setArguments(movieFavoritesArgs);
-
-        FavoritesOverviewFragment seriesFavorites = new FavoritesOverviewFragment();
-        Bundle seriesFavoritesArgs = new Bundle();
-        seriesFavoritesArgs.putString("MEDIA_TYPE", "tv");
-        seriesFavorites.setArguments(seriesFavoritesArgs);
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_movies, movieFavorites, "movies");
-        transaction.add(R.id.fragment_series, seriesFavorites, "series");
-        transaction.commit();
     }
 
-    private void buildProfile() {
-        ProfileElement profile = new ProfileElement(ParseUser.getCurrentUser());
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        ParseUser.getQuery().getInBackground(getIntent().getStringExtra("user_id"), new GetCallback<ParseUser>() {
+            @Override
+            public void done(ParseUser user, ParseException e) {
+                buildProfile(user);
+
+                FavoritesOverviewFragment movieFavorites = new FavoritesOverviewFragment();
+                Bundle movieFavoritesArgs = new Bundle();
+                movieFavoritesArgs.putString("user_id", user.getObjectId());
+                movieFavoritesArgs.putString("MEDIA_TYPE", "movie");
+                movieFavorites.setArguments(movieFavoritesArgs);
+
+                FavoritesOverviewFragment seriesFavorites = new FavoritesOverviewFragment();
+                Bundle seriesFavoritesArgs = new Bundle();
+                seriesFavoritesArgs.putString("user_id", user.getObjectId());
+                seriesFavoritesArgs.putString("MEDIA_TYPE", "tv");
+                seriesFavorites.setArguments(seriesFavoritesArgs);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.add(R.id.fragment_movies, movieFavorites, "movies");
+                transaction.add(R.id.fragment_series, seriesFavorites, "series");
+                transaction.commit();
+            }
+        });
+    }
+
+    private void buildProfile(ParseUser user) {
+        ProfileElement profile = new ProfileElement(user);
 
         TextView name = (TextView) findViewById(R.id.name);
         CircleImageView image = (CircleImageView) findViewById(R.id.circleView);

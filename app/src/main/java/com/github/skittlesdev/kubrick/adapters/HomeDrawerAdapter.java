@@ -55,6 +55,7 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
             Intent intent;
             if (ParseUser.getCurrentUser() != null) {
                 intent = new Intent(this.context, ProfileActivity.class);
+                intent.putExtra("user_id", ParseUser.getCurrentUser().getObjectId());
             }
             else {
                 intent = new Intent(this.context, LoginActivity.class);

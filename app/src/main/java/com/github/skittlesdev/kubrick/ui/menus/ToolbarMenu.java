@@ -39,7 +39,9 @@ public class ToolbarMenu {
         }
 
         if (item.getItemId() == R.id.action_user) {
-            context.startActivity(new Intent(context, ProfileActivity.class));
+            Intent profileIntent = new Intent(context, ProfileActivity.class);
+            profileIntent.putExtra("user_id", ParseUser.getCurrentUser().getObjectId());
+            context.startActivity(profileIntent);
         }
 
         if (item.getItemId() == R.id.action_about) {
