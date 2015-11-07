@@ -26,4 +26,5 @@
     <string name="movie_cast_content">-</string>
     <string name="movie_cast_title">Cast</string>
     <string name="tvEpisodeBundleOverview">tvEpisodeBundleOverview</string>
+    <string name="tv_episode_poster">TV Episode poster</string>
 </resources>
