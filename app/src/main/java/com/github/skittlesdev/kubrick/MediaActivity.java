@@ -1,7 +1,9 @@
 package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
+
 import android.graphics.drawable.Drawable;
+
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +42,7 @@ import org.joda.time.Duration;
 import org.joda.time.format.*;
 import com.vlonjatg.progressactivity.ProgressActivity;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener {
@@ -63,18 +66,39 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
         toggleView.setOnClickListener(this);
 
+
         this.mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
 
         if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
-            GetSeriesTask task = new GetSeriesTask(this);
-            task.execute(this.mediaId);
+            //boolean isConnected = isOnline();
+            //if(isConnected) {
+                GetMovieTask task = new GetMovieTask(this);
+                task.execute(this.mediaId);
+            //}
         }
         else {
-            GetMovieTask task = new GetMovieTask(this);
-            task.execute(this.mediaId);
+            //boolean isConnected = isOnline();
+            //if(isConnected) {
+                GetMovieTask task = new GetMovieTask(this);
+                task.execute(this.mediaId);
+            //}
         }
     }
 
+    /*public boolean isOnline() {
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
+    }*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

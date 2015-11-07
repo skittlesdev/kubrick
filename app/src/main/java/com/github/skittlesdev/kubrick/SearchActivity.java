@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+
+
 import com.github.skittlesdev.kubrick.asyncs.SearchMediaTask;
 import com.github.skittlesdev.kubrick.interfaces.SearchListener;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
@@ -19,6 +21,8 @@ import info.movito.themoviedbapi.model.Multi;
 import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 import android.support.v7.widget.Toolbar;
+
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,9 +55,27 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
     }
 
     public void executeSearchTask(TextView searchInput, SearchActivity searchActivity) {
-        SearchMediaTask searchTask = new SearchMediaTask(searchActivity);
-        searchTask.execute(searchInput.getText().toString());
+        //boolean isConnected = isOnline();
+        //if(isConnected) {
+            SearchMediaTask searchTask = new SearchMediaTask(searchActivity);
+            searchTask.execute(searchInput.getText().toString());
+        //}
     }
+
+    /*public boolean isOnline() {
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
+    }*/
 
     private void setActionListener() {
         final EditText searchInput = (EditText) findViewById(R.id.search);

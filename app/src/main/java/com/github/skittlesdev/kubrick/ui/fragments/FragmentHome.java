@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.HomeActivityRecyclerAdapter;
+import com.github.skittlesdev.kubrick.asyncs.SearchMediaTask;
 import com.github.skittlesdev.kubrick.asyncs.TmdbApiTask;
 import com.github.skittlesdev.kubrick.interfaces.DataListener;
 
+import java.io.IOException;
 import java.util.List;
 
 import info.movito.themoviedbapi.model.core.IdElement;
@@ -54,8 +56,26 @@ public class FragmentHome extends Fragment implements DataListener {
         super.onStart();
 
         if (!TextUtils.isEmpty(this.mApiKey)) {
-            this.mTmdbApiTask = new TmdbApiTask(this);
-            this.mTmdbApiTask.execute(this.mApiKey);
+           // boolean isConnected = isOnline();
+            //if(isConnected) {
+                this.mTmdbApiTask = new TmdbApiTask(this);
+                this.mTmdbApiTask.execute(this.mApiKey);
+           // }
         }
     }
+
+   /* public boolean isOnline() {
+
+        Runtime runtime = Runtime.getRuntime();
+        try {
+
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return false;
+    }*/
 }
