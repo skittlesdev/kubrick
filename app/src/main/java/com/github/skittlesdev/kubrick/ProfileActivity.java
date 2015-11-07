@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
@@ -22,8 +24,9 @@ import com.parse.*;
 import com.parse.ParseUser;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private ParseUser user;
+    private boolean followed = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,9 @@ public class ProfileActivity extends AppCompatActivity {
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
+
+        final Button toggle = (Button) findViewById(R.id.followToggle);
+        toggle.setOnClickListener(this);
     }
 
     @Override
@@ -42,6 +48,8 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void done(ParseUser user, ParseException e) {
                 buildProfile(user);
+                setUser(user);
+                getFollowStatus();
 
                 FavoritesOverviewFragment movieFavorites = new FavoritesOverviewFragment();
                 Bundle movieFavoritesArgs = new Bundle();
@@ -62,6 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void buildProfile(ParseUser user) {
         ProfileElement profile = new ProfileElement(user);
@@ -94,4 +103,75 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void getFollowStatus() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Follow");
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
+        query.whereEqualTo("other_user", this.user);
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (object != null) {
+                    setFollowed(true);
+                }
+                else {
+                    setFollowed(false);
+                }
+            }
+        });
+    }
+
+    public void setUser(ParseUser user) {
+        this.user = user;
+    }
+
+    public void setFollowed(boolean followed) {
+        this.followed = followed;
+        final Button toggle = (Button) findViewById(R.id.followToggle);
+
+        if (!this.followed) {
+            toggle.setText("FOLLOW");
+        }
+        else {
+            toggle.setText("UNFOLLOW");
+        }
+
+        toggle.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (!this.followed) {
+            ParseObject follow = new ParseObject("Follow");
+            follow.put("user", ParseUser.getCurrentUser());
+            follow.put("other_user", this.user);
+            follow.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        setFollowed(true);
+                    }
+                }
+            });
+        }
+        else {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Follow");
+            query.whereEqualTo("user", ParseUser.getCurrentUser());
+            query.whereEqualTo("other_user", this.user);
+            query.getFirstInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject object, ParseException e) {
+                    if (e == null) {
+                        object.deleteInBackground(new DeleteCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    setFollowed(false);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
 }

@@ -70,6 +70,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:text="FOLLOW"
+                android:id="@+id/followToggle"
+                android:visibility="invisible"
                 android:layout_gravity="center_horizontal"/>
     </LinearLayout>
 
