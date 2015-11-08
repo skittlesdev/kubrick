@@ -27,6 +27,7 @@ import java.util.List;
 public class MediaSearchFragment extends Fragment implements SearchListener, AdapterView.OnItemClickListener {
     private ListView view;
     private TmdbSearch.MultiListResultsPage results;
+    private SearchMediaTask searchTask;
 
     @Nullable
     @Override
@@ -37,8 +38,16 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
     }
 
     public void search(String searchTerms) {
-        SearchMediaTask searchTask = new SearchMediaTask(this);
-        searchTask.execute(searchTerms);
+        this.searchTask = new SearchMediaTask(this);
+        this.searchTask.execute(searchTerms);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.searchTask != null) {
+            this.searchTask.cancel(true);
+        }
     }
 
     @Override

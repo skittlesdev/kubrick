@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -48,6 +49,8 @@ import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener{
+    private AsyncTask task;
+    private GetSeriesInfo seriesInfoTask;
     private int mediaId;
     private IdElement media;
     private FavoriteState favoriteState;
@@ -76,12 +79,12 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         calendar.setSelectionColor(getResources().getColor(R.color.light_orange));
 
         if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
-            GetSeriesTask task = new GetSeriesTask(this);
-            task.execute(this.mediaId);
+            this.task = new GetSeriesTask(this);
+            ((GetSeriesTask) this.task).execute(this.mediaId);
         }
         else {
-            GetMovieTask task = new GetMovieTask(this);
-            task.execute(this.mediaId);
+            this.task = new GetMovieTask(this);
+            ((GetMovieTask) this.task).execute(this.mediaId);
         }
     }
 
@@ -97,6 +100,17 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     public boolean onOptionsItemSelected(MenuItem item) {
         new ToolbarMenu(this).itemSelected(item);
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.task != null) {
+            this.task.cancel(true);
+        }
+        if (this.seriesInfoTask != null) {
+            this.seriesInfoTask.cancel(true);
+        }
     }
 
     private void showTitle(IdElement media) {
@@ -142,8 +156,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     }
 
     public void displaySerieEpisodesCalendar(TvSeries tvSeries){
-        GetSeriesInfo task = new GetSeriesInfo(this);
-        task.execute(this.mediaId);
+        this.seriesInfoTask = new GetSeriesInfo(this);
+        this.seriesInfoTask.execute(this.mediaId);
     }
 
     @Override

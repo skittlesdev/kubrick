@@ -58,4 +58,12 @@ public class FragmentHome extends Fragment implements DataListener {
             this.tmdbApiTask.execute(this.apiKey);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.tmdbApiTask != null) {
+            this.tmdbApiTask.cancel(true);
+        }
+    }
 }
