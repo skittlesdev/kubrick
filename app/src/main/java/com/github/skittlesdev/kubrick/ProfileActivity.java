@@ -52,8 +52,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void done(ParseUser user, ParseException e) {
                 buildProfile(user);
+                buildFollowStats(user);
                 setUser(user);
-                getFollowStatus();
+                getFollowStatus(user);
 
                 FavoritesOverviewFragment movieFavorites = new FavoritesOverviewFragment();
                 Bundle movieFavoritesArgs = new Bundle();
@@ -75,7 +76,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-
     private void buildProfile(ParseUser user) {
         ProfileElement profile = new ProfileElement(user);
 
@@ -93,6 +93,40 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void buildFollowStats(ParseUser user) {
+        ParseQuery<ParseObject> followersQuery = ParseQuery.getQuery("Follow");
+        followersQuery.whereEqualTo("other_user", user);
+        followersQuery.countInBackground(new CountCallback() {
+            @Override
+            public void done(int count, ParseException e) {
+                if (e == null) {
+                    setFollowers(count);
+                }
+            }
+        });
+
+        ParseQuery<ParseObject> followingsQuery = ParseQuery.getQuery("Follow");
+        followingsQuery.whereEqualTo("user", user);
+        followingsQuery.countInBackground(new CountCallback() {
+            @Override
+            public void done(int count, ParseException e) {
+                if (e == null) {
+                    setFollowings(count);
+                }
+            }
+        });
+    }
+
+    private void setFollowings(int count) {
+        TextView view = (TextView) findViewById(R.id.following_number);
+        view.setText(String.valueOf(count));
+    }
+
+    private void setFollowers(int count) {
+        TextView view = (TextView) findViewById(R.id.followers_number);
+        view.setText(String.valueOf(count));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -107,14 +141,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         return super.onOptionsItemSelected(item);
     }
 
-    public void getFollowStatus() {
+    public void getFollowStatus(ParseUser user) {
         if (ParseUser.getCurrentUser() == null) {
             return;
         }
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Follow");
         query.whereEqualTo("user", ParseUser.getCurrentUser());
-        query.whereEqualTo("other_user", this.user);
+        query.whereEqualTo("other_user", user);
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
@@ -184,7 +218,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void onEvent(LoginEvent e) {
-        getFollowStatus();
+        getFollowStatus(this.user);
     }
 
     public void onEvent(LogoutEvent e) {

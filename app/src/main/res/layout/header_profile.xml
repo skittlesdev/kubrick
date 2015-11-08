@@ -39,7 +39,7 @@
                           android:padding="4dp">
                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                           android:id="@+id/followers_number"
-                          android:text="18"
+                          android:text="..."
                           android:textSize="28dp"
                           android:gravity="center_horizontal"/>
                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
@@ -55,7 +55,7 @@
                           android:layout_marginLeft="6dp">
                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                           android:id="@+id/following_number"
-                          android:text="16"
+                          android:text="..."
                           android:textSize="28dp"
                           android:gravity="center_horizontal"/>
                 <TextView android:layout_width="match_parent" android:layout_height="match_parent"
