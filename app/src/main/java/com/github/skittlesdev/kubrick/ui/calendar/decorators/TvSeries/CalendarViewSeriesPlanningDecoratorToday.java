@@ -1,4 +1,4 @@
-package com.github.skittlesdev.kubrick.ui.calendar.decorators;
+package com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries;
 
 import android.text.style.ForegroundColorSpan;
 

@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -18,24 +19,44 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.github.skittlesdev.kubrick.adapters.FavoritesOverviewAdapter;
+import com.github.skittlesdev.kubrick.asyncs.GetSeasonEpisodeTask;
+import com.github.skittlesdev.kubrick.customsWrapperTypes.CustomTvEpisode;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
+import com.github.skittlesdev.kubrick.interfaces.TvSeasonListener;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorNextEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorNoEpisode;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorToday;
 import com.github.skittlesdev.kubrick.ui.fragments.FavoritesOverviewFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
+import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewUtils;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.parse.*;
 import com.parse.ParseUser;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import info.movito.themoviedbapi.model.ExternalIds;
+import info.movito.themoviedbapi.model.tv.TvEpisode;
+import info.movito.themoviedbapi.model.tv.TvSeason;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, TvSeasonListener {
     private ParseUser user;
     private boolean followed = false;
     private  MaterialCalendarView calendar;
+    private List<CustomTvEpisode> tvEpisodesList;
+    private List<TvSeason> tvSeasonsList;
+    private Map<Integer, List<CustomTvEpisode>> map;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,15 +106,28 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 transaction.commit();
 
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("ViewedTvSeriesEpisodes");
-                String userId = getIntent().getStringExtra("user_id");
 
-                query.whereEqualTo("User",null);
+                query.whereEqualTo("User", user);
                 query.findInBackground(new FindCallback<ParseObject>() {
                     public void done(List<ParseObject> EpisodeList, ParseException e) {
                         if (e == null) {
+                            tvEpisodesList = new ArrayList<>();
+
+                            for (ParseObject item : EpisodeList){
+                                CustomTvEpisode customTvEpisode = new CustomTvEpisode(
+                                        item.getString("AirDate"),
+                                        item.getInt("SerieId"),
+                                        item.getInt("EpisodeNumber"),
+                                        item.getInt("SeasonNumber"),
+                                        item.getInt("EpisodeId"));
+
+                                tvEpisodesList.add(customTvEpisode);
+                            }
+                            buildCalendar(tvEpisodesList);
+
                             Log.d("Viewed episodes data", "Retrieved " + EpisodeList.size() + " episodes");
                         } else {
-                            Log.d("score", "Error: " + e.getMessage());
+                            Log.d("Viewed episodes data", "Error: " + e.getMessage());
                         }
                     }
                 });
@@ -103,9 +137,52 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private void buildCalendar(ParseObject parseObject){
+    @Override
+    public void onTvSeasonRetrieved(List<TvSeason> tvSeasonList) {
+
+        this.tvSeasonsList = tvSeasonList;
+
+       /* calendar.addDecorators(
+                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.WHITE, CalendarViewUtils.tvSeriesWatchedEpisodesListToAirDate(customTvEpisodesList)),
+                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, CalendarViewUtils.tvSeriesWatchedEpisodesListToAirDate(customTvEpisodesList)),
+                new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesWatchedEpisodesListToAirDate(customTvEpisodesList))
+        );*/
 
     }
+
+    private void buildCalendar(List<CustomTvEpisode> customTvEpisodesList){
+
+        map = new HashMap<>();
+
+        for(CustomTvEpisode customTvEpisode : customTvEpisodesList){
+
+            if(map.get(customTvEpisode.getSerieId()) == null){
+                List<CustomTvEpisode> subList = new ArrayList<>();
+                subList.add(customTvEpisode);
+                map.put(customTvEpisode.getSerieId(), subList);
+            }else{
+                List<CustomTvEpisode> subList = map.get(customTvEpisode.getSerieId());
+                subList.add(customTvEpisode);
+            }
+        }
+
+        Iterator it = map.values().iterator();
+
+        List<Integer> serieIdArray = new ArrayList<>();
+        List<Integer> seasonNumber = new ArrayList<>();
+
+        while(it.hasNext()){
+            List<CustomTvEpisode> iteratorItem = (List<CustomTvEpisode>) it.next();
+            serieIdArray.add(iteratorItem.get(0).getSerieId());
+            seasonNumber.add(iteratorItem.get(0).getSeasonNumber());
+        }
+
+        GetSeasonEpisodeTask getSeasonEpisodeTask = new GetSeasonEpisodeTask(this);
+        getSeasonEpisodeTask.execute(serieIdArray,seasonNumber);
+
+    }
+
+
     private void buildProfile(ParseUser user) {
         ProfileElement profile = new ProfileElement(user);
 

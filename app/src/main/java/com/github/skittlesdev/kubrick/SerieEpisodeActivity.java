@@ -122,21 +122,21 @@ public class SerieEpisodeActivity extends AppCompatActivity {
     }
 
     public void handleWatch(View v) {
-        Toast.makeText(v.getContext(), "YOU LOST. >:3", Toast.LENGTH_SHORT).show();
 
-        ParseObject favorite = new ParseObject("ViewedTvSeriesEpisodes");
+        ParseObject viewedTvSeriesEpisodes = new ParseObject("ViewedTvSeriesEpisodes");
         ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
         acl.setPublicReadAccess(true);
         acl.setPublicWriteAccess(false);
 
-        favorite.put("User", ParseUser.getCurrentUser());
-        favorite.put("SerieId", this.tvEpisode.getSeriesId());
-        favorite.put("SeasonNumber", this.tvEpisode.getSeasonNumber());
-        favorite.put("EpisodeNumber", this.tvEpisode.getEpisodeNumber());
-        favorite.put("EpisodeId", this.tvEpisode.getId());
+        viewedTvSeriesEpisodes.put("User", ParseUser.getCurrentUser());
+        viewedTvSeriesEpisodes.put("SerieId", this.tvEpisode.getExternalIds().getId());
+        viewedTvSeriesEpisodes.put("SeasonNumber", this.tvEpisode.getSeasonNumber());
+        viewedTvSeriesEpisodes.put("EpisodeNumber", this.tvEpisode.getEpisodeNumber());
+        viewedTvSeriesEpisodes.put("EpisodeId", this.tvEpisode.getId());
+        viewedTvSeriesEpisodes.put("AirDate", this.tvEpisode.getAirDate());
 
-        favorite.setACL(acl);
-        favorite.saveInBackground(new SaveCallback() {
+        viewedTvSeriesEpisodes.setACL(acl);
+        viewedTvSeriesEpisodes.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
