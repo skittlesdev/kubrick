@@ -326,8 +326,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     @Override
     public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
         Log.d("onSelectedDayChange", "day changed");
+        TvSeries serie = (TvSeries) this.media;
 
-        TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, (TvSeries) media);
+        TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, serie);
 
         if (tvEpisode != null) {
 
@@ -335,6 +336,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             Bundle bundle = new Bundle();
 
             bundle.putSerializable("tvEpisode", tvEpisode);
+            bundle.putString("seriePoster", serie.getPosterPath());
+            bundle.putString("serieBackdrop", serie.getBackdropPath());
 
             intent.putExtras(bundle);
 

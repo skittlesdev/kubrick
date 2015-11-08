@@ -7,6 +7,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,6 +34,8 @@ import info.movito.themoviedbapi.model.tv.TvEpisode;
 public class SerieEpisodeActivity extends AppCompatActivity {
 
     TvEpisode tvEpisode = null;
+    String seriePosterPath;
+    String serieBackdroptPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +45,24 @@ public class SerieEpisodeActivity extends AppCompatActivity {
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        tvEpisode = (TvEpisode) getIntent().getSerializableExtra("tvEpisode");
+        this.tvEpisode = (TvEpisode) this.getIntent().getSerializableExtra("tvEpisode");
+        this.seriePosterPath = this.getIntent().getStringExtra("seriePoster");
+        this.serieBackdroptPath = this.getIntent().getStringExtra("serieBackdrop");
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        Bundle options = new Bundle();
-        options.putSerializable("tvEpisode", tvEpisode);
+        Bundle optionsHeader = new Bundle();
+        optionsHeader.putSerializable("tvEpisode", tvEpisode);
+        optionsHeader.putString("seriePoster", this.seriePosterPath);
+
+        Bundle optionsOverview = new Bundle();
+        optionsOverview.putSerializable("tvEpisode", tvEpisode);
 
         FragmentTvEpisodeHeader header = new FragmentTvEpisodeHeader();
-        header.setArguments(options);
+        header.setArguments(optionsHeader);
 
         FragmenTvEpisodeOverview overview = new FragmenTvEpisodeOverview();
-        overview.setArguments(options);
+        overview.setArguments(optionsOverview);
 
         transaction.add(R.id.episodeHeaderContainer, header);
         transaction.add(R.id.episodeOverviewContainer, overview);
@@ -71,23 +80,29 @@ public class SerieEpisodeActivity extends AppCompatActivity {
 
     private void showBackdrop() {
         MovieImages images = tvEpisode.getImages();
+        String path = null;
 
         if (images != null) {
             List<Artwork> backdrops = tvEpisode.getImages().getBackdrops();
+
             if (backdrops != null) {
                 Artwork artwork = backdrops.get(0);
 
                 if (artwork != null) {
-                    Glide.with(this.getApplicationContext())
-                            .load("http://image.tmdb.org/t/p/w500" + artwork)
-                            .placeholder(R.drawable.poster_default_placeholder)
-                            .error(R.drawable.poster_default_error)
-                            .into((ImageView) this.findViewById(R.id.tvEpisodePoster));
-                } else {
-                    // get serie backdrop
+                    path = artwork.getFilePath();
                 }
             }
         }
+
+        if (TextUtils.isEmpty(path)) {
+            path = this.serieBackdroptPath;
+        }
+
+        Glide.with(this.getApplicationContext())
+                .load("http://image.tmdb.org/t/p/w500" + path)
+                .placeholder(R.drawable.poster_default_placeholder)
+                .error(R.drawable.poster_default_error)
+                .into((ImageView) this.findViewById(R.id.episodeBackDropPicture));
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +32,15 @@ import info.movito.themoviedbapi.model.tv.TvSeries;
  */
 public class FragmentTvEpisodeHeader extends Fragment {
     private TvEpisode tvEpisode;
+    private String seriePosterPath;
     private View rootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.tvEpisode = (TvEpisode) getArguments().getSerializable("tvEpisode");
+        this.tvEpisode = (TvEpisode) this.getArguments().getSerializable("tvEpisode");
+        this.seriePosterPath = this.getArguments().getString("seriePoster");
     }
 
     @Override
@@ -52,23 +55,29 @@ public class FragmentTvEpisodeHeader extends Fragment {
 
     private void showPoster() {
         MovieImages images = tvEpisode.getImages();
+        String path = null;
 
         if (images != null) {
             List<Artwork> posters = tvEpisode.getImages().getPosters();
+
             if (posters != null) {
                 Artwork artwork = posters.get(0);
 
                 if (artwork != null) {
-                    Glide.with(getActivity().getApplicationContext())
-                            .load("http://image.tmdb.org/t/p/w500" + artwork)
-                            .placeholder(R.drawable.poster_default_placeholder)
-                            .error(R.drawable.poster_default_error)
-                            .into((ImageView) this.rootView.findViewById(R.id.tvEpisodePoster));
-                } else {
-                    // get serie poster
+                    path = artwork.getFilePath();
                 }
             }
         }
+
+        if (TextUtils.isEmpty(path)) {
+            path = this.seriePosterPath;
+        }
+
+        Glide.with(getActivity().getApplicationContext())
+                .load("http://image.tmdb.org/t/p/w500" + path)
+                .placeholder(R.drawable.poster_default_placeholder)
+                .error(R.drawable.poster_default_error)
+                .into((ImageView) this.rootView.findViewById(R.id.tvEpisodePoster));
     }
 
     private void showTitle() {
