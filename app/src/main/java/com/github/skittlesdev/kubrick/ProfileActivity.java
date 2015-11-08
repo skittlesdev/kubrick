@@ -50,11 +50,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         final LinearLayout followingsLayout = (LinearLayout) findViewById(R.id.followingsLayout);
         followingsLayout.setOnClickListener(this);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
 
         ParseUser.getQuery().getInBackground(getIntent().getStringExtra("user_id"), new GetCallback<ParseUser>() {
             @Override

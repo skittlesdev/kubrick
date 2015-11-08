@@ -74,11 +74,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
         calendar.setOnDateChangedListener(this);
         calendar.setSelectionColor(getResources().getColor(R.color.light_orange));
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
             GetSeriesTask task = new GetSeriesTask(this);
