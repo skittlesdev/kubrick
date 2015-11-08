@@ -25,25 +25,22 @@ import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
-/**
- * Created by lowgr on 11/2/2015.
- */
 public class FragmentMovieHeader extends Fragment implements View.OnClickListener {
-    private IdElement mMedia;
+    private IdElement media;
     private ImageView posterView;
-    private View r;
+    private View rootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mMedia = (IdElement) getArguments().getSerializable("media");
+        this.media = (IdElement) getArguments().getSerializable("media");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_header, container, false);
-        r = rootView;
+        this.rootView = rootView;
 
         this.posterView = (ImageView) rootView.findViewById(R.id.moviePosterPicture);
         this.posterView.setOnClickListener(this);
@@ -60,54 +57,55 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
         this.showDuration();
         this.showGenres();
         this.showReleaseDate();
+        this.showStats();
     }
 
     private void showPoster() {
         String posterPath;
 
-        if (mMedia instanceof MovieDb) {
-            posterPath = ((MovieDb) mMedia).getPosterPath();
+        if (media instanceof MovieDb) {
+            posterPath = ((MovieDb) media).getPosterPath();
         }
         else {
-            posterPath = ((TvSeries) mMedia).getPosterPath();
+            posterPath = ((TvSeries) media).getPosterPath();
         }
 
         Glide.with(getActivity().getApplicationContext())
                 .load("http://image.tmdb.org/t/p/w500" + posterPath)
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
-                .into((ImageView) r.findViewById(R.id.moviePosterPicture));
+                .into((ImageView) rootView.findViewById(R.id.moviePosterPicture));
     }
 
     private void showTitle() {
-        TextView titleView = (TextView) r.findViewById(R.id.movieTitle);
+        TextView titleView = (TextView) rootView.findViewById(R.id.movieTitle);
 
-        if (mMedia instanceof MovieDb) {
-            titleView.setText(((MovieDb) mMedia).getTitle());
+        if (media instanceof MovieDb) {
+            titleView.setText(((MovieDb) media).getTitle());
         }
         else {
-            titleView.setText(((TvSeries) mMedia).getName());
+            titleView.setText(((TvSeries) media).getName());
         }
     }
 
     private void showReleaseDate() {
-        TextView releaseDate = (TextView) r.findViewById(R.id.movieReleaseDate);
+        TextView releaseDate = (TextView) rootView.findViewById(R.id.movieReleaseDate);
 
-        if (mMedia instanceof MovieDb) {
-            releaseDate.setText("(" + ((MovieDb) mMedia).getReleaseDate().split("-")[0] + ")");
+        if (media instanceof MovieDb) {
+            releaseDate.setText("(" + ((MovieDb) media).getReleaseDate().split("-")[0] + ")");
         }
         else {
-            String firstYear = ((TvSeries) mMedia).getFirstAirDate().split("-")[0];
-            String lastYear = ((TvSeries) mMedia).getLastAirDate().split("-")[0];
+            String firstYear = ((TvSeries) media).getFirstAirDate().split("-")[0];
+            String lastYear = ((TvSeries) media).getLastAirDate().split("-")[0];
             releaseDate.setText(" (" + firstYear + " - " + lastYear + ")");
         }
     }
 
     private void showDuration() {
-        if (this.mMedia instanceof MovieDb) {
-            MovieDb movieDb = (MovieDb) this.mMedia;
+        if (this.media instanceof MovieDb) {
+            MovieDb movieDb = (MovieDb) this.media;
 
-            TextView durationView = (TextView) r.findViewById(R.id.movieDuration);
+            TextView durationView = (TextView) rootView.findViewById(R.id.movieDuration);
 
             Duration duration = new Duration(movieDb.getRuntime() * 1000 * 60);
             PeriodFormatter formatter = new PeriodFormatterBuilder()
@@ -123,23 +121,24 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
         }
     }
 
-    /*private void showStats() {
-        if (this.mMedia instanceof TvSeries) {
-            TvSeries tvSeries = (TvSeries) this.mMedia;
-            TextView durationView = (TextView) r.findViewById(R.id.duration);
-            durationView.setText(tvSeries.getNumberOfSeasons() + " seasons, " + tvSeries.getNumberOfEpisodes() + " episodes");
+    private void showStats() {
+        if (this.media instanceof TvSeries) {
+            TvSeries tvSeries = (TvSeries) this.media;
+            TextView durationView = (TextView) rootView.findViewById(R.id.movieDuration);
+            String stats = tvSeries.getNumberOfSeasons() + " seasons, " + tvSeries.getNumberOfEpisodes() + " episodes";
+            durationView.setText(stats);
         }
-    }*/
+    }
 
     private void showGenres(){
-        TextView genresView = (TextView) r.findViewById(R.id.movieGenres);
+        TextView genresView = (TextView) rootView.findViewById(R.id.movieGenres);
 
         List<Genre> genres;
-        if (mMedia instanceof MovieDb) {
-            genres = ((MovieDb) mMedia).getGenres();
+        if (media instanceof MovieDb) {
+            genres = ((MovieDb) media).getGenres();
         }
         else {
-            genres = ((TvSeries) mMedia).getGenres();
+            genres = ((TvSeries) media).getGenres();
         }
 
         genresView.setText(GenresUtils.getGenrePrintableString(genres));

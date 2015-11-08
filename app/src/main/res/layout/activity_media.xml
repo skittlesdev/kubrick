@@ -100,7 +100,6 @@
                         app:cardUseCompatPadding="true">
 
                         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-                            style="@style/CalendarStyle"
                             android:id="@+id/seriesPlanningCalendarView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

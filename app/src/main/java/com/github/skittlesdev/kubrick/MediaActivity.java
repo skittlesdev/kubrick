@@ -326,8 +326,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     @Override
     public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
         Log.d("onSelectedDayChange", "day changed");
+        TvSeries serie = (TvSeries) this.media;
 
-        TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, (TvSeries) media);
+        TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, serie);
 
         if (tvEpisode != null) {
 
@@ -335,17 +336,17 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             Bundle bundle = new Bundle();
 
             bundle.putSerializable("tvEpisode", tvEpisode);
+            bundle.putString("seriePoster", serie.getPosterPath());
+            bundle.putString("serieBackdrop", serie.getBackdropPath());
 
             intent.putExtras(bundle);
 
             startActivity(intent);
-
         }
     }
 
     public void setFavoriteFabIcon(FavoriteStateEvent event) {
         final FloatingActionButton toggleView = (FloatingActionButton) findViewById(R.id.favoriteFab);
-        toggleView.setVisibility(View.VISIBLE);
         CoordinatorLayout.LayoutParams toggleParams = (CoordinatorLayout.LayoutParams) toggleView.getLayoutParams();
         toggleParams.setAnchorId(R.id.app_bar_layout);
 
@@ -357,7 +358,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             this.favoriteState = FavoriteState.ON;
             toggleView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_heart_broken));
         }
-
+        
+        toggleView.setLayoutParams(toggleParams);
         toggleView.setVisibility(View.VISIBLE);
     }
 
