@@ -26,11 +26,16 @@ import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.parse.*;
 import com.parse.ParseUser;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+
+import java.util.List;
+
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private ParseUser user;
     private boolean followed = false;
+    private  MaterialCalendarView calendar;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +55,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         final LinearLayout followingsLayout = (LinearLayout) findViewById(R.id.followingsLayout);
         followingsLayout.setOnClickListener(this);
+
+        calendar = (MaterialCalendarView) findViewById(R.id.userSerieCalendarPlanning);
+        calendar.setVisibility(View.VISIBLE);
 
         ParseUser.getQuery().getInBackground(getIntent().getStringExtra("user_id"), new GetCallback<ParseUser>() {
             @Override
@@ -75,10 +83,29 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 transaction.add(R.id.fragment_movies, movieFavorites, "movies");
                 transaction.add(R.id.fragment_series, seriesFavorites, "series");
                 transaction.commit();
+
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("ViewedTvSeriesEpisodes");
+                String userId = getIntent().getStringExtra("user_id");
+
+                query.whereEqualTo("User",null);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    public void done(List<ParseObject> EpisodeList, ParseException e) {
+                        if (e == null) {
+                            Log.d("Viewed episodes data", "Retrieved " + EpisodeList.size() + " episodes");
+                        } else {
+                            Log.d("score", "Error: " + e.getMessage());
+                        }
+                    }
+                });
             }
         });
+
+
     }
 
+    private void buildCalendar(ParseObject parseObject){
+
+    }
     private void buildProfile(ParseUser user) {
         ProfileElement profile = new ProfileElement(user);
 
