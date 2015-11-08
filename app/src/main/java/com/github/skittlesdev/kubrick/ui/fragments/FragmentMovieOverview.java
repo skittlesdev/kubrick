@@ -17,20 +17,20 @@ import info.movito.themoviedbapi.model.tv.TvSeries;
  * Created by lowgr on 11/2/2015.
  */
 public class FragmentMovieOverview extends Fragment {
-    private IdElement mMedia;
-    private View r;
+    private IdElement media;
+    private View rootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mMedia = (IdElement) getArguments().getSerializable("media");
+        this.media = (IdElement) getArguments().getSerializable("media");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_overview, container, false);
-        r = rootView;
+        this.rootView = rootView;
 
         return rootView;
     }
@@ -43,14 +43,14 @@ public class FragmentMovieOverview extends Fragment {
     }
 
     private void showOverview() {
-        TextView overviewView = (TextView) r.findViewById(R.id.movieOverviewContent);
+        TextView overviewView = (TextView) rootView.findViewById(R.id.movieOverviewContent);
 
         String overview;
 
-        if (mMedia instanceof MovieDb) {
-            overview = ((MovieDb) mMedia).getOverview();
+        if (media instanceof MovieDb) {
+            overview = ((MovieDb) media).getOverview();
         } else {
-            overview = ((TvSeries) mMedia).getOverview();
+            overview = ((TvSeries) media).getOverview();
         }
 
         overviewView.setText(overview);

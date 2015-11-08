@@ -95,7 +95,6 @@ public class FragmentTvEpisodeHeader extends Fragment {
     private void showAirDate() {
         TextView releaseDateContainer = (TextView) this.rootView.findViewById(R.id.episodeAirDate);
         String releaseDate =  this.tvEpisode.getAirDate();
-        releaseDate = "Airdate: " + releaseDate;
         releaseDateContainer.setText(releaseDate);
     }
 
