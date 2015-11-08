@@ -2,6 +2,8 @@ package com.github.skittlesdev.kubrick;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -55,27 +57,25 @@ public class SearchActivity extends AppCompatActivity implements SearchListener,
     }
 
     public void executeSearchTask(TextView searchInput, SearchActivity searchActivity) {
-        //boolean isConnected = isOnline();
-        //if(isConnected) {
+        boolean isConnected = isOnline();
+        if(isConnected) {
             SearchMediaTask searchTask = new SearchMediaTask(searchActivity);
             searchTask.execute(searchInput.getText().toString());
-        //}
+        }
     }
 
-    /*public boolean isOnline() {
+    public boolean isOnline() {
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
+        // Fonction haveInternetConnection : return true si connecté, return false dans le cas contraire
+        NetworkInfo network = ((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
 
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-
-        } catch (IOException e)          { e.printStackTrace(); }
-        catch (InterruptedException e) { e.printStackTrace(); }
-
-        return false;
-    }*/
+        if (network==null || !network.isConnected())
+        {
+            // Le périphérique n'est pas connecté à Internet
+            return false;
+        }
+        return true;
+    }
 
     private void setActionListener() {
         final EditText searchInput = (EditText) findViewById(R.id.search);

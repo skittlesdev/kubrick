@@ -1,5 +1,8 @@
 package com.github.skittlesdev.kubrick.ui.fragments;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -56,26 +59,24 @@ public class FragmentHome extends Fragment implements DataListener {
         super.onStart();
 
         if (!TextUtils.isEmpty(this.mApiKey)) {
-           // boolean isConnected = isOnline();
-            //if(isConnected) {
+           boolean isConnected = isOnline();
+           if(isConnected) {
                 this.mTmdbApiTask = new TmdbApiTask(this);
                 this.mTmdbApiTask.execute(this.mApiKey);
-           // }
+           }
         }
     }
 
-   /* public boolean isOnline() {
+    public boolean isOnline() {
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
+        // Fonction haveInternetConnection : return true si connecté, return false dans le cas contraire
+        NetworkInfo network = ((ConnectivityManager)this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
 
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-
-        } catch (IOException e)          { e.printStackTrace(); }
-        catch (InterruptedException e) { e.printStackTrace(); }
-
-        return false;
-    }*/
+        if (network==null || !network.isConnected())
+        {
+            // Le périphérique n'est pas connecté à Internet
+            return false;
+        }
+        return true;
+    }
 }

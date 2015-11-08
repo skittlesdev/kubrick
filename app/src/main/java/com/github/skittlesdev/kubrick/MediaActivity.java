@@ -2,8 +2,11 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -68,37 +71,34 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
 
         this.mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
-
+        boolean isConnected = isOnline();
         if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
-            //boolean isConnected = isOnline();
-            //if(isConnected) {
+            if(isConnected) {
                 GetMovieTask task = new GetMovieTask(this);
                 task.execute(this.mediaId);
-            //}
+            }
         }
         else {
-            //boolean isConnected = isOnline();
-            //if(isConnected) {
+            if(isConnected) {
                 GetMovieTask task = new GetMovieTask(this);
                 task.execute(this.mediaId);
-            //}
+            }
         }
     }
 
-    /*public boolean isOnline() {
+    public boolean isOnline() {
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
+        // Fonction haveInternetConnection : return true si connecté, return false dans le cas contraire
+        NetworkInfo network = ((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
 
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
+        if (network==null || !network.isConnected())
+        {
+            // Le périphérique n'est pas connecté à Internet
+            return false;
+        }
+        return true;
+    }
 
-        } catch (IOException e)          { e.printStackTrace(); }
-        catch (InterruptedException e) { e.printStackTrace(); }
-
-        return false;
-    }*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
