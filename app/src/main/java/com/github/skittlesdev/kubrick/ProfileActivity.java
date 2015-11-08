@@ -145,7 +145,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void getFollowStatus(ParseUser user) {
-        if (ParseUser.getCurrentUser() == null) {
+        if (ParseUser.getCurrentUser() == null || user == ParseUser.getCurrentUser()) {
             return;
         }
 
