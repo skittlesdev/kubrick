@@ -7,10 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.parse.ParseObject;
-import com.squareup.picasso.Picasso;
 import info.movito.themoviedbapi.model.people.Person;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         this.context = parent.getContext();
-        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.movies_layout, parent, false);
+        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.credits_layout, parent, false);
         return new ViewHolder(layout);
     }
 
@@ -43,15 +44,17 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView profile;
+        private TextView name;
         private Person item;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.profile = (ImageView) itemView.findViewById(R.id.moviePoster);
+            this.name = (TextView) itemView.findViewById(R.id.name);
         }
         public void setProfile(Context context) {
-            Picasso.with(context)
-                    .load("http://image.tmdb.org/t/p/w500" + item.getProfilePath())
+            Glide.with(context)
+                    .load("http://image.tmdb.org/t/p/w185" + item.getProfilePath())
                     .placeholder(R.drawable.poster_default_placeholder)
                     .error(R.drawable.poster_default_error)
                     .into(this.profile);
@@ -59,6 +62,7 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
 
         public void setItem(Person item) {
             this.item = item;
+            this.name.setText(item.getName());
         }
     }
 }

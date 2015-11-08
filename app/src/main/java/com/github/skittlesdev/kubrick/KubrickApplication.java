@@ -2,11 +2,12 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDexApplication;
 import com.parse.Parse;
 import de.greenrobot.event.EventBus;
 import net.danlew.android.joda.JodaTimeAndroid;
 
-public class KubrickApplication extends Application {
+public class KubrickApplication extends MultiDexApplication {
     private static Context sContext;
     private static EventBus eventBus;
 

@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentHome;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
+import com.newrelic.agent.android.NewRelic;
 
 public class HomeActivity extends AppCompatActivity {
     private Toolbar mToolbar;
@@ -20,6 +21,11 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        NewRelic.withApplicationToken(
+
+                "AA0720373e3e4e1842d4056cd255936932dcf73d93"
+        ).start(this.getApplication());
 
         this.setContentView(R.layout.activity_home);
 
