@@ -31,5 +31,9 @@
     <string name="tv_episode_poster_content_description">Episode poster</string>
     <string name="tv_episode_title">Episode title</string>
     <string name="tv_episode_number">S??E??</string>
+    <string name="cast_default">Cast</string>
+    <string name="crew_default">Crew</string>
+    <string name="credits_picture_default">Person picture</string>
+    <string name="credits_name_default">-</string>
 </resources>
 

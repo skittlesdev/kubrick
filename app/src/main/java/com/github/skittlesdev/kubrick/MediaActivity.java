@@ -358,7 +358,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             this.favoriteState = FavoriteState.ON;
             toggleView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_heart_broken));
         }
-        
+
         toggleView.setLayoutParams(toggleParams);
         toggleView.setVisibility(View.VISIBLE);
     }

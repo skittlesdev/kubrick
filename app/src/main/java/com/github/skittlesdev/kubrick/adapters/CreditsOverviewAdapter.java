@@ -52,6 +52,7 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
             this.profile = (ImageView) itemView.findViewById(R.id.moviePoster);
             this.name = (TextView) itemView.findViewById(R.id.name);
         }
+
         public void setProfile(Context context) {
             Glide.with(context)
                     .load("http://image.tmdb.org/t/p/w185" + item.getProfilePath())
