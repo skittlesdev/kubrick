@@ -13,13 +13,19 @@ import android.support.v7.widget.Toolbar;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentHome;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
+import com.newrelic.agent.android.NewRelic;
 
 public class HomeActivity extends AppCompatActivity {
-    private Toolbar mToolbar;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        NewRelic.withApplicationToken(
+
+                "AA0720373e3e4e1842d4056cd255936932dcf73d93"
+        ).start(this.getApplication());
 
         this.setContentView(R.layout.activity_home);
 
@@ -30,8 +36,8 @@ public class HomeActivity extends AppCompatActivity {
         transaction.add(R.id.homeContainer, fragmentHome);
         transaction.commit();
 
-        this.mToolbar = (Toolbar) this.findViewById(R.id.toolBar);
-        this.setSupportActionBar(this.mToolbar);
+        this.toolbar = (Toolbar) this.findViewById(R.id.toolBar);
+        this.setSupportActionBar(this.toolbar);
         if (this.getSupportActionBar() != null) this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();

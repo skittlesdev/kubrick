@@ -87,6 +87,26 @@ public class DrawerMenu {
             }
         });
 
+        RowElement followersElement = new RowElement(R.drawable.ic_row_element, "Followers", new Callback(this.activity) {
+            @Override
+            public void execute() {
+                Intent intent = new Intent(getContext(), ProfileRelationsActivity.class);
+                intent.putExtra("user_id", ParseUser.getCurrentUser().getObjectId());
+                intent.putExtra("type", ProfileRelationsActivity.Types.FOLLOWERS);
+                getContext().startActivity(intent);
+            }
+        });
+
+        RowElement followingsElement = new RowElement(R.drawable.ic_row_element, "Following", new Callback(this.activity) {
+            @Override
+            public void execute() {
+                Intent intent = new Intent(getContext(), ProfileRelationsActivity.class);
+                intent.putExtra("user_id", ParseUser.getCurrentUser().getObjectId());
+                intent.putExtra("type", ProfileRelationsActivity.Types.FOLLOWINGS);
+                getContext().startActivity(intent);
+            }
+        });
+
         RowElement logoutElement = new RowElement(R.drawable.ic_row_element, "Logout", new Callback(this.activity) {
             @Override
             public void execute() {
@@ -103,6 +123,8 @@ public class DrawerMenu {
         }
         else {
             titles.add(favoritesElement);
+            titles.add(followersElement);
+            titles.add(followingsElement);
             titles.add(logoutElement);
         }
 

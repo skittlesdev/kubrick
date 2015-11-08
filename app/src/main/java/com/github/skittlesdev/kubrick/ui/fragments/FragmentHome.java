@@ -1,8 +1,5 @@
 package com.github.skittlesdev.kubrick.ui.fragments;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,26 +11,24 @@ import android.view.ViewGroup;
 
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.HomeActivityRecyclerAdapter;
-import com.github.skittlesdev.kubrick.asyncs.SearchMediaTask;
 import com.github.skittlesdev.kubrick.asyncs.TmdbApiTask;
 import com.github.skittlesdev.kubrick.interfaces.DataListener;
 
-import java.io.IOException;
 import java.util.List;
 
 import info.movito.themoviedbapi.model.core.IdElement;
 
 public class FragmentHome extends Fragment implements DataListener {
-    private TmdbApiTask mTmdbApiTask;
-    private String mApiKey;
-    private RecyclerView mRecyclerView;
+    private TmdbApiTask tmdbApiTask;
+    private String apiKey;
+    private RecyclerView recyclerView;
 
     public FragmentHome() { }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mApiKey = getString(R.string.tmdb_api_key);
+        this.apiKey = getString(R.string.tmdb_api_key);
     }
 
     @Override
@@ -41,8 +36,8 @@ public class FragmentHome extends Fragment implements DataListener {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        this.mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-        this.mRecyclerView.setHasFixedSize(true);
+        this.recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        this.recyclerView.setHasFixedSize(true);
 
         return rootView;
     }
@@ -50,33 +45,25 @@ public class FragmentHome extends Fragment implements DataListener {
     @Override
     public void onDataRetrieved(List<? extends IdElement> data) {
         HomeActivityRecyclerAdapter adapter = new HomeActivityRecyclerAdapter(data);
-        this.mRecyclerView.setAdapter(adapter);
-        this.mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3));
+        this.recyclerView.setAdapter(adapter);
+        this.recyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3));
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        if (!TextUtils.isEmpty(this.mApiKey)) {
-           boolean isConnected = isOnline();
-           if(isConnected) {
-                this.mTmdbApiTask = new TmdbApiTask(this);
-                this.mTmdbApiTask.execute(this.mApiKey);
-           }
+        if (!TextUtils.isEmpty(this.apiKey)) {
+            this.tmdbApiTask = new TmdbApiTask(this);
+            this.tmdbApiTask.execute(this.apiKey);
         }
     }
 
-    public boolean isOnline() {
-
-        // Fonction haveInternetConnection : return true si connecté, return false dans le cas contraire
-        NetworkInfo network = ((ConnectivityManager)this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-
-        if (network==null || !network.isConnected())
-        {
-            // Le périphérique n'est pas connecté à Internet
-            return false;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.tmdbApiTask != null) {
+            this.tmdbApiTask.cancel(true);
         }
-        return true;
     }
 }

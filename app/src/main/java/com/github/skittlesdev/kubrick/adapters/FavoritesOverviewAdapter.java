@@ -7,10 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.parse.ParseObject;
-import com.squareup.picasso.Picasso;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
@@ -27,7 +27,7 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         this.context = parent.getContext();
-        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.movies_layout, parent, false);
+        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.favorites_layout, parent, false);
         return new ViewHolder(layout);
     }
 
@@ -52,8 +52,8 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
             this.poster.setOnClickListener(this);
         }
         public void setPoster(Context context) {
-            Picasso.with(context)
-                .load("http://image.tmdb.org/t/p/w500" + item.getString("poster_path"))
+            Glide.with(context)
+                .load("http://image.tmdb.org/t/p/w185" + item.getString("poster_path"))
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
                 .into(this.poster);

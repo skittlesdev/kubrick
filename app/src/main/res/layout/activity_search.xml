@@ -35,10 +35,8 @@
                 android:src="@drawable/ic_search"
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/results" />
+        <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/profileSearch" />
+        <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/mediaSearch" />
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/homeRecyclerView"

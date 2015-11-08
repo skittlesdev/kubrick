@@ -4,4 +4,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="drawer_width">320dp</dimen>
+    <dimen name="default_margin_text_view">10dp</dimen>
 </resources>

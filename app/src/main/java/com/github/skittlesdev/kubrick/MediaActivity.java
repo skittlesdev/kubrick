@@ -1,57 +1,61 @@
 package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
-
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.util.Log;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
+import com.github.skittlesdev.kubrick.asyncs.GetSeriesInfo;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
 import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
-import com.github.skittlesdev.kubrick.ui.dialog.PosterFullScreenDialog;
-import com.github.skittlesdev.kubrick.ui.fragments.CreditsOverviewFragment;
+import com.github.skittlesdev.kubrick.interfaces.TvSeriesSeasonsListener;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNextEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNoEpisode;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorToday;
+import com.github.skittlesdev.kubrick.ui.fragments.*;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
-import com.github.skittlesdev.kubrick.utils.CastUtils;
+import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewUtils;
 import com.github.skittlesdev.kubrick.utils.FavoriteState;
-import com.github.skittlesdev.kubrick.utils.GenresUtils;
 import com.parse.*;
-import com.squareup.picasso.Picasso;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
-import info.movito.themoviedbapi.model.Credits;
-import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.IdElement;
+import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
-import org.joda.time.Duration;
-import org.joda.time.format.*;
-import com.vlonjatg.progressactivity.ProgressActivity;
 
-import java.io.IOException;
-import java.util.List;
-
-public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener {
+public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener{
+    private AsyncTask task;
+    private GetSeriesInfo seriesInfoTask;
     private int mediaId;
     private IdElement media;
     private FavoriteState favoriteState;
+    private MaterialCalendarView calendar;
+    private boolean backPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,39 +68,24 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
         KubrickApplication.getEventBus().register(this);
-        ((ProgressActivity) findViewById(R.id.progressActivity)).showLoading();
 
-        final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
-        toggleView.setOnClickListener(this);
-
+        FloatingActionButton favoriteFab = (FloatingActionButton) this.findViewById(R.id.favoriteFab);
+        favoriteFab.setOnClickListener(this);
 
         this.mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
-        boolean isConnected = isOnline();
+
+        calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
+        calendar.setOnDateChangedListener(this);
+        calendar.setSelectionColor(getResources().getColor(R.color.light_orange));
+
         if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
-            if(isConnected) {
-                GetMovieTask task = new GetMovieTask(this);
-                task.execute(this.mediaId);
-            }
+            this.task = new GetSeriesTask(this);
+            ((GetSeriesTask) this.task).execute(this.mediaId);
         }
         else {
-            if(isConnected) {
-                GetMovieTask task = new GetMovieTask(this);
-                task.execute(this.mediaId);
-            }
+            this.task = new GetMovieTask(this);
+            ((GetMovieTask) this.task).execute(this.mediaId);
         }
-    }
-
-    public boolean isOnline() {
-
-        // Fonction haveInternetConnection : return true si connecté, return false dans le cas contraire
-        NetworkInfo network = ((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-
-        if (network==null || !network.isConnected())
-        {
-            // Le périphérique n'est pas connecté à Internet
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -113,25 +102,15 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         return super.onOptionsItemSelected(item);
     }
 
-    private void showPoster(IdElement media) {
-        String posterPath;
-
-        if (media instanceof MovieDb) {
-            posterPath = ((MovieDb) media).getPosterPath();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.task != null) {
+            this.task.cancel(true);
         }
-        else {
-            posterPath = ((TvSeries) media).getPosterPath();
+        if (this.seriesInfoTask != null) {
+            this.seriesInfoTask.cancel(true);
         }
-
-        final ImageView imageView=(ImageView) findViewById(R.id.poster);
-        Picasso.with(getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + posterPath)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into(imageView);
-
-
-        imageView.setOnClickListener(this);
     }
 
     private void showTitle(IdElement media) {
@@ -148,86 +127,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             titleView.setText(title + " (" + firstYear + " - " + lastYear + ")");
         }
     }
-
-    private void showDuration(MovieDb movie) {
-        TextView durationView = (TextView) findViewById(R.id.duration);
-
-        Duration duration = new Duration(movie.getRuntime() * 1000 * 60);
-        PeriodFormatter formatter = new PeriodFormatterBuilder()
-                .appendHours()
-                .appendSuffix(":")
-                .minimumPrintedDigits(2)
-                .appendMinutes()
-                .toFormatter();
-
-        String durationDisplay = formatter.print(duration.toPeriod());
-
-        durationView.setText(durationDisplay);
-    }
-
-    private void showOverview(IdElement media) {
-        TextView overviewView = (TextView) findViewById(R.id.overview);
-
-        String overview;
-        if (media instanceof MovieDb) {
-            overview = ((MovieDb) media).getOverview();
-        }
-        else {
-            overview = ((TvSeries) media).getOverview();
-        }
-
-        overviewView.setText(overview);
-    }
-
-    private void showStats(TvSeries media) {
-        TextView durationView = (TextView) findViewById(R.id.duration);
-        durationView.setText(media.getNumberOfSeasons() + " seasons, " + media.getNumberOfEpisodes() + " episodes");
-    }
-
-    private void showGenres(IdElement media){
-        TextView genresView = (TextView) findViewById(R.id.genres);
-
-        List<Genre> genres;
-        if (media instanceof MovieDb) {
-            genres = ((MovieDb) media).getGenres();
-        }
-        else {
-            genres = ((TvSeries) media).getGenres();
-        }
-
-        genresView.setText(GenresUtils.getGenrePrintableString(genres));
-    }
-
-    private void showCast(IdElement media) {
-        CreditsOverviewFragment castFragment = new CreditsOverviewFragment();
-        CreditsOverviewFragment crewFragment = new CreditsOverviewFragment();
-
-        Bundle castFragmentArgs = new Bundle();
-        castFragmentArgs.putString("type", "cast");
-
-        Bundle crewFragmentArgs = new Bundle();
-        crewFragmentArgs.putString("type", "crew");
-
-        if (media instanceof MovieDb) {
-            castFragmentArgs.putSerializable("credits", ((MovieDb) media).getCredits());
-            crewFragmentArgs.putSerializable("credits", ((MovieDb) media).getCredits());
-        }
-        else {
-            castFragmentArgs.putSerializable("credits", ((TvSeries) media).getCredits());
-            crewFragmentArgs.putSerializable("credits", ((TvSeries) media).getCredits());
-        }
-
-        castFragment.setArguments(castFragmentArgs);
-        crewFragment.setArguments(crewFragmentArgs);
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_cast, castFragment, "cast");
-        if (media instanceof MovieDb) {
-            transaction.add(R.id.fragment_crew, crewFragment, "crew");
-        }
-        transaction.commit();
-    }
-
 
     private void getFavoriteStatus() {
         if (ParseUser.getCurrentUser() == null) {
@@ -248,18 +147,36 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             @Override
             public void done(ParseObject object, ParseException e) {
                 if (object == null) {
-                    favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
+                    setFavoriteFabIcon(new FavoriteStateEvent(FavoriteState.OFF));
                 } else {
-                    favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
+                    setFavoriteFabIcon(new FavoriteStateEvent(FavoriteState.ON));
                 }
             }
         });
     }
 
+    public void displaySerieEpisodesCalendar(TvSeries tvSeries){
+        this.seriesInfoTask = new GetSeriesInfo(this);
+        this.seriesInfoTask.execute(this.mediaId);
+    }
+
+    @Override
+    public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
+        calendar.setVisibility(View.VISIBLE);
+
+        this.media = tvSeries;
+
+        calendar.addDecorators(
+                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
+                new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
+        );
+    }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.favoriteToggle) {
+        if (v.getId() == R.id.favoriteFab) {
             if (this.favoriteState == FavoriteState.OFF) {
                 ParseObject favorite = new ParseObject("Favorite");
                 ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
@@ -284,7 +201,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
-                            favoriteStateChange(new FavoriteStateEvent(FavoriteState.ON));
+                            setFavoriteFabIcon(new FavoriteStateEvent(FavoriteState.ON));
                         }
                         else {
                             Toast.makeText(KubrickApplication.getContext(), "Failed to favorite movie", Toast.LENGTH_SHORT).show();
@@ -317,7 +234,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                                         Toast.makeText(KubrickApplication.getContext(), "Failed to remove from favorites", Toast.LENGTH_SHORT).show();
                                     }
                                     else {
-                                        favoriteStateChange(new FavoriteStateEvent(FavoriteState.OFF));
+                                        setFavoriteFabIcon(new FavoriteStateEvent(FavoriteState.OFF));
                                     }
                                 }
                             });
@@ -326,48 +243,138 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 });
             }
         }
-        else if(v.getId()==R.id.poster){
-            final ImageView imageView=(ImageView) findViewById(R.id.poster);
-            Drawable drawable = imageView.getDrawable();
-            PosterFullScreenDialog posterDialog = new PosterFullScreenDialog(MediaActivity.this, drawable);
-            posterDialog.show();
+    }
+
+    private void showBackdrop(IdElement mMedia) {
+        String backdrop;
+
+        if (mMedia instanceof MovieDb) {
+            backdrop = ((MovieDb) mMedia).getBackdropPath();
         }
+        else {
+            backdrop = ((TvSeries) mMedia).getBackdropPath();
+        }
+
+        Glide.with(this)
+                .load("http://image.tmdb.org/t/p/w780" + backdrop)
+                .placeholder(R.drawable.poster_default_placeholder)
+                .error(R.drawable.poster_default_error)
+                .into((ImageView) this.findViewById(R.id.movieBackDropPicture));
     }
 
     @Override
     public void onMediaRetrieved(IdElement media) {
         this.media = media;
 
-        showPoster(media);
-        showTitle(media);
-        showGenres(media);
-        showCast(media);
+        this.showBackdrop(this.media);
+
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitleEnabled(true);
 
         if (media instanceof MovieDb) {
-            showDuration((MovieDb) media);
+            collapsingToolbar.setTitle(((MovieDb) this.media).getTitle());
         }
         else {
-            showStats((TvSeries) media);
+            collapsingToolbar.setTitle(((TvSeries) this.media).getName());
         }
 
-        showOverview(media);
-        getFavoriteStatus();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        ((ProgressActivity) findViewById(R.id.progressActivity)).showContent();
+        Bundle options = new Bundle();
+        options.putSerializable("media", this.media);
+
+        FragmentMovieHeader header = new FragmentMovieHeader();
+        header.setArguments(options);
+
+        FragmentMovieOverview overview = new FragmentMovieOverview();
+        overview.setArguments(options);
+
+        transaction.add(R.id.movieHeaderContainer, header);
+        transaction.add(R.id.movieOverviewContainer, overview);
+
+        CreditsOverviewFragment movieCast = new CreditsOverviewFragment();
+        Bundle movieCastOptions = new Bundle();
+        movieCastOptions.putString("type", "cast");
+
+        if (media instanceof MovieDb) {
+            movieCastOptions.putSerializable("credits", ((MovieDb) media).getCredits());
+        }
+        else {
+            movieCastOptions.putSerializable("credits", ((TvSeries) media).getCredits());
+        }
+
+        movieCast.setArguments(movieCastOptions);
+        transaction.add(R.id.movieCastContainer, movieCast, "movieCast");
+
+        if (media instanceof MovieDb) {
+            CreditsOverviewFragment movieCrew = new CreditsOverviewFragment();
+            Bundle movieCrewOptions = new Bundle();
+            movieCrewOptions.putString("type", "crew");
+            movieCrewOptions.putSerializable("credits", ((MovieDb) this.media).getCredits());
+            movieCrew.setArguments(movieCrewOptions);
+            transaction.add(R.id.movieCrewContainer, movieCrew, "movieCrew");
+        }
+
+        if(!backPressed){
+            transaction.commit();
+
+            if (media instanceof TvSeries) {
+                displaySerieEpisodesCalendar((TvSeries) media);
+            }
+        }
+
+        getFavoriteStatus();
     }
 
-    public void favoriteStateChange(FavoriteStateEvent event) {
-        final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //do whatever you need for the hardware 'back' button
+            backPressed = true;
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
+        Log.d("onSelectedDayChange", "day changed");
+        TvSeries serie = (TvSeries) this.media;
+
+        TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, serie);
+
+        if (tvEpisode != null) {
+
+            Intent intent = new Intent(getApplicationContext(), SerieEpisodeActivity.class);
+            Bundle bundle = new Bundle();
+
+            bundle.putSerializable("tvEpisode", tvEpisode);
+            bundle.putString("seriePoster", serie.getPosterPath());
+            bundle.putString("serieBackdrop", serie.getBackdropPath());
+
+            intent.putExtras(bundle);
+
+            startActivity(intent);
+        }
+    }
+
+    public void setFavoriteFabIcon(FavoriteStateEvent event) {
+        final FloatingActionButton toggleView = (FloatingActionButton) findViewById(R.id.favoriteFab);
+        CoordinatorLayout.LayoutParams toggleParams = (CoordinatorLayout.LayoutParams) toggleView.getLayoutParams();
+        toggleParams.setAnchorId(R.id.app_bar_layout);
+
         if (event.getFavoriteState() == FavoriteState.OFF) {
             this.favoriteState = FavoriteState.OFF;
-            toggleView.setText("Add to favorites");
+            toggleView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_heart));
         }
         if (event.getFavoriteState() == FavoriteState.ON) {
             this.favoriteState = FavoriteState.ON;
-            toggleView.setText("Delete from favorites");
+            toggleView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_heart_broken));
         }
+
+        toggleView.setLayoutParams(toggleParams);
         toggleView.setVisibility(View.VISIBLE);
-        KubrickApplication.getEventBus().post(event);
     }
 
     public void onEvent(LoginEvent event) {
@@ -375,7 +382,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     }
 
     public void onEvent(LogoutEvent event) {
-        final Button toggleView = (Button) findViewById(R.id.favoriteToggle);
+        final FloatingActionButton toggleView = (FloatingActionButton) findViewById(R.id.favoriteFab);
         toggleView.setVisibility(View.GONE);
+        CoordinatorLayout.LayoutParams toggleParams = (CoordinatorLayout.LayoutParams) toggleView.getLayoutParams();
+        toggleParams.setAnchorId(View.NO_ID);
     }
 }

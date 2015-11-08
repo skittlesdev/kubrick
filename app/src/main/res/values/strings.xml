@@ -15,4 +15,25 @@
     <string name="search_hint">Search terms</string>
     <string name="navigation_drawer_icon">Icon</string>
     <string name="navigation_drawer_title">Title</string>
+    <string name="movie_overview_content">-</string>
+    <string name="movie_overview_title">Overview</string>
+    <string name="movie_release_date">(Date)</string>
+    <string name="movie_duration">0:0</string>
+    <string name="movie_genres">Genres</string>
+    <string name="movie_title">Movie Title</string>
+    <string name="movie_poster_picture_content_description">Movie poster</string>
+    <string name="movie_backdrop_picture_content_description">Movie backdrop picture</string>
+    <string name="movie_cast_content">-</string>
+    <string name="movie_cast_title">Cast</string>
+    <string name="tv_episode_poster">TV Episode poster</string>
+    <string name="tv_episode_toast_watched">This episode has been added as watched</string>
+    <string name="tv_episode_air_date">Air date</string>
+    <string name="tv_episode_poster_content_description">Episode poster</string>
+    <string name="tv_episode_title">Episode title</string>
+    <string name="tv_episode_number">S??E??</string>
+    <string name="cast_default">Cast</string>
+    <string name="crew_default">Crew</string>
+    <string name="credits_picture_default">Person picture</string>
+    <string name="credits_name_default">-</string>
 </resources>
+

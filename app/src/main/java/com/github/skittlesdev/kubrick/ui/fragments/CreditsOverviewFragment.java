@@ -31,11 +31,11 @@ public class CreditsOverviewFragment extends Fragment {
         String type = getArguments().getString("type");
         TextView typeView = (TextView) layout.findViewById(R.id.type);
 
-        if (type.compareTo("cast") == 0) {
-            typeView.setText("Cast");
+        if (type != null && type.compareTo("cast") == 0) {
+            typeView.setText(R.string.cast_default);
         }
         else {
-            typeView.setText("Crew");
+            typeView.setText(R.string.crew_default);
         }
 
         this.view = (UltimateRecyclerView) layout.findViewById(R.id.recyclerView);
@@ -45,14 +45,20 @@ public class CreditsOverviewFragment extends Fragment {
 
         List<Person> people = new LinkedList<>();
 
-        if (type.compareTo("cast") == 0) {
-            for (PersonCast item: credits.getCast()) {
-                people.add(item);
+        if (credits != null) {
+            if (type != null && type.compareTo("cast") == 0) {
+                List<PersonCast> cast = credits.getCast();
+
+                for (PersonCast item : cast) {
+                    people.add(item);
+                }
             }
-        }
-        else {
-            for (PersonCrew item: credits.getCrew()) {
-                people.add(item);
+            else {
+                List<PersonCrew> crew = credits.getCrew();
+
+                for (PersonCrew item: crew) {
+                    people.add(item);
+                }
             }
         }
 

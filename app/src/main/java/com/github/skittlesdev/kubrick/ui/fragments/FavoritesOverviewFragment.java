@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,8 @@ public class FavoritesOverviewFragment extends Fragment {
 
     public void fetchItems() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Favorite");
-        query.whereEqualTo("user", ParseUser.getCurrentUser());
+        ParseUser user = ParseUser.createWithoutData(ParseUser.class, getArguments().getString("user_id"));
+        query.whereEqualTo("user", user);
 
         if (this.mediaType.compareTo("movie") == 0) {
             query.whereExists("tmdb_movie_id");

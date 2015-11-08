@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -57,11 +57,10 @@ public class HomeActivityRecyclerAdapter extends
         holder.element = element;
 
 
-        Picasso.with(this.mContext)
-                .load("http://image.tmdb.org/t/p/w500" + posterPath)
+        Glide.with(this.mContext)
+                .load("http://image.tmdb.org/t/p/w185" + posterPath)
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
-                //.resize(holder.avatar.getMaxHeight(), holder.avatar.getMaxWidth())
                 .into(poster);
     }
 
