@@ -74,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.add(R.id.fragment_movies, movieFavorites, "movies");
                 transaction.add(R.id.fragment_series, seriesFavorites, "series");
-                transaction.commit();
+                transaction.commitAllowingStateLoss();
             }
         });
     }
