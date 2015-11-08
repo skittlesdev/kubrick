@@ -1,6 +1,7 @@
 package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
@@ -42,6 +44,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         final Button toggle = (Button) findViewById(R.id.followToggle);
         toggle.setOnClickListener(this);
+
+        final LinearLayout followersLayout = (LinearLayout) findViewById(R.id.followersLayout);
+        followersLayout.setOnClickListener(this);
+
+        final LinearLayout followingsLayout = (LinearLayout) findViewById(R.id.followingsLayout);
+        followingsLayout.setOnClickListener(this);
     }
 
     @Override
@@ -180,8 +188,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         toggle.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public void onClick(View v) {
+    public void toggleFollow() {
         if (!this.followed) {
             ParseObject follow = new ParseObject("Follow");
             follow.put("user", ParseUser.getCurrentUser());
@@ -215,6 +222,35 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 }
             });
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.followToggle) {
+            toggleFollow();
+        }
+
+        if (v.getId() == R.id.followersLayout) {
+            showFollowers();
+        }
+
+        if (v.getId() == R.id.followingsLayout) {
+            showFollowings();
+        }
+    }
+
+    private void showFollowers() {
+        Intent intent = new Intent(this, ProfileRelationsActivity.class);
+        intent.putExtra("user_id", this.user.getObjectId());
+        intent.putExtra("type", ProfileRelationsActivity.Types.FOLLOWERS);
+        startActivity(intent);
+    }
+
+    private void showFollowings() {
+        Intent intent = new Intent(this, ProfileRelationsActivity.class);
+        intent.putExtra("user_id", this.user.getObjectId());
+        intent.putExtra("type", ProfileRelationsActivity.Types.FOLLOWINGS);
+        startActivity(intent);
     }
 
     public void onEvent(LoginEvent e) {

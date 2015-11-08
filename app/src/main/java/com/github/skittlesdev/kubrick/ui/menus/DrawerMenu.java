@@ -87,7 +87,7 @@ public class DrawerMenu {
             }
         });
 
-        RowElement followersElement = new RowElement(R.drawable.ic_row_element, "Followers", new Callback() {
+        RowElement followersElement = new RowElement(R.drawable.ic_row_element, "Followers", new Callback(this.activity) {
             @Override
             public void execute() {
                 Intent intent = new Intent(getContext(), ProfileRelationsActivity.class);
