@@ -30,6 +30,7 @@
         <activity android:name=".AboutActivity" />
         <activity android:name=".ProfileActivity"/>
         <activity android:name=".SerieEpisodeActivity"/>
+        <activity android:name=".ProfileRelationsActivity"/>
     </application>
 
 </manifest>
