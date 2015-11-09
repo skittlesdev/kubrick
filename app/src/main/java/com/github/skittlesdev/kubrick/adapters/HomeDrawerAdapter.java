@@ -11,9 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.LoginActivity;
 import com.github.skittlesdev.kubrick.ProfileActivity;
 import com.github.skittlesdev.kubrick.R;
@@ -21,7 +19,6 @@ import com.github.skittlesdev.kubrick.utils.Callback;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.github.skittlesdev.kubrick.utils.RowElement;
 import com.parse.ParseUser;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import java.util.List;
 

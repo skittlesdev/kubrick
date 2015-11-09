@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
@@ -28,7 +27,6 @@ import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.parse.*;
 import com.parse.ParseUser;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private ParseUser user;
