@@ -35,5 +35,6 @@
     <string name="crew_default">Crew</string>
     <string name="credits_picture_default">Person picture</string>
     <string name="credits_name_default">-</string>
+    <string name="person_name_default">Name</string>
 </resources>
 

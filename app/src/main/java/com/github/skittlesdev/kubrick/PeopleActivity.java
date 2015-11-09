@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.asyncs.GetPersonPeople;
 import com.github.skittlesdev.kubrick.interfaces.PeopleListener;
+import com.github.skittlesdev.kubrick.ui.fragments.FragmentPersonPeopleHeader;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 
 import info.movito.themoviedbapi.model.people.Person;
@@ -89,20 +90,12 @@ public class PeopleActivity extends AppCompatActivity implements PeopleListener 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         Bundle optionsHeader = new Bundle();
-        //optionsHeader.putSerializable("person", person);
-        //optionsHeader.putString("seriePoster", this.seriePosterPath);
+        optionsHeader.putSerializable("personPeople", personPeople);
 
-        //Bundle optionsOverview = new Bundle();
-        //optionsOverview.putSerializable("person", person);
+        FragmentPersonPeopleHeader header = new FragmentPersonPeopleHeader();
+        header.setArguments(optionsHeader);
 
-        //FragmentTvEpisodeHeader header = new FragmentTvEpisodeHeader();
-        //header.setArguments(optionsHeader);
-
-        //FragmentTvEpisodeOverview overview = new FragmentTvEpisodeOverview();
-        //overview.setArguments(optionsOverview);
-
-        //transaction.add(R.id.episodeHeaderContainer, header);
-        //transaction.add(R.id.episodeOverviewContainer, overview);
+        transaction.add(R.id.personHeaderContainer, header);
 
         transaction.commit();
     }

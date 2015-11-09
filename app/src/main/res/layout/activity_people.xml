@@ -68,13 +68,13 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/actorHeaderContainer">
+                        android:id="@+id/personHeaderContainer">
                     </RelativeLayout>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/actorOverviewContainer">
+                        android:id="@+id/personOverviewContainer">
                     </RelativeLayout>
                 </LinearLayout>
             </FrameLayout>
