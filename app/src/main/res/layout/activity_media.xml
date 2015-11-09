@@ -30,7 +30,7 @@
                 app:expandedTitleMarginEnd="64dp"
                 android:fitsSystemWindows="true">
 
-                <ImageView
+                <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/movieBackDropPicture"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"

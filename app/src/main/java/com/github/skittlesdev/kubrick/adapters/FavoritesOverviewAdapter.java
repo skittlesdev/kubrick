@@ -2,12 +2,14 @@ package com.github.skittlesdev.kubrick.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.parse.ParseObject;
@@ -43,20 +45,17 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private ImageView poster;
+        private SimpleDraweeView poster;
         private ParseObject item;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.poster = (ImageView) itemView.findViewById(R.id.moviePoster);
+            this.poster = (SimpleDraweeView) itemView.findViewById(R.id.moviePoster);
             this.poster.setOnClickListener(this);
         }
+
         public void setPoster(Context context) {
-            Glide.with(context)
-                .load("http://image.tmdb.org/t/p/w185" + item.getString("poster_path"))
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into(this.poster);
+            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getString("poster_path")));
         }
 
         @Override

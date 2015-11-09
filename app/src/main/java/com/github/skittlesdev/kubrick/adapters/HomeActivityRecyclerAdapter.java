@@ -2,13 +2,16 @@ package com.github.skittlesdev.kubrick.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
 
@@ -43,7 +46,7 @@ public class HomeActivityRecyclerAdapter extends
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         IdElement element = this.mElements.get(position);
-        ImageView poster = holder.moviePoster;
+        SimpleDraweeView poster = holder.moviePoster;
         String posterPath = "";
 
         if(element instanceof MovieDb){
@@ -56,12 +59,13 @@ public class HomeActivityRecyclerAdapter extends
 
         holder.element = element;
 
+        poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + posterPath));
 
-        Glide.with(this.mContext)
+        /*Glide.with(this.mContext)
                 .load("http://image.tmdb.org/t/p/w185" + posterPath)
                 .placeholder(R.drawable.poster_default_placeholder)
                 .error(R.drawable.poster_default_error)
-                .into(poster);
+                .into(poster);*/
     }
 
     @Override
@@ -70,13 +74,15 @@ public class HomeActivityRecyclerAdapter extends
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public ImageView moviePoster;
+        public SimpleDraweeView moviePoster;
         public IdElement element;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.moviePoster = (ImageView) itemView.findViewById(R.id.moviePoster);
+            this.moviePoster = (SimpleDraweeView) itemView.findViewById(R.id.moviePoster);
             this.moviePoster.setOnClickListener(this);
+            Log.d("KUBRICK", String.valueOf(itemView.getHeight()));
+            Log.d("KUBRICK", String.valueOf(itemView.getWidth()));
         }
 
         @Override

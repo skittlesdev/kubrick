@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.ui.dialog.PosterFullScreenDialog;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
@@ -70,11 +72,7 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
             posterPath = ((TvSeries) media).getPosterPath();
         }
 
-        Glide.with(getActivity().getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + posterPath)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) rootView.findViewById(R.id.moviePosterPicture));
+        ((SimpleDraweeView) rootView.findViewById(R.id.moviePosterPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + posterPath));
     }
 
     private void showTitle() {
