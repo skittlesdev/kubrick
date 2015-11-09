@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,21 +38,25 @@ import com.github.skittlesdev.kubrick.utils.CalendarViewUtils.CalendarViewUtils;
 import com.github.skittlesdev.kubrick.utils.ProfileElement;
 import com.parse.*;
 import com.parse.ParseUser;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import info.movito.themoviedbapi.model.ExternalIds;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeason;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, TvSeasonListener {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, TvSeasonListener, OnDateSelectedListener {
     private ParseUser user;
     private boolean followed = false;
     private  MaterialCalendarView calendar;
@@ -59,6 +64,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private List<CustomTvSeason> tvSeasonsList;
     private Map<Integer, List<CustomTvEpisode>> map;
     private Map<Integer, CustomTvSeason> customTvSeasonMap;
+    private List<List<TvEpisode>> finalList;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +86,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         followingsLayout.setOnClickListener(this);
 
         calendar = (MaterialCalendarView) findViewById(R.id.userSerieCalendarPlanning);
+        calendar.setOnDateChangedListener(this);
         calendar.setVisibility(View.VISIBLE);
 
         ParseUser.getQuery().getInBackground(getIntent().getStringExtra("user_id"), new GetCallback<ParseUser>() {
@@ -115,7 +122,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         if (e == null) {
                             tvEpisodesList = new ArrayList<>();
 
-                            for (ParseObject item : EpisodeList){
+                            for (ParseObject item : EpisodeList) {
                                 CustomTvEpisode customTvEpisode = new CustomTvEpisode(
                                         item.getString("AirDate"),
                                         item.getInt("SerieId"),
@@ -145,27 +152,58 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         customTvSeasonMap = new HashMap<>();
 
         for(TvSeason item : tvSeasonList){
-           customTvSeasonMap.put(item.getExternalIds().getId(),new CustomTvSeason(item.getId(),item.getSeasonNumber(),item.getExternalIds().getId(),item.getPosterPath(),item.getEpisodes()));
+
+            customTvSeasonMap.put(item.getExternalIds().getId(),new CustomTvSeason(item.getId(),item.getSeasonNumber(),item.getExternalIds().getId(),item.getPosterPath(),item.getEpisodes()));
+
         }
 
-        List<List<TvEpisode>> finalList = new ArrayList<>();
+        finalList = new ArrayList<>();
 
         for(CustomTvEpisode item : tvEpisodesList){
-            List<TvEpisode> subList = new ArrayList<>();
+            List<TvEpisode> subList;
 
             subList = removeEpisodesBeforeDate(customTvSeasonMap.get(item.getSerieId()).getTvEpisodes(), item.getAirDate());
 
-            System.out.print("fee");
+            finalList.add(subList);
+        }
+
+        Set<List<TvEpisode>> hs = new HashSet<>();
+        hs.addAll(finalList);
+        finalList.clear();
+        finalList.addAll(hs);
+
+        HashSet<CalendarDay> result = new HashSet<>();
+
+        for (List<TvEpisode> tvEpisodeList : finalList){
+            result.addAll(CalendarViewUtils.tvEpiosdeListToAirDateHash(tvEpisodeList));
+        }
+
+        calendar.addDecorators(
+                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.WHITE, result),
+                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, result),
+                new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, result),
+                new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
+        );
+    }
+
+
+    @Override
+    public void onDateSelected(MaterialCalendarView materialCalendarView, CalendarDay calendarDay, boolean b) {
+
+        String date = calendarDay.getYear() + "-" + calendarDay.getMonth() + "-" + calendarDay.getDay();
+
+        List<TvEpisode> result = new ArrayList<>();
+
+        for (List<TvEpisode> tvEpisodeList : finalList){
+            for(TvEpisode episode : tvEpisodeList){
+                if(episode.getAirDate().compareTo(date) == 0){
+                    result.add(episode);
+                }
+            }
         }
 
         System.out.print("ee");
-
-       /* calendar.addDecorators(
-                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.WHITE, CalendarViewUtils.tvSeriesWatchedEpisodesListToAirDate(customTvEpisodesList)),
-                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, CalendarViewUtils.tvSeriesWatchedEpisodesListToAirDate(customTvEpisodesList)),
-                new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesWatchedEpisodesListToAirDate(customTvEpisodesList))
-        );*/
-
+        // Afficher l'activité avec en intent la liste result.
     }
 
     private List<TvEpisode> removeEpisodesBeforeDate(List<TvEpisode> tvEpisodes, String date){

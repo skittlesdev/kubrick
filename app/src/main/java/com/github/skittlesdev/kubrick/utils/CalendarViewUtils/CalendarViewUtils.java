@@ -36,6 +36,20 @@ public class CalendarViewUtils {
         return result;
     }
 
+    public static HashSet<CalendarDay> tvEpiosdeListToAirDateHash(List<TvEpisode> tvEpisodeList){
+        HashSet<CalendarDay> result = new HashSet<>();
+
+        for(TvEpisode tvEpisode : tvEpisodeList){
+            if (tvEpisode != null && !TextUtils.isEmpty(tvEpisode.getAirDate())) {
+                String[] split = tvEpisode.getAirDate().split("-");
+                CalendarDay day = new CalendarDay(Integer.valueOf(split[0]), Integer.valueOf(split[1]), Integer.valueOf(split[2]));
+                result.add(day);
+            }
+        }
+
+        return result;
+    }
+
     public static TvEpisode getEpisodeFromDate(CalendarDay day, TvSeries tvSeries){
 
         if(tvSeries.getSeasons() != null && tvSeries.getSeasons().size() != 0 ) {
