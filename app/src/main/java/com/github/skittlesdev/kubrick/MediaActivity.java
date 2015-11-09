@@ -92,6 +92,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     }
 
     private boolean isOnline(){
+        //test network connection
         NetworkInfo network = ((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
 
         if (network==null || !network.isConnected())
