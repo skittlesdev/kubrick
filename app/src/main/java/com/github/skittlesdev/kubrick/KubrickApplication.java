@@ -19,7 +19,6 @@ public class KubrickApplication extends MultiDexApplication {
         KubrickApplication.sContext = this.getApplicationContext();
         this.eventBus = new EventBus();
 
-        Parse.enableLocalDatastore(this);
         Parse.initialize(this, "rej9XtKMoEPuEkULwnROypntYF5Bg9aKEQhQgYtr", "6kyMBoKJgKsMyQB72IvUWVq1UBZSJsXArxBIvMy3");
         ParseInstallation.getCurrentInstallation().saveInBackground();
     }
