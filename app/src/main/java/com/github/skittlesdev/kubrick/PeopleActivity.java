@@ -1,6 +1,7 @@
 package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.DrawerLayout;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.asyncs.GetPersonPeople;
 import com.github.skittlesdev.kubrick.interfaces.PeopleListener;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentPersonPeopleHeader;
@@ -68,11 +70,7 @@ public class PeopleActivity extends AppCompatActivity implements PeopleListener 
     }
 
     private void showBackdrop() {
-        Glide.with(this)
-            .load("http://image.tmdb.org/t/p/w780" + this.person.getProfilePath())
-            .placeholder(R.drawable.poster_default_placeholder)
-            .error(R.drawable.poster_default_error)
-            .into((ImageView) this.findViewById(R.id.personBackDropPicture));
+        ((SimpleDraweeView) findViewById(R.id.personBackDropPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w780" + this.person.getProfilePath()));
     }
 
     @Override
