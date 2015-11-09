@@ -7,5 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         fresco:viewAspectRatio="@dimen/poster_ratio"
+        fresco:placeholderImage="@drawable/poster_default_placeholder"
+        fresco:failureImage="@drawable/poster_default_error"
         android:id="@+id/moviePoster"/>
 </RelativeLayout>
