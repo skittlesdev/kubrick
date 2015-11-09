@@ -46,6 +46,7 @@ import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener{
@@ -275,11 +276,49 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 .into((ImageView) this.findViewById(R.id.movieBackDropPicture));
     }
 
+    private void showSimilar(IdElement media) {
+        SimilarMoviesOverviewFragment similarFragment = new SimilarMoviesOverviewFragment();
+
+        Bundle similarFragmentArgs = new Bundle();
+        similarFragmentArgs.putString("type", "movie");
+
+        if (media instanceof MovieDb) {
+            List<MovieDb> similarMoviesList = ((MovieDb) media).getSimilarMovies();
+            ArrayList<MovieDb> similarMoviesArrayList = new ArrayList<>(similarMoviesList.size());
+            similarMoviesArrayList.addAll(similarMoviesList);
+            similarFragmentArgs.putSerializable("movies", similarMoviesArrayList);
+        }
+        else {
+
+            // TODO similar tvseries
+
+            /*Client client = ClientBuilder.newClient();
+            Response response = client.target("http://api.themoviedb.org/3/tv/{id}/similar")
+                    .request(MediaType.TEXT_PLAIN_TYPE)
+                    .header("Accept", "application/json")
+                    .get();
+
+            System.out.println("status: " + response.getStatus());
+            System.out.println("headers: " + response.getHeaders());
+            System.out.println("body:" + response.readEntity(String.class));*/
+
+            //similarFragmentArgs.putSerializable("similar", ((TvSeries) media).getCredits());
+        }
+
+        similarFragment.setArguments(similarFragmentArgs);
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.fragment_similar, similarFragment, "similar");
+
+        transaction.commit();
+    }
+
     @Override
     public void onMediaRetrieved(IdElement media) {
         this.media = media;
 
         this.showBackdrop(this.media);
+        showSimilar(this.media);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitleEnabled(true);
