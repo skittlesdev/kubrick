@@ -41,7 +41,13 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".FavoritesActivity"/>
         <activity android:name=".AboutActivity"/>
-        <activity android:name=".ProfileActivity"/>
+        <activity android:name=".ProfileActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="kubrick" android:host="profile" />
+            </intent-filter>
+        </activity>
         <activity android:name=".SerieEpisodeActivity"/>
         <activity android:name=".ProfileRelationsActivity"/>
 
