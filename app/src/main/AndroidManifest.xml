@@ -50,11 +50,7 @@
         </activity>
         <activity android:name=".SerieEpisodeActivity"/>
         <activity android:name=".ProfileRelationsActivity"/>
-<<<<<<< HEAD
         <activity android:name=".PeopleActivity"/>
-    </application>
-=======
->>>>>>> origin/master
 
         <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/kubrick_icon"/>
 
