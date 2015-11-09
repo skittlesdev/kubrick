@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.ui.fragments.FavoritesOverviewFragment;
@@ -91,16 +93,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         ProfileElement profile = new ProfileElement(user);
 
         TextView name = (TextView) findViewById(R.id.name);
-        ImageView image = (ImageView) findViewById(R.id.circleView);
+        SimpleDraweeView image = (SimpleDraweeView) findViewById(R.id.circleView);
 
         name.setText(profile.getName());
         if (!TextUtils.isEmpty(profile.getAvatarUrl())) {
-            Glide.with(KubrickApplication.getContext())
-                .load(profile.getAvatarUrl())
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .bitmapTransform(new CropCircleTransformation(KubrickApplication.getContext()))
-                .into(image);
+            image.setImageURI(Uri.parse(profile.getAvatarUrl()));
         }
     }
 

@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.LoginActivity;
 import com.github.skittlesdev.kubrick.ProfileActivity;
@@ -35,7 +37,7 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
     private ProfileElement mProfile;
 
     public static class ProfileViewHolder extends HomeDrawerAdapter.ViewHolder implements View.OnClickListener {
-        public ImageView avatar;
+        public SimpleDraweeView avatar;
         public TextView name;
         public TextView email;
         private Context context;
@@ -47,7 +49,7 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
             this.name.setOnClickListener(this);
             this.email = (TextView) itemView.findViewById(R.id.email);
             this.email.setOnClickListener(this);
-            this.avatar = (ImageView) itemView.findViewById(R.id.circleView);
+            this.avatar = (SimpleDraweeView) itemView.findViewById(R.id.circleView);
             this.avatar.setOnClickListener(this);
         }
 
@@ -139,12 +141,7 @@ public class HomeDrawerAdapter extends RecyclerView.Adapter<HomeDrawerAdapter.Vi
     private void onBindViewHolder(HomeDrawerAdapter.ProfileViewHolder holder, int position) {
         holder.setContext(this.context);
         if (!TextUtils.isEmpty(this.mProfile.getAvatarUrl())) {
-            Glide.with(KubrickApplication.getContext())
-                .load(this.mProfile.getAvatarUrl())
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .bitmapTransform(new CropCircleTransformation(KubrickApplication.getContext()))
-                .into(holder.avatar);
+            holder.avatar.setImageURI(Uri.parse(this.mProfile.getAvatarUrl()));
         }
         holder.name.setText(this.mProfile.getName());
         holder.email.setText(this.mProfile.getEmail());
