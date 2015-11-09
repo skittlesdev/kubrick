@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.MediaActivity;
+import com.github.skittlesdev.kubrick.PeopleActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.parse.ParseObject;
 import info.movito.themoviedbapi.model.people.Person;
@@ -42,14 +44,16 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
         return this.credits.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView profile;
         private TextView name;
         private Person item;
 
         public ViewHolder(View itemView) {
             super(itemView);
+
             this.profile = (ImageView) itemView.findViewById(R.id.moviePoster);
+            this.profile.setOnClickListener(this);
             this.name = (TextView) itemView.findViewById(R.id.name);
         }
 
@@ -64,6 +68,17 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
         public void setItem(Person item) {
             this.item = item;
             this.name.setText(item.getName());
+        }
+
+        @Override
+        public void onClick(View view) {
+            Context context = view.getContext();
+            Intent intent = new Intent(context, PeopleActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("person", this.item);
+
+            intent.putExtra("PERSON_OBJECT", bundle);
+            context.startActivity(intent);
         }
     }
 }

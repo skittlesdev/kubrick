@@ -82,19 +82,17 @@ public class HomeActivityRecyclerAdapter extends
         @Override
         public void onClick(View view) {
             Context context = view.getContext();
-
             Intent intent = new Intent(context, MediaActivity.class);
 
-            if(this.element instanceof MovieDb){
+            if (this.element instanceof MovieDb) {
                 intent.putExtra("MEDIA_TYPE", "movie");
             }
 
-            if(this.element instanceof TvSeries){
+            if (this.element instanceof TvSeries) {
                 intent.putExtra("MEDIA_TYPE", "tv");
             }
 
             intent.putExtra("MEDIA_ID", this.element.getId());
-
             context.startActivity(intent);
         }
     }

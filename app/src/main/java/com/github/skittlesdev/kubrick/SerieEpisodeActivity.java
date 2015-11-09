@@ -32,10 +32,9 @@ import info.movito.themoviedbapi.model.tv.TvEpisode;
  * Created by louis on 11/6/15.
  */
 public class SerieEpisodeActivity extends AppCompatActivity {
-
-    TvEpisode tvEpisode = null;
-    String seriePosterPath;
-    String serieBackdroptPath;
+    private TvEpisode tvEpisode = null;
+    private String seriePosterPath;
+    private String serieBackdroptPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
