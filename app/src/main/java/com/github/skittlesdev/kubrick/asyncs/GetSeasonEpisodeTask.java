@@ -14,6 +14,7 @@ import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbTV;
 import info.movito.themoviedbapi.TmdbTvEpisodes;
 import info.movito.themoviedbapi.TmdbTvSeasons;
+import info.movito.themoviedbapi.model.ExternalIds;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeason;
 import info.movito.themoviedbapi.model.tv.TvSeries;
@@ -43,6 +44,10 @@ public class GetSeasonEpisodeTask extends AsyncTask<List<Integer>, Void, List<Tv
 
             for(TvSeason item : tvSeasonList){
                 if(item.getSeasonNumber() == seasonNumber){
+                    ExternalIds e = new ExternalIds();
+                    e.setId(tvSeries.getId());
+
+                    item.setExternalIds(e);
                     item.setEpisodes(api.getTvSeasons().getSeason(serieId, seasonNumber, "en").getEpisodes());
                     result.add(item);
                 }

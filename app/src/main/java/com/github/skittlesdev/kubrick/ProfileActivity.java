@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.adapters.FavoritesOverviewAdapter;
 import com.github.skittlesdev.kubrick.asyncs.GetSeasonEpisodeTask;
 import com.github.skittlesdev.kubrick.customsWrapperTypes.CustomTvEpisode;
+import com.github.skittlesdev.kubrick.customsWrapperTypes.CustomTvSeason;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.TvSeasonListener;
@@ -55,8 +56,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private boolean followed = false;
     private  MaterialCalendarView calendar;
     private List<CustomTvEpisode> tvEpisodesList;
-    private List<TvSeason> tvSeasonsList;
+    private List<CustomTvSeason> tvSeasonsList;
     private Map<Integer, List<CustomTvEpisode>> map;
+    private Map<Integer, CustomTvSeason> customTvSeasonMap;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,7 +142,23 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onTvSeasonRetrieved(List<TvSeason> tvSeasonList) {
 
-        this.tvSeasonsList = tvSeasonList;
+        customTvSeasonMap = new HashMap<>();
+
+        for(TvSeason item : tvSeasonList){
+           customTvSeasonMap.put(item.getExternalIds().getId(),new CustomTvSeason(item.getId(),item.getSeasonNumber(),item.getExternalIds().getId(),item.getPosterPath(),item.getEpisodes()));
+        }
+
+        List<List<TvEpisode>> finalList = new ArrayList<>();
+
+        for(CustomTvEpisode item : tvEpisodesList){
+            List<TvEpisode> subList = new ArrayList<>();
+
+            subList = removeEpisodesBeforeDate(customTvSeasonMap.get(item.getSerieId()).getTvEpisodes(), item.getAirDate());
+
+            System.out.print("fee");
+        }
+
+        System.out.print("ee");
 
        /* calendar.addDecorators(
                 new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.WHITE, CalendarViewUtils.tvSeriesWatchedEpisodesListToAirDate(customTvEpisodesList)),
@@ -148,6 +166,26 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesWatchedEpisodesListToAirDate(customTvEpisodesList))
         );*/
 
+    }
+
+    private List<TvEpisode> removeEpisodesBeforeDate(List<TvEpisode> tvEpisodes, String date){
+
+        String[] dateOrig = date.split("-");
+
+        for(int i = 0; i < tvEpisodes.size()-1; i++){
+            if(tvEpisodes.get(i) != null && !tvEpisodes.get(i).getAirDate().isEmpty()){
+                String[] split = tvEpisodes.get(i).getAirDate().split("-");
+
+                if(Integer.valueOf(split[0]) < Integer.valueOf(dateOrig[0])){
+                    tvEpisodes.remove(i);
+                }else if(Integer.valueOf(split[1]) < Integer.valueOf(dateOrig[1])){
+                    tvEpisodes.remove(i);
+                } else if(Integer.valueOf(split[2]) < Integer.valueOf(dateOrig[2])){
+                    tvEpisodes.remove(i);
+                }
+            }
+        }
+        return tvEpisodes;
     }
 
     private void buildCalendar(List<CustomTvEpisode> customTvEpisodesList){
