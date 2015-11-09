@@ -26,19 +26,26 @@
             android:label="@string/title_activity_home" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MediaActivity" />
+        <activity android:name="com.github.skittlesdev.kubrick.MediaActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="kubrick" android:host="media" />
+            </intent-filter>
+        </activity>
         <activity android:name=".SearchActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".FavoritesActivity"/>
-        <activity android:name=".AboutActivity" />
+        <activity android:name=".AboutActivity"/>
         <activity android:name=".ProfileActivity"/>
         <activity android:name=".SerieEpisodeActivity"/>
         <activity android:name=".ProfileRelationsActivity"/>
+
+        <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/kubrick_icon"/>
 
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParsePushBroadcastReceiver"
