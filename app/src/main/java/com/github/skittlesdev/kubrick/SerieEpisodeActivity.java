@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.github.skittlesdev.kubrick.ui.fragments.FragmenTvEpisodeOverview;
+import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeOverview;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeHeader;
 import com.bumptech.glide.Glide;
 import com.parse.ParseACL;
@@ -60,7 +60,7 @@ public class SerieEpisodeActivity extends AppCompatActivity {
         FragmentTvEpisodeHeader header = new FragmentTvEpisodeHeader();
         header.setArguments(optionsHeader);
 
-        FragmenTvEpisodeOverview overview = new FragmenTvEpisodeOverview();
+        FragmentTvEpisodeOverview overview = new FragmentTvEpisodeOverview();
         overview.setArguments(optionsOverview);
 
         transaction.add(R.id.episodeHeaderContainer, header);

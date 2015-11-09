@@ -14,7 +14,7 @@ import info.movito.themoviedbapi.model.tv.TvEpisode;
 /**
  * Created by lowgr on 11/2/2015.
  */
-public class FragmenTvEpisodeOverview extends Fragment {
+public class FragmentTvEpisodeOverview extends Fragment {
     private TvEpisode tvEpisode;
     private View rootView;
 
