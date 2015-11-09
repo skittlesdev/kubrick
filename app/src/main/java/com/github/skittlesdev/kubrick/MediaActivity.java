@@ -46,6 +46,8 @@ import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
+import java.util.List;
+
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener{
     private AsyncTask task;
     private GetSeriesInfo seriesInfoTask;
@@ -73,13 +75,23 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         FloatingActionButton favoriteFab = (FloatingActionButton) this.findViewById(R.id.favoriteFab);
         favoriteFab.setOnClickListener(this);
 
-        this.mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
+        String mediaType;
+
+        if (getIntent().hasExtra("MEDIA_ID") && getIntent().hasExtra("MEDIA_TYPE")) {
+            this.mediaId = getIntent().getIntExtra("MEDIA_ID", -1);
+            mediaType = getIntent().getStringExtra("MEDIA_TYPE");
+        }
+        else {
+            List<String> segments = this.getIntent().getData().getPathSegments();
+            mediaType = segments.get(0);
+            this.mediaId = Integer.valueOf(segments.get(1));
+        }
 
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
         calendar.setOnDateChangedListener(this);
         calendar.setSelectionColor(getResources().getColor(R.color.light_orange));
 
-        if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
+        if (mediaType.compareTo("tv") == 0) {
             this.task = new GetSeriesTask(this);
             ((GetSeriesTask) this.task).execute(this.mediaId);
         }

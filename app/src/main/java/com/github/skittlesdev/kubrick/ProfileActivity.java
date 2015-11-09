@@ -51,7 +51,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         final LinearLayout followingsLayout = (LinearLayout) findViewById(R.id.followingsLayout);
         followingsLayout.setOnClickListener(this);
 
-        ParseUser.getQuery().getInBackground(getIntent().getStringExtra("user_id"), new GetCallback<ParseUser>() {
+        String user_id;
+        if (getIntent().hasExtra("user_id")) {
+            user_id = getIntent().getStringExtra("user_id");
+        }
+        else {
+            user_id = getIntent().getData().getPathSegments().get(0);
+        }
+
+        ParseUser.getQuery().getInBackground(user_id, new GetCallback<ParseUser>() {
             @Override
             public void done(ParseUser user, ParseException e) {
                 buildProfile(user);
@@ -145,7 +153,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void getFollowStatus(ParseUser user) {
-        if (ParseUser.getCurrentUser() == null || user == ParseUser.getCurrentUser()) {
+        if (ParseUser.getCurrentUser() == null || user.getObjectId().compareTo(ParseUser.getCurrentUser().getObjectId()) == 0) {
             return;
         }
 
