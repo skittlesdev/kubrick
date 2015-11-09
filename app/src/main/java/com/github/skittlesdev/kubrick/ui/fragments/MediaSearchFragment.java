@@ -1,7 +1,10 @@
 package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -38,8 +41,20 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
     }
 
     public void search(String searchTerms) {
-        this.searchTask = new SearchMediaTask(this);
-        this.searchTask.execute(searchTerms);
+        if(isOnline()) {
+            this.searchTask = new SearchMediaTask(this);
+            this.searchTask.execute(searchTerms);
+        }
+    }
+
+    private boolean isOnline(){
+        NetworkInfo network = ((ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+
+        if (network==null || !network.isConnected())
+        {
+            return false;
+        }
+        return true;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.github.skittlesdev.kubrick.ui.fragments;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -52,11 +55,22 @@ public class FragmentHome extends Fragment implements DataListener {
     @Override
     public void onStart() {
         super.onStart();
-
-        if (!TextUtils.isEmpty(this.apiKey)) {
-            this.tmdbApiTask = new TmdbApiTask(this);
-            this.tmdbApiTask.execute(this.apiKey);
+        if(isOnline()) {
+            if (!TextUtils.isEmpty(this.apiKey)) {
+                this.tmdbApiTask = new TmdbApiTask(this);
+                this.tmdbApiTask.execute(this.apiKey);
+            }
         }
+    }
+
+    private boolean isOnline(){
+        NetworkInfo network = ((ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+
+        if (network==null || !network.isConnected())
+        {
+            return false;
+        }
+        return true;
     }
 
     @Override

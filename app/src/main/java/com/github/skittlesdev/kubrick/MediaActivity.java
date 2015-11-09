@@ -4,6 +4,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -77,15 +79,26 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
         calendar.setOnDateChangedListener(this);
         calendar.setSelectionColor(getResources().getColor(R.color.light_orange));
+        boolean connected=isOnline();
+        if(connected) {
+            if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
+                this.task = new GetSeriesTask(this);
+                ((GetSeriesTask) this.task).execute(this.mediaId);
+            } else {
+                this.task = new GetMovieTask(this);
+                ((GetMovieTask) this.task).execute(this.mediaId);
+            }
+        }
+    }
 
-        if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
-            this.task = new GetSeriesTask(this);
-            ((GetSeriesTask) this.task).execute(this.mediaId);
+    private boolean isOnline(){
+        NetworkInfo network = ((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+
+        if (network==null || !network.isConnected())
+        {
+            return false;
         }
-        else {
-            this.task = new GetMovieTask(this);
-            ((GetMovieTask) this.task).execute(this.mediaId);
-        }
+        return true;
     }
 
     @Override
@@ -156,9 +169,13 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     }
 
     public void displaySerieEpisodesCalendar(TvSeries tvSeries){
-        this.seriesInfoTask = new GetSeriesInfo(this);
-        this.seriesInfoTask.execute(this.mediaId);
+        boolean isConnected=isOnline();
+        if(isConnected) {
+            this.seriesInfoTask = new GetSeriesInfo(this);
+            this.seriesInfoTask.execute(this.mediaId);
+        }
     }
+
 
     @Override
     public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
