@@ -3,6 +3,7 @@ package com.github.skittlesdev.kubrick;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesInfo;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
@@ -268,11 +270,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             backdrop = ((TvSeries) mMedia).getBackdropPath();
         }
 
-        Glide.with(this)
-                .load("http://image.tmdb.org/t/p/w780" + backdrop)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) this.findViewById(R.id.movieBackDropPicture));
+        ((SimpleDraweeView) findViewById(R.id.movieBackDropPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w780" + backdrop));
     }
 
     @Override

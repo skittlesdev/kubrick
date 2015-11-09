@@ -3,6 +3,7 @@ package com.github.skittlesdev.kubrick;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.parse.Parse;
 import com.parse.ParseInstallation;
 import de.greenrobot.event.EventBus;
@@ -16,6 +17,7 @@ public class KubrickApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         JodaTimeAndroid.init(this);
+        Fresco.initialize(this);
         KubrickApplication.sContext = this.getApplicationContext();
         this.eventBus = new EventBus();
 
