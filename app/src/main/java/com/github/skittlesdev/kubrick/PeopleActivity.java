@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.asyncs.GetPersonPeople;
 import com.github.skittlesdev.kubrick.interfaces.PeopleListener;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentPersonPeopleHeader;
+import com.github.skittlesdev.kubrick.ui.fragments.FragmentPersonPeopleOverview;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 
 import info.movito.themoviedbapi.model.people.Person;
@@ -88,13 +89,17 @@ public class PeopleActivity extends AppCompatActivity implements PeopleListener 
     public void onPeopleRetrieved(PersonPeople personPeople) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        Bundle optionsHeader = new Bundle();
-        optionsHeader.putSerializable("personPeople", personPeople);
+        Bundle options = new Bundle();
+        options.putSerializable("personPeople", personPeople);
 
         FragmentPersonPeopleHeader header = new FragmentPersonPeopleHeader();
-        header.setArguments(optionsHeader);
+        header.setArguments(options);
+
+        FragmentPersonPeopleOverview overview = new FragmentPersonPeopleOverview();
+        overview.setArguments(options);
 
         transaction.add(R.id.personHeaderContainer, header);
+        transaction.add(R.id.personOverviewContainer, overview);
 
         transaction.commit();
     }

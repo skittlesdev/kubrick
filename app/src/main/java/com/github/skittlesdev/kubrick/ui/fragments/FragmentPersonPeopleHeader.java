@@ -12,16 +12,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.R;
 
-import java.text.DecimalFormat;
-import java.util.List;
-
-import info.movito.themoviedbapi.model.Artwork;
-import info.movito.themoviedbapi.model.MovieImages;
 import info.movito.themoviedbapi.model.people.PersonPeople;
-import info.movito.themoviedbapi.model.tv.TvEpisode;
 
 /**
- * Created by louis on 04/11/2015.
+ * Created by low on 09/11/2015.
  */
 public class FragmentPersonPeopleHeader extends Fragment {
     private PersonPeople personPeople;
