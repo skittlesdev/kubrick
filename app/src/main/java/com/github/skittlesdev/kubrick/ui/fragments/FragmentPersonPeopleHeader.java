@@ -39,10 +39,40 @@ public class FragmentPersonPeopleHeader extends Fragment {
         super.onStart();
 
         this.showName();
+        this.showJob();
+        this.showBirthAndDeath();
+        this.showPoster();
     }
 
     private void showName() {
         ((TextView) this.rootView.findViewById(R.id.personName)).setText(this.personPeople.getName());
+    }
+
+    private void showJob() {
+        ((TextView) this.rootView.findViewById(R.id.personJob)).setText(this.personPeople.getJob());
+    }
+
+    private void showBirthAndDeath() {
+        String birthAndDeath = "Born the ";
+        birthAndDeath += this.personPeople.getBirthday();
+        birthAndDeath += " at ";
+        birthAndDeath += this.personPeople.getBirthplace();
+        String death = this.personPeople.getDeathday();
+
+        if (!TextUtils.isEmpty(death)) {
+            birthAndDeath += "Dead the ";
+            birthAndDeath += death;
+        }
+
+        ((TextView) this.rootView.findViewById(R.id.personBirth)).setText(birthAndDeath);
+    }
+
+    private void showPoster() {
+        Glide.with(getActivity().getApplicationContext())
+                .load("http://image.tmdb.org/t/p/w500" + this.personPeople.getProfilePath())
+                .placeholder(R.drawable.poster_default_placeholder)
+                .error(R.drawable.poster_default_error)
+                .into((ImageView) rootView.findViewById(R.id.personPoster));
     }
 
     @Override
