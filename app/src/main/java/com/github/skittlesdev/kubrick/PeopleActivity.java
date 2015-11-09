@@ -41,6 +41,7 @@ public class PeopleActivity extends AppCompatActivity implements PeopleListener 
 
         this.person = (Person) this.getIntent().getBundleExtra("PERSON_OBJECT").getSerializable("person");
         this.task = new GetPersonPeople(this);
+        this.task.execute(this.person.getId());
 
         this.showBackdrop();
         this.showTitle();
@@ -49,8 +50,6 @@ public class PeopleActivity extends AppCompatActivity implements PeopleListener 
     @Override
     protected void onStart() {
         super.onStart();
-
-        this.task.execute(this.person.getId());
     }
 
     @Override
