@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/holo_blue_light"
     android:padding="8dp" >
 
     <ImageView
         android:id="@+id/seasonListIcon"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/ic_launcher" />
+         />
 
     <TextView
         android:id="@+id/seasonListName"
@@ -19,7 +20,7 @@
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@+id/seasonListIcon"
         android:text="name"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textSize="18sp" />
 
 </RelativeLayout>

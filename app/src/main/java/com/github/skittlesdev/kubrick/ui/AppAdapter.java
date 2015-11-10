@@ -1,44 +1,52 @@
 package com.github.skittlesdev.kubrick.ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
+import com.github.skittlesdev.kubrick.adapters.HomeActivityRecyclerAdapter;
 
 import java.util.List;
 
 import info.movito.themoviedbapi.model.tv.TvSeason;
+import info.movito.themoviedbapi.model.tv.TvSeries;
+
 
 public class AppAdapter extends BaseAdapter {
-
-    private List<TvSeason> seasonList;
+    private List<TvSeason> tvSeasons;
     private Context context;
 
-    public AppAdapter(List<TvSeason> seasonList, Context context) {
-        this.seasonList = seasonList;
-        this.context = context;
-    }
-
-    public List<TvSeason> getSeasonList() {
-        return seasonList;
-    }
-
-    public void setSeasonList(List<TvSeason> seasonList) {
-        this.seasonList = seasonList;
-    }
-
-    @Override
-    public int getCount() {
-        return seasonList.size();
+    public AppAdapter(List<TvSeason> tvSeasons) {
+        this.tvSeasons = tvSeasons;
     }
 
     @Override
     public TvSeason getItem(int position) {
-        return seasonList.get(position);
+        return tvSeasons.get(position);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = View.inflate(parent.getContext(),
+                    R.layout.season_list_item, null);
+            new ViewHolder(convertView);
+        }
+        ViewHolder holder = (ViewHolder) convertView.getTag();
+        TvSeason item = getItem(position);
+        holder.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getPosterPath()));
+        holder.name.setText(item.getName());
+        return convertView;
     }
 
     @Override
@@ -47,48 +55,40 @@ public class AppAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = View.inflate(context,
-                    R.layout.season_list_item, null);
-            new CustomSwipeViewHolder(convertView);
-        }
-
-        CustomSwipeViewHolder holder = (CustomSwipeViewHolder) convertView.getTag();
-        TvSeason item = getItem(position);
-        holder.getSeasonListName().setText(item.getName());
-        item.getPosterPath()
-        holder.getSeasonListIcon().setImageDrawable();
-        return convertView;
+    public int getCount() {
+        return tvSeasons.size();
     }
 
-    public class Viewholder {
-        ImageView seasonListIcon;
-        TextView seasonListName;
-
-        public Viewholder(View view) {
-            seasonListIcon = (ImageView) view.findViewById(R.id.seasonListIcon);
-            seasonListName = (TextView) view.findViewById(R.id.seasonListName);
-            view.setTag(this);
-        }
-
-        public ImageView getSeasonListIcon() {
-            return seasonListIcon;
-        }
-
-        public void setSeasonListIcon(ImageView seasonListIcon) {
-            this.seasonListIcon = seasonListIcon;
-        }
-
-        public TextView getSeasonListName() {
-            return seasonListName;
-        }
-
-        public void setSeasonListName(TextView seasonListName) {
-            this.seasonListName = seasonListName;
-        }
+    /*@Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        this.context = parent.getContext();
+        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.season_list_item, parent, false);
+        return new ViewHolder(layout);
     }
 
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.setItem(this.tvSeasons.get(position));
+        holder.setPoster(this.context);
+    }
+
+    @Override
+    public int getItemCount() {
+        return tvSeasons.size();
+    }*/
+
+    public static class ViewHolder {
+        public ImageView poster;
+        public TextView name;
+
+
+        public ViewHolder(View itemView) {
+            this.poster = (ImageView) itemView.findViewById(R.id.seasonListIcon);
+            this.name = (TextView) itemView.findViewById(R.id.seasonListName);
+            itemView.setTag(this);
+        }
+
+    }
 }
 
 

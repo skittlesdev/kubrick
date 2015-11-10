@@ -21,6 +21,7 @@ import android.util.TypedValue;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
@@ -72,8 +73,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     private MaterialCalendarView calendar;
     private boolean backPressed = false;
     private SwipeMenuListView listView;
-    private AppAdapter appAdpter;
-    private List<TvSeason> seasonList;
+    private List<TvSeason> tvSeasonList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,10 +243,11 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         };
 
 // set creator
-
-
         listView.setMenuCreator(creator);
-        listView.setAdapter(new AppAdapter(tvSeries.getSeasons(), getApplicationContext()));
+
+        this.tvSeasonList = tvSeries.getSeasons();
+        ListAdapter appAdapter = (ListAdapter) new AppAdapter(tvSeries.getSeasons());
+        listView.setAdapter(appAdapter);
 
         setUpSeasonList();
 
@@ -281,14 +282,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 //ApplicationInfo item = listView.get(position);
                 switch (index) {
                     case 0:
-                        // open
+                        Toast.makeText(getApplicationContext(), "fav", Toast.LENGTH_SHORT).show();
                        // open(item);
-                        break;
-                    case 1:
-                        // delete
-//					delete(item);
-                        //listView.remove(position);
-
                         break;
                 }
                 return false;
@@ -329,7 +324,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                            int position, long id) {
-                Toast.makeText(getApplicationContext(), position + " long click", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), tvSeasonList.get(position).getName() + " long click", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
