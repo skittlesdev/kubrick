@@ -49,6 +49,7 @@ import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener{
@@ -275,40 +276,39 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     }
 
     private void showSimilar(IdElement media) {
-        SimilarMoviesOverviewFragment similarFragment = new SimilarMoviesOverviewFragment();
-
-        Bundle similarFragmentArgs = new Bundle();
-        similarFragmentArgs.putString("type", "movie");
+        final FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        final SimilarMoviesOverviewFragment similarFragment = new SimilarMoviesOverviewFragment();
+        final Bundle similarFragmentArgs = new Bundle();
 
         if (media instanceof MovieDb) {
+            similarFragmentArgs.putString("type", "movie");
             List<MovieDb> similarMoviesList = ((MovieDb) media).getSimilarMovies();
             ArrayList<MovieDb> similarMoviesArrayList = new ArrayList<>(similarMoviesList.size());
             similarMoviesArrayList.addAll(similarMoviesList);
             similarFragmentArgs.putSerializable("movies", similarMoviesArrayList);
+
+            similarFragment.setArguments(similarFragmentArgs);
+            transaction.add(R.id.fragment_similar, similarFragment, "similar");
+            transaction.commit();
         }
         else {
+            similarFragmentArgs.putString("type", "tv");
 
-            // TODO similar tvseries
+            HashMap<String, String> params = new HashMap<>();
+            params.put("seriesId", String.valueOf(media.getId()));
+            ParseCloud.callFunctionInBackground("similarSeries", params, new FunctionCallback<HashMap>() {
+                @Override
+                public void done(HashMap results, ParseException e) {
+                    if (e == null) {
+                        similarFragmentArgs.putSerializable("series", results);
 
-            /*Client client = ClientBuilder.newClient();
-            Response response = client.target("http://api.themoviedb.org/3/tv/{id}/similar")
-                    .request(MediaType.TEXT_PLAIN_TYPE)
-                    .header("Accept", "application/json")
-                    .get();
-
-            System.out.println("status: " + response.getStatus());
-            System.out.println("headers: " + response.getHeaders());
-            System.out.println("body:" + response.readEntity(String.class));*/
-
-            //similarFragmentArgs.putSerializable("similar", ((TvSeries) media).getCredits());
+                        similarFragment.setArguments(similarFragmentArgs);
+                        transaction.add(R.id.fragment_similar, similarFragment, "similar");
+                        transaction.commit();
+                    }
+                }
+            });
         }
-
-        similarFragment.setArguments(similarFragmentArgs);
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_similar, similarFragment, "similar");
-
-        transaction.commit();
     }
 
     @Override
