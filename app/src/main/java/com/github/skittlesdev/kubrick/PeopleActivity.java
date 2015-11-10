@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.asyncs.GetPersonPeople;
 import com.github.skittlesdev.kubrick.interfaces.PeopleListener;

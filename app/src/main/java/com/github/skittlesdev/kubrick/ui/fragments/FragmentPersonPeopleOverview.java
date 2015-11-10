@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.github.skittlesdev.kubrick.R;
 
 import info.movito.themoviedbapi.model.people.PersonPeople;

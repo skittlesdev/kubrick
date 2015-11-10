@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
-import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesInfo;
