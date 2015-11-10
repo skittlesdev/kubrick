@@ -1,43 +1,44 @@
+package com.github.skittlesdev.kubrick.ui;
+
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.github.skittlesdev.kubrick.R;
 
 import java.util.List;
 
-class AppAdapter extends BaseAdapter {
+import info.movito.themoviedbapi.model.tv.TvSeason;
 
-    private List<ApplicationInfo> mAppList;
+public class AppAdapter extends BaseAdapter {
+
+    private List<TvSeason> seasonList;
     private Context context;
 
-
-    public Context getContext() {
-        return context;
-    }
-
-    public void setContext(Context context) {
+    public AppAdapter(List<TvSeason> seasonList, Context context) {
+        this.seasonList = seasonList;
         this.context = context;
     }
 
-    public List<ApplicationInfo> getmAppList() {
-        return mAppList;
+    public List<TvSeason> getSeasonList() {
+        return seasonList;
     }
 
-    public void setmAppList(List<ApplicationInfo> mAppList) {
-        this.mAppList = mAppList;
+    public void setSeasonList(List<TvSeason> seasonList) {
+        this.seasonList = seasonList;
     }
 
     @Override
     public int getCount() {
-        return mAppList.size();
+        return seasonList.size();
     }
 
     @Override
-    public ApplicationInfo getItem(int position) {
-        return mAppList.get(position);
+    public TvSeason getItem(int position) {
+        return seasonList.get(position);
     }
 
     @Override
@@ -49,24 +50,45 @@ class AppAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = View.inflate(context,
-                    R.layout.item_list_app, null);
-            new ViewHolder(convertView);
+                    R.layout.season_list_item, null);
+            new CustomSwipeViewHolder(convertView);
         }
-        ViewHolder holder = (ViewHolder) convertView.getTag();
-        ApplicationInfo item = getItem(position);
-        holder.iv_icon.setImageDrawable(item.loadIcon(getPackageManager()));
-        holder.tv_name.setText(item.loadLabel(getPackageManager()));
+
+        CustomSwipeViewHolder holder = (CustomSwipeViewHolder) convertView.getTag();
+        TvSeason item = getItem(position);
+        holder.getSeasonListName().setText(item.getName());
+        item.getPosterPath()
+        holder.getSeasonListIcon().setImageDrawable();
         return convertView;
     }
 
-    class ViewHolder {
-        ImageView iv_icon;
-        TextView tv_name;
+    public class Viewholder {
+        ImageView seasonListIcon;
+        TextView seasonListName;
 
-        public ViewHolder(View view) {
-            iv_icon = (ImageView) view.findViewById(R.id.iv_icon);
-            tv_name = (TextView) view.findViewById(R.id.tv_name);
+        public Viewholder(View view) {
+            seasonListIcon = (ImageView) view.findViewById(R.id.seasonListIcon);
+            seasonListName = (TextView) view.findViewById(R.id.seasonListName);
             view.setTag(this);
         }
+
+        public ImageView getSeasonListIcon() {
+            return seasonListIcon;
+        }
+
+        public void setSeasonListIcon(ImageView seasonListIcon) {
+            this.seasonListIcon = seasonListIcon;
+        }
+
+        public TextView getSeasonListName() {
+            return seasonListName;
+        }
+
+        public void setSeasonListName(TextView seasonListName) {
+            this.seasonListName = seasonListName;
+        }
     }
+
 }
+
+
