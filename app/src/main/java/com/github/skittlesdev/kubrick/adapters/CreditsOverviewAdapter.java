@@ -16,6 +16,8 @@ import com.github.skittlesdev.kubrick.PeopleActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.parse.ParseObject;
 import info.movito.themoviedbapi.model.people.Person;
+import info.movito.themoviedbapi.model.people.PersonCast;
+import info.movito.themoviedbapi.model.people.PersonCrew;
 
 import java.util.List;
 
@@ -48,6 +50,7 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView profile;
         private TextView name;
+        private TextView job;
         private Person item;
 
         public ViewHolder(View itemView) {
@@ -56,6 +59,7 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
             this.profile = (SimpleDraweeView) itemView.findViewById(R.id.moviePoster);
             this.profile.setOnClickListener(this);
             this.name = (TextView) itemView.findViewById(R.id.name);
+            this.job = (TextView) itemView.findViewById(R.id.personJob);
         }
 
         public void setProfile(Context context) {
@@ -65,6 +69,12 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
         public void setItem(Person item) {
             this.item = item;
             this.name.setText(item.getName());
+
+            if (this.item instanceof PersonCrew) {
+                this.job.setText(((PersonCrew) this.item).getJob());
+            } else {
+                this.job.setVisibility(View.GONE);
+            }
         }
 
         @Override

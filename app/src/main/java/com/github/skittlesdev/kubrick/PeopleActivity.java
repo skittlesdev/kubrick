@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.widget.ImageView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.asyncs.GetPersonPeople;
@@ -32,6 +31,9 @@ public class PeopleActivity extends AppCompatActivity implements PeopleListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_people);
+
+        this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitleEnabled(false);

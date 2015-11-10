@@ -12,13 +12,13 @@
     <string name="closeDrawer">2</string>
     <string name="tmdb_api_key">0d1d0cc3c4aec9ca1c2c8c9e781a7ef1</string>
     <string name="title_activity_search">SearchActivity</string>
-    <string name="search_hint">Search terms</string>
+    <string name="search_hint">Search terms...</string>
     <string name="navigation_drawer_icon">Icon</string>
     <string name="navigation_drawer_title">Title</string>
     <string name="movie_overview_content">-</string>
     <string name="movie_overview_title">Overview</string>
-    <string name="movie_release_date">(Date)</string>
-    <string name="movie_duration">0:0</string>
+    <string name="movie_release_date">[Date]</string>
+    <string name="movie_duration">0 hr 00 min</string>
     <string name="movie_genres">Genres</string>
     <string name="movie_title">Movie Title</string>
     <string name="movie_poster_picture_content_description">Movie poster</string>
@@ -36,5 +36,8 @@
     <string name="credits_picture_default">Person picture</string>
     <string name="credits_name_default">-</string>
     <string name="person_name_default">Name</string>
+    <string name="person_job_default">Job</string>
+    <string name="person_birth_default">Birth</string>
+    <string name="person_death_default">Death</string>
 </resources>
 

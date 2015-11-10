@@ -130,8 +130,6 @@ public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisode
     }
 
     public void handleWatch(View v) {
-        Toast.makeText(v.getContext(), "YOU LOST. >:3", Toast.LENGTH_SHORT).show();
-
         ParseObject favorite = new ParseObject("ViewedTvSeriesEpisodes");
         ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
         acl.setPublicReadAccess(true);
