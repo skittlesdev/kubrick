@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -13,9 +14,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeOverview;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeHeader;
-import com.bumptech.glide.Glide;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -97,11 +98,7 @@ public class SerieEpisodeActivity extends AppCompatActivity {
             path = this.serieBackdroptPath;
         }
 
-        Glide.with(this.getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + path)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) this.findViewById(R.id.episodeBackDropPicture));
+        ((SimpleDraweeView) findViewById(R.id.episodeBackDropPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + path));
     }
 
     @Override
