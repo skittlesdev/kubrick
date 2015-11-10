@@ -61,4 +61,5 @@ dependencies {
     compile 'com.github.vlonjatg:progress-activity:v1.0.3'
     compile 'com.android.support:cardview-v7:23.1.0'
     compile 'com.prolificinteractive:material-calendarview:1.1.0' // https://github.com/prolificinteractive/material-calendarview
+    compile 'com.baoyz.swipemenulistview:library:1.3.0'
 }

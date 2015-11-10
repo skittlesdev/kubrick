@@ -2,7 +2,9 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,11 +16,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.*;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
+
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesInfo;
@@ -59,6 +68,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     private FavoriteState favoriteState;
     private MaterialCalendarView calendar;
     private boolean backPressed = false;
+    private SwipeMenuListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +99,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             mediaType = segments.get(0);
             this.mediaId = Integer.valueOf(segments.get(1));
         }
+
+        listView = (SwipeMenuListView) findViewById(R.id.mediaSeasonList);
 
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
         calendar.setOnDateChangedListener(this);
@@ -188,6 +200,155 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 new CalendarViewSeriesPlanningDecoratorNextEpisodes(R.color.light_orange, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
         );
+
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "open" item
+                SwipeMenuItem openItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
+                        0xCE)));
+                // set item width
+                openItem.setWidth(dp2px(90));
+                // set item title
+                openItem.setTitle("Open");
+                // set item title fontsize
+                openItem.setTitleSize(18);
+                // set item title font color
+                openItem.setTitleColor(Color.WHITE);
+                // add to menu
+                menu.addMenuItem(openItem);
+
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                        0x3F, 0x25)));
+                // set item width
+                deleteItem.setWidth(dp2px(90));
+                // set a icon
+                deleteItem.setIcon(R.drawable.ptr_rotate_arrow);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+
+// set creator
+
+        listView.setMenuCreator(creator);
+        //listView.add
+
+    }
+
+    private void setUpSeasonList(){
+        // step 1. create a MenuCreator
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "open" item
+                SwipeMenuItem openItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
+                        0xCE)));
+                // set item width
+                openItem.setWidth(dp2px(90));
+                // set item title
+                openItem.setTitle("Open");
+                // set item title fontsize
+                openItem.setTitleSize(18);
+                // set item title font color
+                openItem.setTitleColor(Color.WHITE);
+                // add to menu
+                menu.addMenuItem(openItem);
+
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                        0x3F, 0x25)));
+                // set item width
+                deleteItem.setWidth(dp2px(90));
+                // set a icon
+                deleteItem.setIcon(R.drawable.ptr_rotate_arrow);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+        // set creator
+        listView.setMenuCreator(creator);
+
+        // step 2. listener item click event
+        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                //ApplicationInfo item = listView.get(position);
+                switch (index) {
+                    case 0:
+                        // open
+                       // open(item);
+                        break;
+                    case 1:
+                        // delete
+//					delete(item);
+                        //listView.remove(position);
+
+                        break;
+                }
+                return false;
+            }
+        });
+
+        // set SwipeListener
+        listView.setOnSwipeListener(new SwipeMenuListView.OnSwipeListener() {
+
+            @Override
+            public void onSwipeStart(int position) {
+                // swipe start
+            }
+
+            @Override
+            public void onSwipeEnd(int position) {
+                // swipe end
+            }
+        });
+
+        // set MenuStateChangeListener
+        listView.setOnMenuStateChangeListener(new SwipeMenuListView.OnMenuStateChangeListener() {
+            @Override
+            public void onMenuOpen(int position) {
+            }
+
+            @Override
+            public void onMenuClose(int position) {
+            }
+        });
+
+        // other setting
+//		listView.setCloseInterpolator(new BounceInterpolator());
+
+        // test item long click
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           int position, long id) {
+                Toast.makeText(getApplicationContext(), position + " long click", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+    }
+
+
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics());
     }
 
     @Override
