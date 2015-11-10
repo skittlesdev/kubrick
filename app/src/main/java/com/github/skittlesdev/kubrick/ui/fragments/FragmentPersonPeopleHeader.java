@@ -1,6 +1,7 @@
 package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -9,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.R;
 
 import info.movito.themoviedbapi.model.people.PersonPeople;
@@ -62,11 +63,7 @@ public class FragmentPersonPeopleHeader extends Fragment {
     }
 
     private void showPoster() {
-        Glide.with(getActivity().getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + this.personPeople.getProfilePath())
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) rootView.findViewById(R.id.personPoster));
+        ((SimpleDraweeView) rootView.findViewById(R.id.personPoster)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + this.personPeople.getProfilePath()));
     }
 
     @Override

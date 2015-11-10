@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -13,9 +14,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.skittlesdev.kubrick.asyncs.GetTvEpisodeTask;
+import com.github.skittlesdev.kubrick.interfaces.TvEpisodeListener;
+import com.github.skittlesdev.kubrick.models.SeriesEpisode;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeOverview;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeHeader;
-import com.bumptech.glide.Glide;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -31,7 +35,7 @@ import info.movito.themoviedbapi.model.tv.TvEpisode;
 /**
  * Created by louis on 11/6/15.
  */
-public class SerieEpisodeActivity extends AppCompatActivity {
+public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisodeListener {
     private TvEpisode tvEpisode = null;
     private String seriePosterPath;
     private String serieBackdroptPath;
@@ -44,10 +48,19 @@ public class SerieEpisodeActivity extends AppCompatActivity {
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.tvEpisode = (TvEpisode) this.getIntent().getSerializableExtra("tvEpisode");
+
         this.seriePosterPath = this.getIntent().getStringExtra("seriePoster");
         this.serieBackdroptPath = this.getIntent().getStringExtra("serieBackdrop");
 
+        SeriesEpisode episodeRequest = (SeriesEpisode) getIntent().getSerializableExtra("tvEpisode");
+        GetTvEpisodeTask task = new GetTvEpisodeTask(this);
+        task.execute(episodeRequest);
+    }
+
+
+    @Override
+    public void onTvEpisode(TvEpisode episode) {
+        this.tvEpisode = episode;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         Bundle optionsHeader = new Bundle();
@@ -97,11 +110,7 @@ public class SerieEpisodeActivity extends AppCompatActivity {
             path = this.serieBackdroptPath;
         }
 
-        Glide.with(this.getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + path)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) this.findViewById(R.id.episodeBackDropPicture));
+        ((SimpleDraweeView) findViewById(R.id.episodeBackDropPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + path));
     }
 
     @Override

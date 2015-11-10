@@ -7,22 +7,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
-import com.parse.ParseObject;
-import info.movito.themoviedbapi.model.MovieDb;
-import info.movito.themoviedbapi.model.tv.TvSeries;
 
 import java.util.List;
 
-public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOverviewAdapter.ViewHolder> {
-    private List<ParseObject> favorites;
+import info.movito.themoviedbapi.model.MovieDb;
+
+public class SimilarMoviesOverviewAdapter extends RecyclerView.Adapter<SimilarMoviesOverviewAdapter.ViewHolder> {
+    private List<MovieDb> movies;
     private Context context;
 
-    public FavoritesOverviewAdapter(List<ParseObject> favorites) {
-        this.favorites = favorites;
+    public SimilarMoviesOverviewAdapter(List<MovieDb> movies) {
+        this.movies = movies;
     }
 
     @Override
@@ -34,27 +33,30 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.setItem(this.favorites.get(position));
-        holder.setPoster(this.context);
+        holder.setItem(this.movies.get(position));
+        holder.setposter(this.context);
     }
 
     @Override
     public int getItemCount() {
-        return favorites.size();
+        return this.movies.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView poster;
-        private ParseObject item;
+        private MovieDb item;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.poster = (SimpleDraweeView) itemView.findViewById(R.id.moviePoster);
             this.poster.setOnClickListener(this);
         }
+        public void setposter(Context context) {
+            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + item.getPosterPath()));
+        }
 
-        public void setPoster(Context context) {
-            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getString("poster_path")));
+        public void setItem(MovieDb item) {
+            this.item = item;
         }
 
         @Override
@@ -62,22 +64,10 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
             Context context = view.getContext();
 
             Intent intent = new Intent(context, MediaActivity.class);
-
-            if(this.item.has("tmdb_movie_id")){
-                intent.putExtra("MEDIA_TYPE", "movie");
-                intent.putExtra("MEDIA_ID", this.item.getInt("tmdb_movie_id"));
-            }
-
-            if(this.item.has("tmdb_series_id")){
-                intent.putExtra("MEDIA_TYPE", "tv");
-                intent.putExtra("MEDIA_ID", this.item.getInt("tmdb_series_id"));
-            }
+            intent.putExtra("MEDIA_TYPE", "movie");
+            intent.putExtra("MEDIA_ID", this.item.getId());
 
             context.startActivity(intent);
-        }
-
-        public void setItem(ParseObject item) {
-            this.item = item;
         }
     }
 }

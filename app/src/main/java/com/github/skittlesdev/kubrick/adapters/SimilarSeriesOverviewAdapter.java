@@ -7,45 +7,44 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
-import com.parse.ParseObject;
-import info.movito.themoviedbapi.model.MovieDb;
-import info.movito.themoviedbapi.model.tv.TvSeries;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
-public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOverviewAdapter.ViewHolder> {
-    private List<ParseObject> favorites;
-    private Context context;
+/**
+ * Created by Hugo Caille on 10/11/2015.
+ */
+public class SimilarSeriesOverviewAdapter extends RecyclerView.Adapter<SimilarSeriesOverviewAdapter.ViewHolder> {
+    private List<HashMap<String, Object>> results;
 
-    public FavoritesOverviewAdapter(List<ParseObject> favorites) {
-        this.favorites = favorites;
+    public SimilarSeriesOverviewAdapter(HashMap<String, Object> series) {
+        this.results = (List<HashMap<String, Object>>) series.get("results");
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        this.context = parent.getContext();
         View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.favorites_layout, parent, false);
         return new ViewHolder(layout);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.setItem(this.favorites.get(position));
-        holder.setPoster(this.context);
+        holder.setItem(this.results.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return favorites.size();
+        return this.results.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView poster;
-        private ParseObject item;
+        private HashMap<String, Object> item;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -53,8 +52,9 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
             this.poster.setOnClickListener(this);
         }
 
-        public void setPoster(Context context) {
-            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getString("poster_path")));
+        public void setItem(HashMap<String, Object> item) {
+            this.item = item;
+            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + item.get("poster_path")));
         }
 
         @Override
@@ -62,22 +62,10 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
             Context context = view.getContext();
 
             Intent intent = new Intent(context, MediaActivity.class);
-
-            if(this.item.has("tmdb_movie_id")){
-                intent.putExtra("MEDIA_TYPE", "movie");
-                intent.putExtra("MEDIA_ID", this.item.getInt("tmdb_movie_id"));
-            }
-
-            if(this.item.has("tmdb_series_id")){
-                intent.putExtra("MEDIA_TYPE", "tv");
-                intent.putExtra("MEDIA_ID", this.item.getInt("tmdb_series_id"));
-            }
+            intent.putExtra("MEDIA_TYPE", "tv");
+            intent.putExtra("MEDIA_ID", (int) this.item.get("id"));
 
             context.startActivity(intent);
-        }
-
-        public void setItem(ParseObject item) {
-            this.item = item;
         }
     }
 }
