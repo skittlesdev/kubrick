@@ -18,6 +18,7 @@
         android:layout_width="112dp"
         android:layout_height="match_parent"
         fresco:placeholderImage="@drawable/poster_default_placeholder"
+        fresco:placeholderImageScaleType="centerCrop"
         fresco:failureImage="@drawable/poster_default_error"
         android:src="@drawable/poster_default_placeholder" />
 

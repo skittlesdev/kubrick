@@ -31,11 +31,11 @@
     <com.facebook.drawee.view.SimpleDraweeView
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/ic_launcher"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginTop="38dp"
         android:id="@+id/circleView"
         fresco:roundAsCircle="true"
-        fresco:placeholderImage="@drawable/poster_default_placeholder"
+        fresco:placeholderImage="@drawable/ic_launcher"
+        fresco:placeholderImageScaleType="centerCrop"
         fresco:failureImage="@drawable/poster_default_error"/>
 </RelativeLayout>

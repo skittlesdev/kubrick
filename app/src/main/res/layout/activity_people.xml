@@ -38,6 +38,7 @@
                     android:background="@drawable/poster_default_placeholder"
                     android:fitsSystemWindows="true"
                     fresco:placeholderImage="@drawable/poster_default_placeholder"
+                    fresco:placeholderImageScaleType="centerCrop"
                     fresco:failureImage="@drawable/poster_default_error"
                     app:layout_collapseMode="parallax"/>
 
