@@ -1,25 +1,20 @@
 package com.github.skittlesdev.kubrick.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
-import com.github.skittlesdev.kubrick.adapters.HomeActivityRecyclerAdapter;
+
 
 import java.util.List;
 
 import info.movito.themoviedbapi.model.tv.TvSeason;
-import info.movito.themoviedbapi.model.tv.TvSeries;
+
 
 
 public class AppAdapter extends BaseAdapter {
@@ -46,6 +41,7 @@ public class AppAdapter extends BaseAdapter {
         TvSeason item = getItem(position);
         holder.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getPosterPath()));
         holder.name.setText(item.getName());
+        Log.d("getView", "erggergregerg");
         return convertView;
     }
 

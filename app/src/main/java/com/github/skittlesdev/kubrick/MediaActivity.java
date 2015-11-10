@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.*;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -72,8 +74,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     private FavoriteState favoriteState;
     private MaterialCalendarView calendar;
     private boolean backPressed = false;
-    private SwipeMenuListView listView;
-    private List<TvSeason> tvSeasonList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +94,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         FloatingActionButton favoriteFab = (FloatingActionButton) this.findViewById(R.id.favoriteFab);
         favoriteFab.setOnClickListener(this);
 
+        Button button = (Button) findViewById(R.id.seasonListButton);
+        button.setOnClickListener(this);
+
         String mediaType;
 
         if (getIntent().hasExtra("MEDIA_ID") && getIntent().hasExtra("MEDIA_TYPE")) {
@@ -105,8 +109,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             this.mediaId = Integer.valueOf(segments.get(1));
         }
 
-        listView = (SwipeMenuListView) findViewById(R.id.seasonList);
-
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
         calendar.setOnDateChangedListener(this);
         calendar.setSelectionColor(getResources().getColor(R.color.light_orange));
@@ -116,9 +118,12 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             ((GetSeriesTask) this.task).execute(this.mediaId);
         }
         else {
+            button.setVisibility(View.INVISIBLE);
             this.task = new GetMovieTask(this);
             ((GetMovieTask) this.task).execute(this.mediaId);
         }
+
+
     }
 
     @Override
@@ -205,136 +210,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 new CalendarViewSeriesPlanningDecoratorNextEpisodes(R.color.light_orange, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
                 new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
         );
-
-        SwipeMenuCreator creator = new SwipeMenuCreator() {
-
-            @Override
-            public void create(SwipeMenu menu) {
-                // create "open" item
-                SwipeMenuItem openItem = new SwipeMenuItem(
-                        getApplicationContext());
-                // set item background
-                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
-                        0xCE)));
-                // set item width
-                openItem.setWidth(dp2px(90));
-                // set item title
-                openItem.setTitle("Open");
-                // set item title fontsize
-                openItem.setTitleSize(18);
-                // set item title font color
-                openItem.setTitleColor(Color.WHITE);
-                // add to menu
-                menu.addMenuItem(openItem);
-
-                // create "delete" item
-                SwipeMenuItem deleteItem = new SwipeMenuItem(
-                        getApplicationContext());
-                // set item background
-                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
-                        0x3F, 0x25)));
-                // set item width
-                deleteItem.setWidth(dp2px(90));
-                // set a icon
-                deleteItem.setIcon(R.drawable.ptr_rotate_arrow);
-                // add to menu
-                menu.addMenuItem(deleteItem);
-            }
-        };
-
-// set creator
-        listView.setMenuCreator(creator);
-
-        this.tvSeasonList = tvSeries.getSeasons();
-        ListAdapter appAdapter = (ListAdapter) new AppAdapter(tvSeries.getSeasons());
-        listView.setAdapter(appAdapter);
-
-        setUpSeasonList();
-
-    }
-
-    private void setUpSeasonList(){
-        // step 1. create a MenuCreator
-        SwipeMenuCreator creator = new SwipeMenuCreator() {
-            @Override
-            public void create(SwipeMenu menu) {
-
-                // create "delete" item
-                SwipeMenuItem deleteItem = new SwipeMenuItem(
-                        getApplicationContext());
-                // set item background
-                deleteItem.setBackground(new ColorDrawable(Color.WHITE));
-                // set item width
-                deleteItem.setWidth(dp2px(90));
-                // set a icon
-                deleteItem.setIcon(R.drawable.ic_heart);
-                // add to menu
-                menu.addMenuItem(deleteItem);
-            }
-        };
-        // set creator
-        listView.setMenuCreator(creator);
-
-        // step 2. listener item click event
-        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                //ApplicationInfo item = listView.get(position);
-                switch (index) {
-                    case 0:
-                        Toast.makeText(getApplicationContext(), "fav", Toast.LENGTH_SHORT).show();
-                       // open(item);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        // set SwipeListener
-        listView.setOnSwipeListener(new SwipeMenuListView.OnSwipeListener() {
-
-            @Override
-            public void onSwipeStart(int position) {
-                // swipe start
-            }
-
-            @Override
-            public void onSwipeEnd(int position) {
-                // swipe end
-            }
-        });
-
-        // set MenuStateChangeListener
-        listView.setOnMenuStateChangeListener(new SwipeMenuListView.OnMenuStateChangeListener() {
-            @Override
-            public void onMenuOpen(int position) {
-            }
-
-            @Override
-            public void onMenuClose(int position) {
-            }
-        });
-
-        // other setting
-//		listView.setCloseInterpolator(new BounceInterpolator());
-
-        // test item long click
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long id) {
-                Toast.makeText(getApplicationContext(), tvSeasonList.get(position).getName() + " long click", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
-
-    }
-
-
-    private int dp2px(int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-                getResources().getDisplayMetrics());
     }
 
     @Override
@@ -406,6 +281,26 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 });
             }
         }
+
+        if(v.getId() == R.id.seasonListButton){
+
+            Intent intentE = new Intent(getApplication().getApplicationContext(), EpisodeListActivity.class);
+
+            Bundle bundleE = new Bundle();
+            bundleE.putSerializable("tvSerie", (TvSeries) media);
+
+            intentE.putExtras(bundleE);
+
+            startActivity(intentE);
+           //finish();
+
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        System.out.print('e');
+        //super.onSaveInstanceState(outState);
     }
 
     private void showBackdrop(IdElement mMedia) {

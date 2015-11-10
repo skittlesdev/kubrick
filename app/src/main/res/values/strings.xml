@@ -36,5 +36,6 @@
     <string name="credits_picture_default">Person picture</string>
     <string name="credits_name_default">-</string>
     <string name="person_name_default">Name</string>
+    <string name="seasonListButton">Season list</string>
 </resources>
 
