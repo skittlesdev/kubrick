@@ -80,8 +80,6 @@ public class HomeActivityRecyclerAdapter extends
             super(itemView);
             this.moviePoster = (SimpleDraweeView) itemView.findViewById(R.id.moviePoster);
             this.moviePoster.setOnClickListener(this);
-            Log.d("KUBRICK", String.valueOf(itemView.getHeight()));
-            Log.d("KUBRICK", String.valueOf(itemView.getWidth()));
         }
 
         @Override
