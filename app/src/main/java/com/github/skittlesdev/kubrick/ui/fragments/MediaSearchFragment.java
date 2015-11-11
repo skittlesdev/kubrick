@@ -89,5 +89,6 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
             intent.putExtra("MEDIA_TYPE", "tv");
             startActivity(intent);
         }
+        getFragmentManager().beginTransaction().remove(this).commit();
     }
 }
