@@ -128,6 +128,7 @@ public class SerieEpisodeActivity extends AppCompatActivity {
         favorite.put("SeasonNumber", this.tvEpisode.getSeasonNumber());
         favorite.put("EpisodeNumber", this.tvEpisode.getEpisodeNumber());
         favorite.put("EpisodeId", this.tvEpisode.getId());
+        favorite.put("AirDate", this.tvEpisode.getAirDate());
 
         favorite.setACL(acl);
         favorite.saveInBackground(new SaveCallback() {
