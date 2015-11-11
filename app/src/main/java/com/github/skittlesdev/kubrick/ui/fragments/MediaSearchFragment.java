@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.asyncs.SearchMediaTask;
@@ -48,6 +49,8 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
         if (this.searchTask != null) {
             this.searchTask.cancel(true);
         }
+
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

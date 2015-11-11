@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.ui.dialog.PosterFullScreenDialog;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
@@ -168,5 +169,11 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
         Drawable drawable = this.posterView.getDrawable();
         PosterFullScreenDialog posterDialog = new PosterFullScreenDialog(getActivity(), drawable);
         posterDialog.show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

@@ -1,6 +1,7 @@
 package com.github.skittlesdev.kubrick;
 
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,9 +15,11 @@ import com.github.skittlesdev.kubrick.ui.fragments.FragmentHome;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.newrelic.agent.android.NewRelic;
+import com.squareup.leakcanary.RefWatcher;
 
 public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

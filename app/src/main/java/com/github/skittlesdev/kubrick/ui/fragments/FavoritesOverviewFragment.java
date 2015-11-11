@@ -83,4 +83,11 @@ public class FavoritesOverviewFragment extends Fragment {
     public void onEvent(FavoriteStateEvent event) {
         fetchItems();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getEventBus().unregister(this);
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
+    }
 }

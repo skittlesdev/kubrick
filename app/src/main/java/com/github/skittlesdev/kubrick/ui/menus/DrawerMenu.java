@@ -31,7 +31,7 @@ public class DrawerMenu {
         this.layout = layout;
         this.view = view;
 
-        KubrickApplication.getEventBus().register(this);
+        // KubrickApplication.getEventBus().register(this);
     }
 
     public void draw() {

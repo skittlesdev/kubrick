@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 
 import java.text.ParseException;
@@ -106,5 +107,11 @@ public class FragmentPersonPeopleHeader extends Fragment {
         this.rootView = inflater.inflate(R.layout.fragment_person_people_header, container, false);
 
         return this.rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 
 import java.text.DecimalFormat;
@@ -111,5 +112,11 @@ public class FragmentTvEpisodeHeader extends Fragment {
                 new DecimalFormat("00").format(this.tvEpisode.getSeasonNumber()) + "E" +
                 new DecimalFormat("00").format(this.tvEpisode.getEpisodeNumber()) + "]";
         episodeNumberContainer.setText(episodeNumber);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

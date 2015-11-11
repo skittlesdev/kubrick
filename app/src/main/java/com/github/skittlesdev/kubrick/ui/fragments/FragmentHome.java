@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.HomeActivityRecyclerAdapter;
 import com.github.skittlesdev.kubrick.asyncs.TmdbApiTask;
@@ -65,5 +66,6 @@ public class FragmentHome extends Fragment implements DataListener {
         if (this.tmdbApiTask != null) {
             this.tmdbApiTask.cancel(true);
         }
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

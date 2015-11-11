@@ -124,6 +124,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     @Override
     public void onDestroy() {
         super.onDestroy();
+        KubrickApplication.getEventBus().unregister(this);
         if (this.task != null) {
             this.task.cancel(true);
         }

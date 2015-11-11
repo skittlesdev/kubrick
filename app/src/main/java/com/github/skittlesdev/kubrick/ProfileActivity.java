@@ -259,4 +259,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         final Button toggle = (Button) findViewById(R.id.followToggle);
         toggle.setVisibility(View.INVISIBLE);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getEventBus().unregister(this);
+    }
 }

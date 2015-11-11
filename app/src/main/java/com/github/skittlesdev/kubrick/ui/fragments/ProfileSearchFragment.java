@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.ProfileActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.parse.FindCallback;
@@ -63,5 +64,12 @@ public class ProfileSearchFragment extends Fragment implements AdapterView.OnIte
         Intent profileIntent = new Intent(getActivity(), ProfileActivity.class);
         profileIntent.putExtra("user_id", user.getObjectId());
         startActivity(profileIntent);
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

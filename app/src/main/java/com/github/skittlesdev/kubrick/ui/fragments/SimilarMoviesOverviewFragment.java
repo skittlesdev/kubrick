@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.CreditsOverviewAdapter;
 import com.github.skittlesdev.kubrick.adapters.SimilarMoviesOverviewAdapter;
@@ -57,5 +58,12 @@ public class SimilarMoviesOverviewFragment extends Fragment {
         }
 
         return layout;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }
