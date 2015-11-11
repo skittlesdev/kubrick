@@ -74,7 +74,7 @@ public class FragmentTvEpisodeHeader extends Fragment {
             path = this.seriePosterPath;
         }
 
-        ((SimpleDraweeView) this.rootView.findViewById(R.id.tvEpisodePoster)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + path));
+        ((SimpleDraweeView) this.rootView.findViewById(R.id.tvEpisodePoster)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w154" + path));
     }
 
     private void showTitle() {

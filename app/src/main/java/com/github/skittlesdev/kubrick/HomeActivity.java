@@ -33,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
 
         FragmentHome fragmentHome = new FragmentHome();
 
-        transaction.add(R.id.homeContainer, fragmentHome);
+        transaction.replace(R.id.homeContainer, fragmentHome);
         transaction.commit();
 
         this.toolbar = (Toolbar) this.findViewById(R.id.toolBar);

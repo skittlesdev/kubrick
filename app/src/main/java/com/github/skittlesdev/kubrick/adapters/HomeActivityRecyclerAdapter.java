@@ -58,13 +58,7 @@ public class HomeActivityRecyclerAdapter extends
 
         holder.element = element;
 
-        poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + posterPath));
-
-        /*Glide.with(this.mContext)
-                .load("http://image.tmdb.org/t/p/w185" + posterPath)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into(poster);*/
+        poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w154" + posterPath));
     }
 
     @Override

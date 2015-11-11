@@ -80,8 +80,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 seriesFavorites.setArguments(seriesFavoritesArgs);
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(R.id.fragment_movies, movieFavorites, "movies");
-                transaction.add(R.id.fragment_series, seriesFavorites, "series");
+                transaction.replace(R.id.fragment_movies, movieFavorites, "movies");
+                transaction.replace(R.id.fragment_series, seriesFavorites, "series");
                 transaction.commitAllowingStateLoss();
             }
         });

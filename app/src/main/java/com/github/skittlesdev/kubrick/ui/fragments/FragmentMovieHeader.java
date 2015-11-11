@@ -71,7 +71,7 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
             posterPath = ((TvSeries) media).getPosterPath();
         }
 
-        ((SimpleDraweeView) rootView.findViewById(R.id.moviePosterPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + posterPath));
+        ((SimpleDraweeView) rootView.findViewById(R.id.moviePosterPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w154" + posterPath));
     }
 
     private void showTitle() {
