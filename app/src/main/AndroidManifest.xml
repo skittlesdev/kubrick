@@ -37,6 +37,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity" />
+        <activity android:name=".SeasonListActivity" />
         <activity android:name=".EpisodeListActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".LoginActivity" />

@@ -15,7 +15,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.github.skittlesdev.kubrick.ui.EpisodeListAdapter;
+import com.github.skittlesdev.kubrick.ui.SeasonListAdapter;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -24,40 +24,36 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeason;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
 /**
- * Created by louis on 11/11/2015.
+ * Created by louis on 10/11/2015.
  */
-public class EpisodeListActivity extends AppCompatActivity {
+public class SeasonListActivity extends AppCompatActivity {
 
     private SwipeMenuListView listView;
     private TvSeries tvSeries;
-    private TvSeason tvSeason;
-    private List<TvEpisode> tvEpisodeList;
+    private List<TvSeason> tvSeasonList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.serie_episode_list_main);
-        tvSeason = (TvSeason) getIntent().getExtras().getSerializable("tvSeason");
-        tvSeries = (TvSeries) getIntent().getExtras().getSerializable("tvSeries");
+        tvSeries = (TvSeries) getIntent().getExtras().getSerializable("tvSerie");
 
         listView = (SwipeMenuListView) findViewById(R.id.seasonList);
 
-        this.tvEpisodeList = this.tvSeason.getEpisodes();
-
-        ListAdapter appAdapter = new EpisodeListAdapter(tvEpisodeList);
+        this.tvSeasonList = this.tvSeries.getSeasons();
+        ListAdapter appAdapter = new SeasonListAdapter(tvSeries.getSeasons());
         listView.setAdapter(appAdapter);
 
-        setUpEpisodeList();
+        setUpSeasonList();
 
     }
 
-    private void setUpEpisodeList(){
+    private void setUpSeasonList(){
         SwipeMenuCreator creator = new SwipeMenuCreator() {
             @Override
             public void create(SwipeMenu menu) {
@@ -75,46 +71,45 @@ public class EpisodeListActivity extends AppCompatActivity {
         listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                TvEpisode item = tvEpisodeList.get(position);
+                TvSeason item = tvSeasonList.get(position);
                 switch (index) {
                     case 0:
-                        setEpisodeAsWatched(tvSeries, tvSeason, item);
+                        setSeasonAsWatched(tvSeries,item);
+                        Toast.makeText(KubrickApplication.getContext(), "Season set as watched", Toast.LENGTH_SHORT).show();
                         break;
                 }
                 return false;
             }
         });
 
-
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                TvEpisode tvEpisode = tvEpisodeList.get(position);
+                Intent intent = new Intent(getApplication().getApplicationContext(), EpisodeListActivity.class);
+                Bundle bundle = new Bundle();
 
-                if (tvEpisode != null) {
-                    Intent intent = new Intent(getApplicationContext(), SerieEpisodeActivity.class);
-                    Bundle bundle = new Bundle();
-
-                    bundle.putSerializable("tvEpisode", tvEpisode);
-                    bundle.putString("seriePoster", tvSeries.getPosterPath());
-                    bundle.putString("serieBackdrop", tvSeries.getBackdropPath());
-
-                    intent.putExtras(bundle);
-
-                    startActivity(intent);
-                }
+                bundle.putSerializable("tvSeason", tvSeasonList.get(position));
+                bundle.putSerializable("tvSeries", tvSeries);
+                intent.putExtras(bundle);
+                startActivity(intent);
 
             }
         });
     }
 
-    private void setEpisodeAsWatched(TvSeries tvSeries, TvSeason tvSeason, TvEpisode tvEpisode){
+    private void setSeasonAsWatched(TvSeries tvSeries, TvSeason tvSeason){
+
+        for(TvEpisode tvEpisode : tvSeason.getEpisodes()){
+            setEpisodeAsWatched(tvSeries, tvSeason, tvEpisode);
+        }
+    }
+
+    private void setEpisodeAsWatched(TvSeries tvSeries, TvSeason tvSeason, TvEpisode tvEpisode) {
 
         ParseObject favorite = new ParseObject("ViewedTvSeriesEpisodes");
 
-        if(ParseUser.getCurrentUser() == null){
+        if (ParseUser.getCurrentUser() == null) {
             Toast.makeText(KubrickApplication.getContext(), "Please login", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -129,21 +124,14 @@ public class EpisodeListActivity extends AppCompatActivity {
         favorite.put("EpisodeId", tvEpisode.getId());
 
         favorite.setACL(acl);
-        favorite.saveInBackground(new SaveCallback() {
+        favorite.saveInBackground();
 
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Toast.makeText(KubrickApplication.getContext(), R.string.tv_episode_toast_watched, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(KubrickApplication.getContext(), "Failed to favorite movie", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     private int dp2px(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
     }
+
+
 }

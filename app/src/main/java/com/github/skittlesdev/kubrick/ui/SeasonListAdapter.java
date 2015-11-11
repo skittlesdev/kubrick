@@ -17,11 +17,11 @@ import info.movito.themoviedbapi.model.tv.TvSeason;
 
 
 
-public class AppAdapter extends BaseAdapter {
+public class SeasonListAdapter extends BaseAdapter {
     private List<TvSeason> tvSeasons;
     private Context context;
 
-    public AppAdapter(List<TvSeason> tvSeasons) {
+    public SeasonListAdapter(List<TvSeason> tvSeasons) {
         this.tvSeasons = tvSeasons;
     }
 
@@ -39,11 +39,11 @@ public class AppAdapter extends BaseAdapter {
         }
         ViewHolder holder = (ViewHolder) convertView.getTag();
         TvSeason item = getItem(position);
-        holder.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getPosterPath()));
+        //holder.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getPosterPath()));
         holder.name.setText(item.getName());
-        Log.d("getView", "erggergregerg");
         return convertView;
     }
+
 
     @Override
     public long getItemId(int position) {
@@ -54,24 +54,6 @@ public class AppAdapter extends BaseAdapter {
     public int getCount() {
         return tvSeasons.size();
     }
-
-    /*@Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        this.context = parent.getContext();
-        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.season_list_item, parent, false);
-        return new ViewHolder(layout);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.setItem(this.tvSeasons.get(position));
-        holder.setPoster(this.context);
-    }
-
-    @Override
-    public int getItemCount() {
-        return tvSeasons.size();
-    }*/
 
     public static class ViewHolder {
         public ImageView poster;
