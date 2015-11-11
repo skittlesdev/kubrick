@@ -96,19 +96,19 @@ public class SeasonListActivity extends AppCompatActivity {
         listView.setMenuCreator(creator);
 
 
-        /*listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                TvSeason item = tvSeasonList.get(position);
+                HashMap<String, Object> item = seasons.get(position);
                 switch (index) {
                     case 0:
-                        setSeasonAsWatched(tvSeries,item);
+                        setSeasonAsWatched(series, item);
                         Toast.makeText(KubrickApplication.getContext(), "Season set as watched", Toast.LENGTH_SHORT).show();
                         break;
                 }
                 return false;
             }
-        });*/
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -132,14 +132,7 @@ public class SeasonListActivity extends AppCompatActivity {
         });
     }
 
-    private void setSeasonAsWatched(TvSeries tvSeries, TvSeason tvSeason){
-
-        for(TvEpisode tvEpisode : tvSeason.getEpisodes()){
-            setEpisodeAsWatched(tvSeries, tvSeason, tvEpisode);
-        }
-    }
-
-    private void setEpisodeAsWatched(TvSeries tvSeries, TvSeason tvSeason, TvEpisode tvEpisode) {
+    private void setSeasonAsWatched(TvSeries tvSeries, HashMap<String, Object> tvSeason) {
 
         ParseObject favorite = new ParseObject("ViewedTvSeriesEpisodes");
 
@@ -147,20 +140,16 @@ public class SeasonListActivity extends AppCompatActivity {
             Toast.makeText(KubrickApplication.getContext(), "Please login", Toast.LENGTH_SHORT).show();
             return;
         }
-        ParseACL acl = new ParseACL(ParseUser.getCurrentUser());
-        acl.setPublicReadAccess(true);
-        acl.setPublicWriteAccess(false);
 
-        favorite.put("User", ParseUser.getCurrentUser());
-        favorite.put("SerieId", tvSeries.getId());
-        favorite.put("SeasonNumber", tvSeason.getSeasonNumber());
-        favorite.put("EpisodeNumber", tvEpisode.getEpisodeNumber());
-        favorite.put("EpisodeId", tvEpisode.getId());
-        favorite.put("AirDate", tvEpisode.getAirDate());
-
-        favorite.setACL(acl);
-        favorite.saveInBackground();
-
+        HashMap<String, String> params = new HashMap<>();
+        params.put("seriesId", String.valueOf(tvSeries.getId()));
+        params.put("seasonNumber", String.valueOf(tvSeason.get("season_number")));
+        ParseCloud.callFunctionInBackground("viewedSeriesSeason", params, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object object, ParseException e) {
+                Toast.makeText(KubrickApplication.getContext(), "Season watch success", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private int dp2px(int dp) {
