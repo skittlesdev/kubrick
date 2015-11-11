@@ -456,12 +456,12 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         try {
             /*
             *
-            * WE MUST DO THIS because sometime a org.json.JSONObject has to be
+            * WE MUST DO THIS because sometime a org.json.JSONObject.NULL has to be
             * serialized (received by the TMDB wrapper), and it is not working
-            * because org.json.JSONObject is no serializable.
+            * because org.json.JSONObject.NULL is no serializable.
             *
             * */
-            // super.onSaveInstanceState(state); catch no taken?
+            // super.onSaveInstanceState(state); catch not taken?
         } catch (Exception e) {
             e.printStackTrace();
         }

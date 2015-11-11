@@ -66,8 +66,7 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
 
         if (media instanceof MovieDb) {
             posterPath = ((MovieDb) media).getPosterPath();
-        }
-        else {
+        } else {
             posterPath = ((TvSeries) media).getPosterPath();
         }
 
