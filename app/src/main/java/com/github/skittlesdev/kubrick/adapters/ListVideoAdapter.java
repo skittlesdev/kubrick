@@ -61,7 +61,7 @@ public class ListVideoAdapter extends RecyclerView.Adapter<ListVideoAdapter.View
         }
 
         public void setThumbnail() {
-            String imageUri = "http://img.youtube.com/vi/" + this.video.getKey() + "/maxresdefault.jpg";
+            String imageUri = "http://img.youtube.com/vi/" + this.video.getKey() + "/0.jpg";
             this.thumbnail.setImageURI(Uri.parse(imageUri));
         }
 

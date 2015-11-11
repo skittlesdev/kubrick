@@ -63,7 +63,7 @@ public class HashMapVideoAdapter extends RecyclerView.Adapter<HashMapVideoAdapte
         }
 
         public void setThumbnail() {
-            String imageUri = "http://img.youtube.com/vi/" + this.video.get("key") + "/maxresdefault.jpg";
+            String imageUri = "http://img.youtube.com/vi/" + this.video.get("key") + "/0.jpg";
             this.thumbnail.setImageURI(Uri.parse(imageUri));
         }
 
