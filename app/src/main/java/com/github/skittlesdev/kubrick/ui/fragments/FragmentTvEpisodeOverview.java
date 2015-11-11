@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 
 import info.movito.themoviedbapi.model.tv.TvEpisode;
@@ -43,5 +44,11 @@ public class FragmentTvEpisodeOverview extends Fragment {
     private void showOverview() {
         ((TextView) rootView.findViewById(R.id.episodeOverviewContent))
                 .setText(this.tvEpisode.getOverview());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

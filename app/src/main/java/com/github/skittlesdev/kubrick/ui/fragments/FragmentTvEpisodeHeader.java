@@ -7,26 +7,21 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
-import com.github.skittlesdev.kubrick.utils.GenresUtils;
-
-import org.joda.time.Duration;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import info.movito.themoviedbapi.model.Artwork;
-import info.movito.themoviedbapi.model.Genre;
-import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.MovieImages;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
-import info.movito.themoviedbapi.model.tv.TvSeries;
 
 /**
  * Created by louis on 04/11/2015.
@@ -74,7 +69,7 @@ public class FragmentTvEpisodeHeader extends Fragment {
             path = this.seriePosterPath;
         }
 
-        ((SimpleDraweeView) this.rootView.findViewById(R.id.tvEpisodePoster)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + path));
+        ((SimpleDraweeView) this.rootView.findViewById(R.id.tvEpisodePoster)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w154" + path));
     }
 
     private void showTitle() {
@@ -91,15 +86,37 @@ public class FragmentTvEpisodeHeader extends Fragment {
 
     private void showAirDate() {
         TextView releaseDateContainer = (TextView) this.rootView.findViewById(R.id.episodeAirDate);
-        String releaseDate =  this.tvEpisode.getAirDate();
+        String releaseDate = "Aired ";
+        releaseDate +=  this.formatDate(this.tvEpisode.getAirDate());
+        releaseDate += ".";
         releaseDateContainer.setText(releaseDate);
+    }
+
+    private String formatDate(String dateFormat) {
+        try {
+            SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat newFormat = new SimpleDateFormat("MMMM d, yyyy");
+            Date date = oldFormat.parse(dateFormat);
+
+            return newFormat.format(date);
+        } catch (ParseException exception) {
+            exception.printStackTrace();
+
+            return dateFormat;
+        }
     }
 
     private void showEpisodeNumber() {
         TextView episodeNumberContainer = (TextView) this.rootView.findViewById(R.id.episodeNumber);
-        String episodeNumber =  "S" +
+        String episodeNumber =  "[S" +
                 new DecimalFormat("00").format(this.tvEpisode.getSeasonNumber()) + "E" +
-                new DecimalFormat("00").format(this.tvEpisode.getEpisodeNumber());
+                new DecimalFormat("00").format(this.tvEpisode.getEpisodeNumber()) + "]";
         episodeNumberContainer.setText(episodeNumber);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

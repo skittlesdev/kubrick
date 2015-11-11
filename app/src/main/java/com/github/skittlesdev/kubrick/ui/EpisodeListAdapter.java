@@ -9,8 +9,10 @@ import android.widget.TextView;
 
 import com.github.skittlesdev.kubrick.R;
 
+import java.util.HashMap;
 import java.util.List;
 
+import com.github.skittlesdev.kubrick.models.SeriesEpisode;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeason;
 
@@ -19,15 +21,15 @@ import info.movito.themoviedbapi.model.tv.TvSeason;
  */
 public class EpisodeListAdapter extends BaseAdapter {
 
-    private List<TvEpisode> tvEpisodeList;
+    private List<SeriesEpisode> tvEpisodeList;
     private Context context;
 
-    public EpisodeListAdapter(List<TvEpisode> tvEpisodeList) {
+    public EpisodeListAdapter(List<SeriesEpisode> tvEpisodeList) {
         this.tvEpisodeList = tvEpisodeList;
     }
 
     @Override
-    public TvEpisode getItem(int position) {
+    public SeriesEpisode getItem(int position) {
         return tvEpisodeList.get(position);
     }
 
@@ -39,9 +41,9 @@ public class EpisodeListAdapter extends BaseAdapter {
             new ViewHolder(convertView);
         }
         ViewHolder holder = (ViewHolder) convertView.getTag();
-        TvEpisode item = getItem(position);
+        SeriesEpisode item = getItem(position);
         //holder.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getPosterPath()));
-        holder.name.setText(item.getName());
+        holder.name.setText((String) item.name);
         return convertView;
     }
 

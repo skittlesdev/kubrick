@@ -7,11 +7,15 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import info.movito.themoviedbapi.model.people.PersonPeople;
 
@@ -35,7 +39,8 @@ public class FragmentPersonPeopleHeader extends Fragment {
 
         this.showName();
         this.showJob();
-        this.showBirthAndDeath();
+        this.showBirth();
+        this.showDeath();
         this.showPoster();
     }
 
@@ -44,22 +49,53 @@ public class FragmentPersonPeopleHeader extends Fragment {
     }
 
     private void showJob() {
-        ((TextView) this.rootView.findViewById(R.id.personJob)).setText(this.personPeople.getJob());
+        String job = this.personPeople.getJob();
+        TextView jobContainer = (TextView) this.rootView.findViewById(R.id.personJob);
+
+        if (TextUtils.isEmpty(job)) {
+            jobContainer.setVisibility(View.GONE);
+        } else {
+            jobContainer.setText(this.personPeople.getJob());
+        }
     }
 
-    private void showBirthAndDeath() {
-        String birthAndDeath = "Born the ";
-        birthAndDeath += this.personPeople.getBirthday();
-        birthAndDeath += " at ";
-        birthAndDeath += this.personPeople.getBirthplace();
+    private void showBirth() {
+        String birth = "Born ";
+        birth += this.formatDate(this.personPeople.getBirthday());
+        birth += ", ";
+        birth += this.personPeople.getBirthplace();
+        birth += ".";
+
+        ((TextView) this.rootView.findViewById(R.id.personBirth)).setText(birth);
+    }
+
+    private void showDeath() {
         String death = this.personPeople.getDeathday();
+        String deathString = "";
+        TextView deathContainer = (TextView) this.rootView.findViewById(R.id.personDeath);
 
         if (!TextUtils.isEmpty(death)) {
-            birthAndDeath += "Dead the ";
-            birthAndDeath += death;
+            deathString += "Dead ";
+            deathString += this.formatDate(death);
+            deathString += ".";
+            deathContainer.setText(deathString);
+        } else {
+            deathContainer.setVisibility(View.GONE);
         }
+    }
 
-        ((TextView) this.rootView.findViewById(R.id.personBirth)).setText(birthAndDeath);
+    private String formatDate(String dateFormat) {
+        try {
+            SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat newFormat = new SimpleDateFormat("MMMM d, yyyy");
+            Date date = oldFormat.parse(dateFormat);
+
+            return newFormat.format(date);
+        } catch (ParseException exception) {
+            exception.printStackTrace();
+
+            return dateFormat;
+        }
     }
 
     private void showPoster() {
@@ -71,5 +107,11 @@ public class FragmentPersonPeopleHeader extends Fragment {
         this.rootView = inflater.inflate(R.layout.fragment_person_people_header, container, false);
 
         return this.rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 
 import info.movito.themoviedbapi.model.MovieDb;
@@ -54,5 +55,11 @@ public class FragmentMovieOverview extends Fragment {
         }
 
         overviewView.setText(overview);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

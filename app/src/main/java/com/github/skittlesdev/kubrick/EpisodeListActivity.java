@@ -15,6 +15,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.github.skittlesdev.kubrick.models.SeriesEpisode;
 import com.github.skittlesdev.kubrick.ui.EpisodeListAdapter;
 import com.parse.ParseACL;
 import com.parse.ParseException;
@@ -22,6 +23,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -36,21 +38,21 @@ public class EpisodeListActivity extends AppCompatActivity {
 
     private SwipeMenuListView listView;
     private TvSeries tvSeries;
-    private TvSeason tvSeason;
-    private List<TvEpisode> tvEpisodeList;
+    // private TvSeason tvSeason;
+    //private List<TvEpisode> tvEpisodeList;
+    private List<SeriesEpisode> episodes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.serie_episode_list_main);
-        tvSeason = (TvSeason) getIntent().getExtras().getSerializable("tvSeason");
-        tvSeries = (TvSeries) getIntent().getExtras().getSerializable("tvSeries");
+
+        this.episodes = (List<SeriesEpisode>) getIntent().getExtras().getSerializable("episodes");
+        this.tvSeries = (TvSeries) getIntent().getExtras().getSerializable("series");
 
         listView = (SwipeMenuListView) findViewById(R.id.seasonList);
 
-        this.tvEpisodeList = this.tvSeason.getEpisodes();
-
-        ListAdapter appAdapter = new EpisodeListAdapter(tvEpisodeList);
+        ListAdapter appAdapter = new EpisodeListAdapter(this.episodes);
         listView.setAdapter(appAdapter);
 
         setUpEpisodeList();
@@ -72,7 +74,7 @@ public class EpisodeListActivity extends AppCompatActivity {
         listView.setMenuCreator(creator);
 
 
-        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+        /*listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 TvEpisode item = tvEpisodeList.get(position);
@@ -83,29 +85,25 @@ public class EpisodeListActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });
+        });*/
 
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SeriesEpisode episode = episodes.get(position);
 
-                TvEpisode tvEpisode = tvEpisodeList.get(position);
+                Intent intent = new Intent(getApplicationContext(), SerieEpisodeActivity.class);
+                Bundle bundle = new Bundle();
 
-                if (tvEpisode != null) {
-                    Intent intent = new Intent(getApplicationContext(), SerieEpisodeActivity.class);
-                    Bundle bundle = new Bundle();
+                bundle.putSerializable("tvEpisode", episode);
+                bundle.putString("seriePoster", tvSeries.getPosterPath());
+                bundle.putString("serieBackdrop", tvSeries.getBackdropPath());
 
-                    bundle.putSerializable("tvEpisode", tvEpisode);
-                    bundle.putString("seriePoster", tvSeries.getPosterPath());
-                    bundle.putString("serieBackdrop", tvSeries.getBackdropPath());
+                intent.putExtras(bundle);
 
-                    intent.putExtras(bundle);
-
-                    startActivity(intent);
-                }
-
+                startActivity(intent);
             }
         });
     }

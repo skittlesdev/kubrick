@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 
 import info.movito.themoviedbapi.model.people.PersonPeople;
@@ -43,5 +44,11 @@ public class FragmentPersonPeopleOverview extends Fragment {
         this.rootView = inflater.inflate(R.layout.fragment_person_people_overview, container, false);
 
         return this.rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

@@ -19,6 +19,7 @@
         android:icon="@mipmap/kubrick_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".HomeActivity"

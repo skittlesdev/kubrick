@@ -52,7 +52,7 @@ public class SimilarMoviesOverviewAdapter extends RecyclerView.Adapter<SimilarMo
             this.poster.setOnClickListener(this);
         }
         public void setposter(Context context) {
-            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + item.getPosterPath()));
+            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w154" + item.getPosterPath()));
         }
 
         public void setItem(MovieDb item) {

@@ -15,13 +15,13 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.github.skittlesdev.kubrick.models.SeriesEpisode;
 import com.github.skittlesdev.kubrick.ui.SeasonListAdapter;
-import com.parse.ParseACL;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
+import com.parse.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import info.movito.themoviedbapi.model.tv.TvEpisode;
@@ -32,25 +32,53 @@ import info.movito.themoviedbapi.model.tv.TvSeries;
  * Created by louis on 10/11/2015.
  */
 public class SeasonListActivity extends AppCompatActivity {
-
+    private int seriesId;
+    private TvSeries series;
     private SwipeMenuListView listView;
-    private TvSeries tvSeries;
-    private List<TvSeason> tvSeasonList;
+    private List<HashMap<String, Object>> seasons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.serie_episode_list_main);
-        tvSeries = (TvSeries) getIntent().getExtras().getSerializable("tvSerie");
 
         listView = (SwipeMenuListView) findViewById(R.id.seasonList);
 
-        this.tvSeasonList = this.tvSeries.getSeasons();
-        ListAdapter appAdapter = new SeasonListAdapter(tvSeries.getSeasons());
-        listView.setAdapter(appAdapter);
+        this.seriesId = getIntent().getExtras().getInt("seriesId");
+        this.series = (TvSeries) getIntent().getExtras().getSerializable("series");
 
-        setUpSeasonList();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("seriesId", String.valueOf(seriesId));
+        ParseCloud.callFunctionInBackground("getSeriesSeasons", params, new FunctionCallback<List<HashMap<String, Object>>>() {
+            @Override
+            public void done(List<HashMap<String, Object>> result, ParseException e) {
+                ListAdapter appAdapter = new SeasonListAdapter(result);
+                listView.setAdapter(appAdapter);
+                seasons = result;
+                setUpSeasonList();
+            }
+        });
+    }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) { // SMALL FIX
+        try {
+            /*
+            *
+            * WE MUST DO THIS because sometime a org.json.JSONObject.NULL has to be
+            * serialized (received by the TMDB wrapper), and it is not working
+            * because org.json.JSONObject.NULL is no serializable.
+            *
+            * */
+            // super.onSaveInstanceState(state); catch not taken?
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getSeriesId() {
+        return seriesId;
     }
 
     private void setUpSeasonList(){
@@ -68,7 +96,7 @@ public class SeasonListActivity extends AppCompatActivity {
         listView.setMenuCreator(creator);
 
 
-        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+        /*listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 TvSeason item = tvSeasonList.get(position);
@@ -80,7 +108,7 @@ public class SeasonListActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });
+        });*/
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -89,11 +117,17 @@ public class SeasonListActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplication().getApplicationContext(), EpisodeListActivity.class);
                 Bundle bundle = new Bundle();
 
-                bundle.putSerializable("tvSeason", tvSeasonList.get(position));
-                bundle.putSerializable("tvSeries", tvSeries);
+                HashMap<String, Object> season = seasons.get(position);
+                LinkedList<SeriesEpisode> episodes = new LinkedList<>();
+                for (HashMap<String, Object> item: (List<HashMap<String, Object>>) season.get("episodes")) {
+                    episodes.add(new SeriesEpisode(series, item));
+                }
+
+                bundle.putSerializable("episodes", episodes);
+                bundle.putInt("seriesId", getSeriesId());
+                bundle.putSerializable("series", series);
                 intent.putExtras(bundle);
                 startActivity(intent);
-
             }
         });
     }

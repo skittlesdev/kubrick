@@ -80,8 +80,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 seriesFavorites.setArguments(seriesFavoritesArgs);
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(R.id.fragment_movies, movieFavorites, "movies");
-                transaction.add(R.id.fragment_series, seriesFavorites, "series");
+                transaction.replace(R.id.fragment_movies, movieFavorites, "movies");
+                transaction.replace(R.id.fragment_series, seriesFavorites, "series");
                 transaction.commitAllowingStateLoss();
             }
         });
@@ -258,5 +258,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void onEvent(LogoutEvent e) {
         final Button toggle = (Button) findViewById(R.id.followToggle);
         toggle.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getEventBus().unregister(this);
     }
 }

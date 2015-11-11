@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.github.skittlesdev.kubrick.R;
 
 
+import java.util.HashMap;
 import java.util.List;
 
 import info.movito.themoviedbapi.model.tv.TvSeason;
@@ -18,15 +19,15 @@ import info.movito.themoviedbapi.model.tv.TvSeason;
 
 
 public class SeasonListAdapter extends BaseAdapter {
-    private List<TvSeason> tvSeasons;
+    private List<HashMap<String, Object>> tvSeasons;
     private Context context;
 
-    public SeasonListAdapter(List<TvSeason> tvSeasons) {
+    public SeasonListAdapter(List<HashMap<String, Object>> tvSeasons) {
         this.tvSeasons = tvSeasons;
     }
 
     @Override
-    public TvSeason getItem(int position) {
+    public HashMap<String, Object> getItem(int position) {
         return tvSeasons.get(position);
     }
 
@@ -38,9 +39,9 @@ public class SeasonListAdapter extends BaseAdapter {
             new ViewHolder(convertView);
         }
         ViewHolder holder = (ViewHolder) convertView.getTag();
-        TvSeason item = getItem(position);
+        HashMap<String, Object> item = getItem(position);
         //holder.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getPosterPath()));
-        holder.name.setText(item.getName());
+        holder.name.setText((String) item.get("name"));
         return convertView;
     }
 

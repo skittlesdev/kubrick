@@ -54,7 +54,7 @@ public class SimilarSeriesOverviewAdapter extends RecyclerView.Adapter<SimilarSe
 
         public void setItem(HashMap<String, Object> item) {
             this.item = item;
-            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + item.get("poster_path")));
+            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w154" + item.get("poster_path")));
         }
 
         @Override

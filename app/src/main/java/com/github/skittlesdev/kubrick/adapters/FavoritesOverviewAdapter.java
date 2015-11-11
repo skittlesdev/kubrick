@@ -54,7 +54,7 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
         }
 
         public void setPoster(Context context) {
-            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getString("poster_path")));
+            this.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w92" + item.getString("poster_path")));
         }
 
         @Override

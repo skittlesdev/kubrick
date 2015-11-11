@@ -29,6 +29,7 @@ import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
 import com.github.skittlesdev.kubrick.interfaces.TvSeriesSeasonsListener;
+import com.github.skittlesdev.kubrick.models.SeriesEpisode;
 import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNextEpisodes;
 import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNoEpisode;
 import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
@@ -50,6 +51,7 @@ import info.movito.themoviedbapi.model.tv.TvSeries;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener{
@@ -57,6 +59,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     private GetSeriesInfo seriesInfoTask;
     private int mediaId;
     private IdElement media;
+    private List<SeriesEpisode> episodes;
     private FavoriteState favoriteState;
     private MaterialCalendarView calendar;
     private boolean backPressed = false;
@@ -129,6 +132,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
     @Override
     public void onDestroy() {
         super.onDestroy();
+        KubrickApplication.getEventBus().unregister(this);
         if (this.task != null) {
             this.task.cancel(true);
         }
@@ -179,23 +183,34 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         });
     }
 
-    public void displaySerieEpisodesCalendar(TvSeries tvSeries){
-        this.seriesInfoTask = new GetSeriesInfo(this);
-        this.seriesInfoTask.execute(this.mediaId);
+    public void displaySerieEpisodesCalendar(final TvSeries tvSeries){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("seriesId", String.valueOf(tvSeries.getId()));
+        ParseCloud.callFunctionInBackground("getSeriesEpisodes", params, new FunctionCallback<List<HashMap<String, Object>>>() {
+            @Override
+            public void done(List<HashMap<String, Object>> results, ParseException e) {
+                List<SeriesEpisode> episodes = new LinkedList<>();
+                for (HashMap<String, Object> result : results) {
+                    episodes.add(new SeriesEpisode(tvSeries, result));
+                }
+
+                setEpisodes(episodes);
+
+                calendar.addDecorators(
+                        new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.DKGRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
+                        new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
+                        new CalendarViewSeriesPlanningDecoratorNextEpisodes(R.color.light_orange, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
+                        new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
+                );
+
+                calendar.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
     public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
-        calendar.setVisibility(View.VISIBLE);
 
-        this.media = tvSeries;
-
-        calendar.addDecorators(
-                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.DKGRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorNextEpisodes(R.color.light_orange, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
-        );
     }
 
     @Override
@@ -273,7 +288,8 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             Intent intentE = new Intent(getApplication().getApplicationContext(), SeasonListActivity.class);
 
             Bundle bundleE = new Bundle();
-            bundleE.putSerializable("tvSerie", (TvSeries) media);
+            bundleE.putInt("seriesId", media.getId());
+            bundleE.putSerializable("series", media);
 
             intentE.putExtras(bundleE);
 
@@ -281,12 +297,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
            //finish();
 
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        System.out.print('e');
-        //super.onSaveInstanceState(outState);
     }
 
     private void showBackdrop(IdElement mMedia) {
@@ -416,16 +426,16 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
     @Override
     public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
-        Log.d("onSelectedDayChange", "day changed");
         TvSeries serie = (TvSeries) this.media;
 
-        TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, serie);
+        SeriesEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, this.episodes);
 
         if (tvEpisode != null) {
 
             Intent intent = new Intent(getApplicationContext(), SerieEpisodeActivity.class);
             Bundle bundle = new Bundle();
 
+            bundle.putInt("episode_id", tvEpisode.id);
             bundle.putSerializable("tvEpisode", tvEpisode);
             bundle.putString("seriePoster", serie.getPosterPath());
             bundle.putString("serieBackdrop", serie.getBackdropPath());
@@ -463,5 +473,25 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         toggleView.setVisibility(View.GONE);
         CoordinatorLayout.LayoutParams toggleParams = (CoordinatorLayout.LayoutParams) toggleView.getLayoutParams();
         toggleParams.setAnchorId(View.NO_ID);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) { // SMALL FIX
+        try {
+            /*
+            *
+            * WE MUST DO THIS because sometime a org.json.JSONObject.NULL has to be
+            * serialized (received by the TMDB wrapper), and it is not working
+            * because org.json.JSONObject.NULL is no serializable.
+            *
+            * */
+            // super.onSaveInstanceState(state); catch not taken?
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setEpisodes(List<SeriesEpisode> episodes) {
+        this.episodes = episodes;
     }
 }

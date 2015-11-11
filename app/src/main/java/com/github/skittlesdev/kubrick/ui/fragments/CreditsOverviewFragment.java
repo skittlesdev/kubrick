@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.adapters.CreditsOverviewAdapter;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
@@ -65,5 +66,11 @@ public class CreditsOverviewFragment extends Fragment {
         this.view.setAdapter(new CreditsOverviewAdapter(people));
 
         return layout;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }
