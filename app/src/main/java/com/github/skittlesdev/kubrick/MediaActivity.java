@@ -44,10 +44,12 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.Video;
 import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -130,21 +132,6 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         }
         if (this.seriesInfoTask != null) {
             this.seriesInfoTask.cancel(true);
-        }
-    }
-
-    private void showTitle(IdElement media) {
-        TextView titleView = (TextView) findViewById(R.id.title);
-        if (media instanceof MovieDb) {
-            String title = ((MovieDb) media).getTitle();
-            String year = "(" + ((MovieDb) media).getReleaseDate().split("-")[0] + ")";
-            titleView.setText(title + " " + year);
-        }
-        else {
-            String title = ((TvSeries) media).getName();
-            String firstYear = ((TvSeries) media).getFirstAirDate().split("-")[0];
-            String lastYear = ((TvSeries) media).getLastAirDate().split("-")[0];
-            titleView.setText(title + " (" + firstYear + " - " + lastYear + ")");
         }
     }
 
@@ -342,9 +329,10 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             collapsingToolbar.setTitle(((TvSeries) this.media).getName());
         }
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        final FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         Bundle options = new Bundle();
+
         options.putSerializable("media", this.media);
 
         FragmentMovieHeader header = new FragmentMovieHeader();
@@ -353,8 +341,45 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         FragmentMovieOverview overview = new FragmentMovieOverview();
         overview.setArguments(options);
 
+
+
         transaction.add(R.id.movieHeaderContainer, header);
         transaction.add(R.id.movieOverviewContainer, overview);
+
+        List<Video> videosList = null;
+        final Bundle videosBundle = new Bundle();
+        final FragmentMovieTrailer videosFragment = new FragmentMovieTrailer();
+        String videoType = null;
+
+        if (this.media instanceof TvSeries) {
+            videosList = ((TvSeries) this.media).getVideos();
+            videoType = "tv";
+        } else if (this.media instanceof MovieDb) {
+            videosList = ((MovieDb) this.media).getVideos();
+            videoType = "movie";
+        }
+
+        if (videosList != null && videosList.size() > 0) {
+            videosFragment.setArguments(videosBundle);
+            videosBundle.putSerializable("videos", (Serializable) videosList);
+            transaction.add(R.id.movieVideosContainer, videosFragment);
+        } else {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("mediaId", String.valueOf(media.getId()));
+            params.put("videoType", String.valueOf(videoType));
+            final FragmentTransaction movieTransaction = getFragmentManager().beginTransaction();
+            ParseCloud.callFunctionInBackground("getVideos", params, new FunctionCallback<HashMap>() {
+                @Override
+                public void done(HashMap results, ParseException e) {
+                    if (e == null) {
+                        videosBundle.putSerializable("videos", results);
+                        videosFragment.setArguments(videosBundle);
+                        movieTransaction.add(R.id.movieVideosContainer, videosFragment);
+                        movieTransaction.commit();
+                    }
+                }
+            });
+        }
 
         CreditsOverviewFragment movieCast = new CreditsOverviewFragment();
         Bundle movieCastOptions = new Bundle();
@@ -457,12 +482,12 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         try {
             /*
             *
-            * WE MUST DO THIS because sometime a org.json.JSONObject.NULL has to be
+            * WE MUST DO THIS because sometimes a org.json.JSONObject.NULL has to be
             * serialized (received by the TMDB wrapper), and it is not working
             * because org.json.JSONObject.NULL is no serializable.
             *
             * */
-            // super.onSaveInstanceState(state); catch not taken?
+            // super.onSaveInstanceState(state); catch not taken? If this line is uncommented the app can crash...
         } catch (Exception e) {
             e.printStackTrace();
         }

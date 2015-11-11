@@ -39,5 +39,7 @@
     <string name="person_job_default">Job</string>
     <string name="person_birth_default">Birth</string>
     <string name="person_death_default">Death</string>
+    <string name="video_thumbnail_default">Video thumbnail</string>
+    <string name="movie_videos_title_default">Videos</string>
 </resources>
 
