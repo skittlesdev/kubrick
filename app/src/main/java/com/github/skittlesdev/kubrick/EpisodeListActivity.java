@@ -74,18 +74,18 @@ public class EpisodeListActivity extends AppCompatActivity {
         listView.setMenuCreator(creator);
 
 
-        /*listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                TvEpisode item = tvEpisodeList.get(position);
+                SeriesEpisode item = episodes.get(position);
                 switch (index) {
                     case 0:
-                        setEpisodeAsWatched(tvSeries, tvSeason, item);
+                        setEpisodeAsWatched(tvSeries, item);
                         break;
                 }
                 return false;
             }
-        });*/
+        });
 
 
 
@@ -108,7 +108,7 @@ public class EpisodeListActivity extends AppCompatActivity {
         });
     }
 
-    private void setEpisodeAsWatched(TvSeries tvSeries, TvSeason tvSeason, TvEpisode tvEpisode){
+    private void setEpisodeAsWatched(TvSeries tvSeries, SeriesEpisode tvEpisode){
 
         ParseObject favorite = new ParseObject("ViewedTvSeriesEpisodes");
 
@@ -122,10 +122,10 @@ public class EpisodeListActivity extends AppCompatActivity {
 
         favorite.put("User", ParseUser.getCurrentUser());
         favorite.put("SerieId", tvSeries.getId());
-        favorite.put("SeasonNumber", tvSeason.getSeasonNumber());
-        favorite.put("EpisodeNumber", tvEpisode.getEpisodeNumber());
-        favorite.put("EpisodeId", tvEpisode.getId());
-        favorite.put("AirDate", tvEpisode.getAirDate());
+        favorite.put("SeasonNumber", tvEpisode.seasonNumber);
+        favorite.put("EpisodeNumber", tvEpisode.episodeNumber);
+        favorite.put("EpisodeId", tvEpisode.id);
+        favorite.put("AirDate", tvEpisode.airDate);
 
         favorite.setACL(acl);
         favorite.saveInBackground(new SaveCallback() {
