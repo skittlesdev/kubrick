@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     xmlns:card_view="http://schemas.android.com/tools"
     card_view:cardBackgroundColor="@android:color/black"
+    android:layout_marginTop="10dp"
     android:layout_height="175dp"
     android:id="@+id/headerCardView"
     app:cardElevation="7dp"

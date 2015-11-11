@@ -181,7 +181,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             @Override
             public void done(List<HashMap<String, Object>> results, ParseException e) {
                 List<SeriesEpisode> episodes = new LinkedList<>();
-                for (HashMap<String, Object> result: results) {
+                for (HashMap<String, Object> result : results) {
                     episodes.add(new SeriesEpisode(tvSeries, result));
                 }
 
@@ -449,6 +449,22 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         toggleView.setVisibility(View.GONE);
         CoordinatorLayout.LayoutParams toggleParams = (CoordinatorLayout.LayoutParams) toggleView.getLayoutParams();
         toggleParams.setAnchorId(View.NO_ID);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) { // SMALL FIX
+        try {
+            /*
+            *
+            * WE MUST DO THIS because sometime a org.json.JSONObject has to be
+            * serialized (received by the TMDB wrapper), and it is not working
+            * because org.json.JSONObject is no serializable.
+            *
+            * */
+            // super.onSaveInstanceState(state); catch no taken?
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setEpisodes(List<SeriesEpisode> episodes) {
