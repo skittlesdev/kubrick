@@ -64,6 +64,7 @@ public class ProfileSearchFragment extends Fragment implements AdapterView.OnIte
         Intent profileIntent = new Intent(getActivity(), ProfileActivity.class);
         profileIntent.putExtra("user_id", user.getObjectId());
         startActivity(profileIntent);
+        getFragmentManager().beginTransaction().remove(this).commit();
     }
 
 
