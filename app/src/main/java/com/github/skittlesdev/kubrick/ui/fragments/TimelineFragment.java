@@ -12,9 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.github.skittlesdev.kubrick.R;
-import com.parse.FunctionCallback;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
+import com.parse.*;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -36,6 +34,10 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (ParseUser.getCurrentUser() == null) {
+            return;
+        }
+        
         ParseCloud.callFunctionInBackground("getTimeline", new HashMap<String, Object>(), new FunctionCallback<List<HashMap<String, Object>>>() {
             @Override
             public void done(List<HashMap<String, Object>> object, ParseException e) {

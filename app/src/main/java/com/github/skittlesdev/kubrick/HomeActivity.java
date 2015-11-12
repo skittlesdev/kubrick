@@ -3,6 +3,7 @@ package com.github.skittlesdev.kubrick;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -35,7 +36,18 @@ public class HomeActivity extends AppCompatActivity {
         this.setContentView(R.layout.activity_home);
 
         HomePagerAdapter pagerAdapter = new HomePagerAdapter(getSupportFragmentManager());
-        ((ViewPager) findViewById(R.id.homeContainer)).setAdapter(pagerAdapter);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.homeContainer);
+        viewPager.setAdapter(pagerAdapter);
+
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                tabLayout.setupWithViewPager(viewPager);
+            }
+        });
 
         this.toolbar = (Toolbar) this.findViewById(R.id.toolBar);
         this.setSupportActionBar(this.toolbar);
@@ -44,6 +56,10 @@ public class HomeActivity extends AppCompatActivity {
         new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
