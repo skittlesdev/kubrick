@@ -54,6 +54,7 @@
         <activity android:name=".SerieEpisodeActivity"/>
         <activity android:name=".ProfileRelationsActivity"/>
         <activity android:name=".PeopleActivity"/>
+        <activity android:name=".TimelineActivity"/>
 
         <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/kubrick_icon"/>
 

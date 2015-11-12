@@ -87,6 +87,14 @@ public class DrawerMenu {
             }
         });
 
+        RowElement timelineElement = new RowElement(R.drawable.ic_row_element, "Timeline", new Callback(this.activity) {
+            @Override
+            public void execute() {
+                Intent intent = new Intent(getContext(), TimelineActivity.class);
+                getContext().startActivity(intent);
+            }
+        });
+
         RowElement followersElement = new RowElement(R.drawable.ic_row_element, "Followers", new Callback(this.activity) {
             @Override
             public void execute() {
@@ -122,6 +130,7 @@ public class DrawerMenu {
             titles.add(signupElement);
         }
         else {
+            titles.add(timelineElement);
             titles.add(favoritesElement);
             titles.add(followersElement);
             titles.add(followingsElement);
