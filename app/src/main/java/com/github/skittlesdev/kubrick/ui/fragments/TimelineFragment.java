@@ -37,7 +37,7 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
         if (ParseUser.getCurrentUser() == null) {
             return;
         }
-        
+
         ParseCloud.callFunctionInBackground("getTimeline", new HashMap<String, Object>(), new FunctionCallback<List<HashMap<String, Object>>>() {
             @Override
             public void done(List<HashMap<String, Object>> object, ParseException e) {
