@@ -5,7 +5,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -20,15 +22,19 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.asyncs.GetTvEpisodeTask;
+import com.github.skittlesdev.kubrick.events.FavoriteStateEvent;
 import com.github.skittlesdev.kubrick.interfaces.TvEpisodeListener;
 import com.github.skittlesdev.kubrick.models.SeriesEpisode;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeOverview;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentTvEpisodeHeader;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
+import com.github.skittlesdev.kubrick.utils.FavoriteState;
+import com.parse.FindCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -46,6 +52,7 @@ public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisode
     private int seriesId;
     private String seriePosterPath;
     private String serieBackdroptPath;
+    private FavoriteState watchedState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +72,6 @@ public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisode
         GetTvEpisodeTask task = new GetTvEpisodeTask(this);
         task.execute(episodeRequest);
     }
-
 
     @Override
     public void onTvEpisode(TvEpisode episode) {
@@ -89,6 +95,7 @@ public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisode
         transaction.add(R.id.episodeOverviewContainer, overview);
         transaction.commit();
 
+        this.setViewedState();
         this.showBackdrop();
         this.showTitle();
     }
@@ -122,11 +129,34 @@ public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisode
         ((SimpleDraweeView) findViewById(R.id.episodeBackDropPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w500" + path));
     }
 
+    private void setViewedState(){
+
+        final FloatingActionButton watchFab = (FloatingActionButton) this.findViewById(R.id.watchFab);
+
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("ViewedTvSeriesEpisodes");
+        query.whereEqualTo("User", ParseUser.getCurrentUser());
+        query.whereEqualTo("EpisodeId", this.tvEpisode.getId());
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    if(objects.isEmpty()){
+                        watchFab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_not_view));
+                    }else{
+                        watchFab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_view));
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
 
         FloatingActionButton watchFab = (FloatingActionButton) this.findViewById(R.id.watchFab);
+
         watchFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Context context = v.getContext();
@@ -157,6 +187,8 @@ public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisode
             public void done(ParseException e) {
                 if (e == null) {
                     Toast.makeText(KubrickApplication.getContext(), R.string.tv_episode_toast_watched, Toast.LENGTH_SHORT).show();
+                    FloatingActionButton watchFab = (FloatingActionButton) findViewById(R.id.watchFab);
+                    watchFab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_view));
                 } else {
                     Toast.makeText(KubrickApplication.getContext(), "Failed to favorite movie", Toast.LENGTH_SHORT).show();
                 }

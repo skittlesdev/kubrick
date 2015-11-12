@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener{
     private AsyncTask task;
@@ -181,10 +182,12 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
                 setEpisodes(episodes);
 
+               Object o = CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes);
+
                 calendar.addDecorators(
-                        new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.DKGRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
+                        new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
                         new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
-                        new CalendarViewSeriesPlanningDecoratorNextEpisodes(R.color.light_orange, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
+                        new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
                         new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
                 );
 

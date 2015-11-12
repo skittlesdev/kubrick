@@ -23,34 +23,50 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import info.movito.themoviedbapi.model.tv.TvEpisode;
-import info.movito.themoviedbapi.model.tv.TvSeason;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
 /**
  * Created by louis on 11/11/2015.
  */
-public class EpisodeListActivity extends AppCompatActivity {
+public class DayEpisodeActivity extends AppCompatActivity {
 
     private SwipeMenuListView listView;
-    private TvSeries tvSeries;
-    private List<SeriesEpisode> episodes;
+    private List<TvSeries> tvSeriesList;
+    private List<SeriesEpisode> tvEpisodeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.serie_episode_list_main);
 
-        this.episodes = (List<SeriesEpisode>) getIntent().getExtras().getSerializable("episodes");
-        this.tvSeries = (TvSeries) getIntent().getExtras().getSerializable("series");
+        this.tvSeriesList = (List<TvSeries>) getIntent().getExtras().getSerializable("resultSeries");
+        List<TvEpisode> tvEpisodeListWrapper = (List<TvEpisode>) getIntent().getExtras().getSerializable("result");
+
+        this.tvEpisodeList = new ArrayList<>();
+
+        int i = 0;
+        for(TvEpisode item : tvEpisodeListWrapper){
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("id", item.getId());
+            hashMap.put("air_date", item.getAirDate());
+            hashMap.put("season_number", item.getSeasonNumber());
+            hashMap.put("episode_number", item.getEpisodeNumber());
+            hashMap.put("name", item.getName());
+            tvEpisodeList.add(new SeriesEpisode(tvSeriesList.get(i),hashMap));
+            i++;
+        }
+
+        //this.tvEpisodeList = (List<SeriesEpisode>)
+       // this.tvSeriesList = (TvSeries) getIntent().getExtras().getSerializable("series");
 
         listView = (SwipeMenuListView) findViewById(R.id.seasonList);
 
-        ListAdapter appAdapter = new EpisodeListAdapter(this.episodes);
+        ListAdapter appAdapter = new EpisodeListAdapter(this.tvEpisodeList);
         listView.setAdapter(appAdapter);
 
         setUpEpisodeList();
@@ -64,7 +80,7 @@ public class EpisodeListActivity extends AppCompatActivity {
                 SwipeMenuItem seasonWatchedItem = new SwipeMenuItem(getApplicationContext());
                 seasonWatchedItem.setBackground(new ColorDrawable(Color.WHITE));
                 seasonWatchedItem.setWidth(dp2px(90));
-                seasonWatchedItem.setIcon(R.drawable.ic_view);
+                seasonWatchedItem.setIcon(R.drawable.ic_heart);
                 menu.addMenuItem(seasonWatchedItem);
             }
         };
@@ -75,10 +91,10 @@ public class EpisodeListActivity extends AppCompatActivity {
         listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                SeriesEpisode item = episodes.get(position);
+                SeriesEpisode item = tvEpisodeList.get(position);
                 switch (index) {
                     case 0:
-                        setEpisodeAsWatched(tvSeries, item);
+                        setEpisodeAsWatched(tvSeriesList.get(position), item);
                         break;
                 }
                 return false;
@@ -90,14 +106,14 @@ public class EpisodeListActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SeriesEpisode episode = episodes.get(position);
+                SeriesEpisode episode = tvEpisodeList.get(position);
 
                 Intent intent = new Intent(getApplicationContext(), SerieEpisodeActivity.class);
                 Bundle bundle = new Bundle();
 
                 bundle.putSerializable("tvEpisode", episode);
-                bundle.putString("seriePoster", tvSeries.getPosterPath());
-                bundle.putString("serieBackdrop", tvSeries.getBackdropPath());
+                bundle.putString("seriePoster", tvSeriesList.get(position).getPosterPath());
+                bundle.putString("serieBackdrop", tvSeriesList.get(position).getBackdropPath());
 
                 intent.putExtras(bundle);
 

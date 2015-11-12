@@ -50,7 +50,7 @@ public class FragmentTvEpisodeOverview extends Fragment {
         if (!TextUtils.isEmpty(overview)) {
             container.setText(overview);
         } else {
-            ((CardView) this.rootView.findViewById(R.id.overviewTVEpisodeCardView)).setVisibility(View.GONE);
+            ((CardView) this.rootView.findViewById(R.id.overviewCardView)).setVisibility(View.GONE);
         }
     }
 
