@@ -14,11 +14,13 @@
                 android:id="@+id/toolBar"
                 layout="@layout/tool_bar">
         </include>
+
         <ListView
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/favorites" />
     </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
             android:id="@+id/homeRecyclerView"
             android:layout_width="@dimen/drawer_width"

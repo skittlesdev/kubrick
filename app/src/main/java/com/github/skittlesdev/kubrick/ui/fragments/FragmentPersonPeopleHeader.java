@@ -60,6 +60,12 @@ public class FragmentPersonPeopleHeader extends Fragment {
     }
 
     private void showBirth() {
+        if (TextUtils.isEmpty(this.personPeople.getBirthday())) {
+            ((TextView) this.rootView.findViewById(R.id.personBirth)).setVisibility(View.GONE);
+
+            return;
+        }
+
         String birth = "Born ";
         birth += this.formatDate(this.personPeople.getBirthday());
         birth += ", ";
@@ -70,6 +76,12 @@ public class FragmentPersonPeopleHeader extends Fragment {
     }
 
     private void showDeath() {
+        if (TextUtils.isEmpty(this.personPeople.getDeathday())) {
+            ((TextView) this.rootView.findViewById(R.id.personDeath)).setVisibility(View.GONE);
+
+            return;
+        }
+
         String death = this.personPeople.getDeathday();
         String deathString = "";
         TextView deathContainer = (TextView) this.rootView.findViewById(R.id.personDeath);

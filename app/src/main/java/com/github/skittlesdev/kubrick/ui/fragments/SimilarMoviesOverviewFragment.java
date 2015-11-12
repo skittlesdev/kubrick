@@ -60,7 +60,6 @@ public class SimilarMoviesOverviewFragment extends Fragment {
         return layout;
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
