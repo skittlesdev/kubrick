@@ -46,6 +46,9 @@ public class PeopleSearchFragment extends Fragment implements PeopleSearchListen
     }
 
     public void search(String searchTerms) {
+        if (this.peopleSearchTask != null) {
+            this.peopleSearchTask.cancel(true);
+        }
         this.peopleSearchTask = new SearchPeopleTask(this);
         this.peopleSearchTask.execute(searchTerms);
     }
