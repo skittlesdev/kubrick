@@ -16,10 +16,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
-import com.parse.FunctionCallback;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
-import com.parse.ParseObject;
+import com.parse.*;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
@@ -29,9 +26,11 @@ import java.util.List;
 public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOverviewAdapter.ViewHolder> {
     private List<ParseObject> favorites;
     private Context context;
+    private ParseUser user;
 
-    public FavoritesOverviewAdapter(List<ParseObject> favorites) {
+    public FavoritesOverviewAdapter(List<ParseObject> favorites, ParseUser user) {
         this.favorites = favorites;
+        this.user = user;
     }
 
     @Override
@@ -51,6 +50,7 @@ public class FavoritesOverviewAdapter extends RecyclerView.Adapter<FavoritesOver
             holder.setToSeries(this.context);
             HashMap<String, String> params = new HashMap<>();
             params.put("seriesId", String.valueOf(item.getInt("tmdb_series_id")));
+            params.put("userId", this.user.getObjectId());
             ParseCloud.callFunctionInBackground("seriesProgress", params, new FunctionCallback<Integer>() {
                 @Override
                 public void done(Integer percentage, ParseException e) {
