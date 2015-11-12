@@ -26,15 +26,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MediaSearchFragment extends Fragment implements SearchListener, AdapterView.OnItemClickListener {
-    private ListView view;
+    private View view;
+    private ListView listView;
     private TmdbSearch.MultiListResultsPage results;
     private SearchMediaTask searchTask;
+    private TextView title;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        this.view = (ListView) inflater.inflate(R.layout.fragment_media_search, container, false);
+        this.view = inflater.inflate(R.layout.fragment_media_search, container, false);
+        this.listView = (ListView) this.view.findViewById(R.id.results);
+        this.title = (TextView) this.view.findViewById(R.id.type);
+        this.title.setText(R.string.media_search_title);
         return this.view;
     }
 
@@ -68,10 +73,13 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
                 titles.add(((TvSeries) item).getName());
             }
         }
+        if (titles.isEmpty()){
+            title.setVisibility(View.GONE);
+        }
 
         ArrayAdapter<String> items = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, titles);
-        view.setAdapter(items);
-        view.setOnItemClickListener(this);
+        this.listView.setAdapter(items);
+        this.listView.setOnItemClickListener(this);
     }
 
     @Override

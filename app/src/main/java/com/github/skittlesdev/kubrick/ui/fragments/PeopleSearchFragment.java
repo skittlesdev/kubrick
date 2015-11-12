@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.MediaActivity;
@@ -33,15 +34,20 @@ import info.movito.themoviedbapi.model.people.Person;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
 public class PeopleSearchFragment extends Fragment implements PeopleSearchListener, AdapterView.OnItemClickListener {
-    private ListView view;
+    private View view;
+    private ListView listView;
     private TmdbPeople.PersonResultsPage results;
     private SearchPeopleTask peopleSearchTask;
+    private TextView title;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        this.view = (ListView) inflater.inflate(R.layout.fragment_media_search, container, false);
+        this.view = inflater.inflate(R.layout.fragment_media_search, container, false);
+        this.listView = (ListView) this.view.findViewById(R.id.results);
+        this.title = (TextView) this.view.findViewById(R.id.type);
+        this.title.setText(R.string.persons_search_title);
         return this.view;
     }
 
@@ -67,12 +73,16 @@ public class PeopleSearchFragment extends Fragment implements PeopleSearchListen
     public void onSearchResults(TmdbPeople.PersonResultsPage results) {
         this.results = results;
         List<String> names = new LinkedList<>();
+
         for (Person item: results.getResults()) {
             names.add(item.getName());
         }
+        if (names.isEmpty()){
+            title.setVisibility(View.GONE);
+        }
         ArrayAdapter<String> items = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, names);
-        view.setAdapter(items);
-        view.setOnItemClickListener(this);
+        this.listView.setAdapter(items);
+        this.listView.setOnItemClickListener(this);
     }
 
     @Override
