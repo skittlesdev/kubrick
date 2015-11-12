@@ -39,6 +39,9 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
     }
 
     public void search(String searchTerms) {
+        if (this.searchTask != null) {
+            this.searchTask.cancel(true);
+        }
         this.searchTask = new SearchMediaTask(this);
         this.searchTask.execute(searchTerms);
     }

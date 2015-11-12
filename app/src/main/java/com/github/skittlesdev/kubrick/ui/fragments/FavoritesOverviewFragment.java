@@ -77,7 +77,8 @@ public class FavoritesOverviewFragment extends Fragment {
 
     public void onResults(List<ParseObject> results) {
         Collections.reverse(results);
-        this.view.setAdapter(new FavoritesOverviewAdapter(results));
+        ParseUser user = ParseUser.createWithoutData(ParseUser.class, getArguments().getString("user_id"));
+        this.view.setAdapter(new FavoritesOverviewAdapter(results, user));
     }
 
     public void onEvent(FavoriteStateEvent event) {
