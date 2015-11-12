@@ -64,7 +64,7 @@ public class EpisodeListActivity extends AppCompatActivity {
                 SwipeMenuItem seasonWatchedItem = new SwipeMenuItem(getApplicationContext());
                 seasonWatchedItem.setBackground(new ColorDrawable(Color.WHITE));
                 seasonWatchedItem.setWidth(dp2px(90));
-                seasonWatchedItem.setIcon(R.drawable.ic_heart);
+                seasonWatchedItem.setIcon(R.drawable.ic_view);
                 menu.addMenuItem(seasonWatchedItem);
             }
         };
