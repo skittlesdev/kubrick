@@ -2,6 +2,8 @@ package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +56,11 @@ public class FragmentMovieOverview extends Fragment {
             overview = ((TvSeries) media).getOverview();
         }
 
-        overviewView.setText(overview);
+        if (!TextUtils.isEmpty(overview)) {
+            overviewView.setText(overview);
+        } else {
+            ((CardView) this.rootView.findViewById(R.id.overviewCardView)).setVisibility(View.GONE);
+        }
     }
 
     @Override
