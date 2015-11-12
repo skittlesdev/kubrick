@@ -41,6 +41,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -195,7 +196,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onDateSelected(MaterialCalendarView materialCalendarView, CalendarDay calendarDay, boolean b) {
 
-        String date = calendarDay.getYear() + "-" + calendarDay.getMonth() + "-" + calendarDay.getDay();
+        String date = calendarDay.getYear() + "-" + (calendarDay.getMonth() + 1) + "-" + calendarDay.getDay();
 
         List<TvEpisode> result = new ArrayList<>();
 
@@ -207,6 +208,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
 
+        for (TvEpisode item : result){
+            int serieId;
+        }
+
         System.out.print("ee");
         // Afficher l'activité avec en intent la liste result.
     }
@@ -214,20 +219,22 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private List<TvEpisode> removeEpisodesBeforeDate(List<TvEpisode> tvEpisodes, String date){
 
         String[] dateOrig = date.split("-");
+        int size = tvEpisodes.size();
 
         for(int i = 0; i < tvEpisodes.size()-1; i++){
             if(tvEpisodes.get(i) != null && !tvEpisodes.get(i).getAirDate().isEmpty()){
                 String[] split = tvEpisodes.get(i).getAirDate().split("-");
 
                 if(Integer.valueOf(split[0]) < Integer.valueOf(dateOrig[0])){
-                    tvEpisodes.remove(i);
+                    tvEpisodes.set(i, null);
                 }else if(Integer.valueOf(split[1]) < Integer.valueOf(dateOrig[1])){
-                    tvEpisodes.remove(i);
+                    tvEpisodes.set(i, null);
                 } else if(Integer.valueOf(split[2]) < Integer.valueOf(dateOrig[2])){
-                    tvEpisodes.remove(i);
+                    tvEpisodes.set(i, null);
                 }
             }
         }
+        tvEpisodes.removeAll(Collections.singleton(null));
         return tvEpisodes;
     }
 
@@ -337,8 +344,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void done(ParseObject object, ParseException e) {
                 if (object != null) {
                     setFollowed(true);
-                }
-                else {
+                } else {
                     setFollowed(false);
                 }
             }

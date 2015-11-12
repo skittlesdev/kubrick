@@ -57,7 +57,7 @@ public class CalendarViewUtils {
         for(TvEpisode tvEpisode : tvEpisodeList){
             if (tvEpisode != null && !TextUtils.isEmpty(tvEpisode.getAirDate())) {
                 String[] split = tvEpisode.getAirDate().split("-");
-                CalendarDay day = new CalendarDay(Integer.valueOf(split[0]), Integer.valueOf(split[1]), Integer.valueOf(split[2]));
+                CalendarDay day = new CalendarDay(Integer.valueOf(split[0]), Integer.valueOf(split[1])-1, Integer.valueOf(split[2]));
                 result.add(day);
             }
         }

@@ -43,6 +43,7 @@ public class EpisodeListAdapter extends BaseAdapter {
         ViewHolder holder = (ViewHolder) convertView.getTag();
         SeriesEpisode item = getItem(position);
         //holder.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getPosterPath()));
+
         holder.name.setText((String) item.name);
         return convertView;
     }
