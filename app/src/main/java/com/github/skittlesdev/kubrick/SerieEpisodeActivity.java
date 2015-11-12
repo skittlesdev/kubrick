@@ -42,7 +42,8 @@ import info.movito.themoviedbapi.model.tv.TvEpisode;
  * Created by louis on 11/6/15.
  */
 public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisodeListener {
-    private TvEpisode tvEpisode = null;
+    private TvEpisode tvEpisode;
+    private int seriesId;
     private String seriePosterPath;
     private String serieBackdroptPath;
 
@@ -60,6 +61,7 @@ public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisode
         this.serieBackdroptPath = this.getIntent().getStringExtra("serieBackdrop");
 
         SeriesEpisode episodeRequest = (SeriesEpisode) getIntent().getSerializableExtra("tvEpisode");
+        this.seriesId = episodeRequest.series.getId();
         GetTvEpisodeTask task = new GetTvEpisodeTask(this);
         task.execute(episodeRequest);
     }
@@ -143,7 +145,7 @@ public class SerieEpisodeActivity extends AppCompatActivity implements TvEpisode
         acl.setPublicWriteAccess(false);
 
         favorite.put("User", ParseUser.getCurrentUser());
-        favorite.put("SerieId", this.tvEpisode.getSeriesId());
+        favorite.put("SerieId", this.seriesId);
         favorite.put("SeasonNumber", this.tvEpisode.getSeasonNumber());
         favorite.put("EpisodeNumber", this.tvEpisode.getEpisodeNumber());
         favorite.put("EpisodeId", this.tvEpisode.getId());
