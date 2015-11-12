@@ -38,8 +38,6 @@ public class EpisodeListActivity extends AppCompatActivity {
 
     private SwipeMenuListView listView;
     private TvSeries tvSeries;
-    // private TvSeason tvSeason;
-    //private List<TvEpisode> tvEpisodeList;
     private List<SeriesEpisode> episodes;
 
     @Override

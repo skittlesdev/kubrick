@@ -18,12 +18,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.github.skittlesdev.kubrick.asyncs.GetEpisodesSeriesInfo;
 import com.github.skittlesdev.kubrick.asyncs.GetSeasonEpisodeTask;
+import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
 import com.github.skittlesdev.kubrick.customsWrapperTypes.CustomTvEpisode;
 import com.github.skittlesdev.kubrick.customsWrapperTypes.CustomTvSeason;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
+import com.github.skittlesdev.kubrick.interfaces.MediaListener;
+import com.github.skittlesdev.kubrick.interfaces.TvEpisodesSeriesInfo;
 import com.github.skittlesdev.kubrick.interfaces.TvSeasonListener;
 import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNextEpisodes;
 import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNoEpisode;
@@ -49,18 +54,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import info.movito.themoviedbapi.model.core.IdElement;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeason;
+import info.movito.themoviedbapi.model.tv.TvSeries;
 
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, TvSeasonListener, OnDateSelectedListener {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, TvSeasonListener, OnDateSelectedListener, TvEpisodesSeriesInfo {
     private ParseUser user;
     private boolean followed = false;
     private  MaterialCalendarView calendar;
     private List<CustomTvEpisode> tvEpisodesList;
-    private List<CustomTvSeason> tvSeasonsList;
+    private List<TvSeason> tvSeasonsList;
     private Map<Integer, List<CustomTvEpisode>> map;
     private Map<Integer, CustomTvSeason> customTvSeasonMap;
     private List<List<TvEpisode>> finalList;
+    private ArrayList<TvEpisode> result;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,6 +163,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onTvSeasonRetrieved(List<TvSeason> tvSeasonList) {
 
+        this.tvSeasonsList = tvSeasonList;
         customTvSeasonMap = new HashMap<>();
 
         for(TvSeason item : tvSeasonList){
@@ -198,7 +207,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         String date = calendarDay.getYear() + "-" + (calendarDay.getMonth() + 1) + "-" + calendarDay.getDay();
 
-        List<TvEpisode> result = new ArrayList<>();
+        result = new ArrayList<>();
 
         for (List<TvEpisode> tvEpisodeList : finalList){
             for(TvEpisode episode : tvEpisodeList){
@@ -208,12 +217,59 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
 
-        for (TvEpisode item : result){
-            int serieId;
-        }
+        ArrayList<Integer> serieIdList = new ArrayList<>();
 
+        boolean found = false;
+        int j = 0;
+        int k = 0;
+
+        if(!result.isEmpty()) {
+            for (TvEpisode item : result) {
+                j = 0;
+                found = false;
+                while (!found && j < tvSeasonsList.size()) {
+                    Log.d("episodeList", String.valueOf(j));
+                    TvSeason tvSeason = tvSeasonsList.get(j);
+                    k=0;
+                    while(! found && k < tvSeason.getEpisodes().size()){
+                        TvEpisode tvEpisode = tvSeason.getEpisodes().get(k);
+                        Log.d("episodeList", tvEpisode.getName());
+                        if (tvEpisode.getId() == item.getId()) {
+                            found = true;
+                            serieIdList.add(tvSeason.getExternalIds().getId());
+                        }
+                        k++;
+                    }
+                    j++;
+                }
+            }
+
+            if (!serieIdList.isEmpty()) {
+                GetEpisodesSeriesInfo getSeriesInfoTask = new GetEpisodesSeriesInfo(this);
+                getSeriesInfoTask.execute(serieIdList);
+            }
+        }
         System.out.print("ee");
         // Afficher l'activité avec en intent la liste result.
+    }
+
+    @Override
+    public void onTvEpisodesSeriesInfo(List<TvSeries> tvSeriesList) {
+
+        ArrayList<TvSeries> tvSeriesArrayList = new ArrayList<>();
+        tvSeriesArrayList.addAll(tvSeriesList);
+
+        Bundle bundle = new Bundle();
+
+        bundle.putSerializable("result", result);
+        bundle.putSerializable("resultSeries", tvSeriesArrayList);
+
+        Intent intent = new Intent(this, DayEpisodeActivity.class);
+        intent.putExtras(bundle);
+
+        startActivity(intent);
+
+
     }
 
     private List<TvEpisode> removeEpisodesBeforeDate(List<TvEpisode> tvEpisodes, String date){

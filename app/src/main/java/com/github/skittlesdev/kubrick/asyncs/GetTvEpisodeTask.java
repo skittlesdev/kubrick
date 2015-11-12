@@ -6,6 +6,7 @@ import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.interfaces.TvEpisodeListener;
 import com.github.skittlesdev.kubrick.models.SeriesEpisode;
 import info.movito.themoviedbapi.TmdbApi;
+import info.movito.themoviedbapi.TmdbTvEpisodes;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 
 
@@ -23,7 +24,7 @@ public class GetTvEpisodeTask extends AsyncTask<SeriesEpisode, Void, TvEpisode> 
         }
 
         TmdbApi api = new TmdbApi(KubrickApplication.getContext().getString(R.string.tmdb_api_key));
-        return api.getTvEpisodes().getEpisode(params[0].series.getId(), params[0].seasonNumber, params[0].episodeNumber, "en");
+        return api.getTvEpisodes().getEpisode(params[0].series.getId(), params[0].seasonNumber, params[0].episodeNumber, "en", TmdbTvEpisodes.EpisodeMethod.external_ids);
     }
 
     @Override
