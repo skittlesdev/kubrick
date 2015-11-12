@@ -17,7 +17,7 @@
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:layout_width="125dp"
-            android:layout_height="150dp"
+            android:layout_height="125dp"
             android:contentDescription="@string/credits_picture_default"
             android:padding="0dp"
             android:id="@+id/moviePoster"
@@ -28,9 +28,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:layout_height="25dp"
             android:textAlignment="center"
             android:textStyle="bold"
             android:text="@string/credits_name_default"
@@ -38,10 +36,10 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:layout_height="25dp"
             android:textAlignment="center"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:text="@string/credits_name_default"
             android:id="@+id/personJob"/>
     </LinearLayout>
