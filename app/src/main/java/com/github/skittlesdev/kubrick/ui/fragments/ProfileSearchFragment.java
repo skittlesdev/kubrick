@@ -37,6 +37,7 @@ public class ProfileSearchFragment extends Fragment implements AdapterView.OnIte
         this.listView = (ListView) this.view.findViewById(R.id.results);
         this.title = (TextView) this.view.findViewById(R.id.type);
         this.title.setText(R.string.profiles_search_title);
+        this.title.setVisibility(View.GONE);
         return this.view;
     }
 
@@ -56,8 +57,8 @@ public class ProfileSearchFragment extends Fragment implements AdapterView.OnIte
     private void showResults(List<ParseUser> users) {
         this.results = users;
         List<String> usernames = new LinkedList<>();
-        if (users.isEmpty()){
-            title.setVisibility(View.GONE);
+        if (!users.isEmpty()){
+            title.setVisibility(View.VISIBLE);
         }
         for (ParseUser user: users) {
             usernames.add(user.getUsername());

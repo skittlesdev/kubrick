@@ -40,6 +40,7 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
         this.listView = (ListView) this.view.findViewById(R.id.results);
         this.title = (TextView) this.view.findViewById(R.id.type);
         this.title.setText(R.string.media_search_title);
+        this.title.setVisibility(View.GONE);
         return this.view;
     }
 
@@ -73,8 +74,8 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
                 titles.add(((TvSeries) item).getName());
             }
         }
-        if (titles.isEmpty()){
-            title.setVisibility(View.GONE);
+        if (!titles.isEmpty()){
+            title.setVisibility(View.VISIBLE);
         }
 
         ArrayAdapter<String> items = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, titles);
