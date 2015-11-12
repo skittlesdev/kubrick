@@ -7,9 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
-import com.parse.LogInCallback;
-import com.parse.ParseException;
-import com.parse.ParseUser;
+import com.parse.*;
 import com.vlonjatg.progressactivity.ProgressActivity;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -32,6 +30,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void done(ParseUser parseUser, ParseException e) {
                 if (parseUser != null) {
                     KubrickApplication.getEventBus().post(new LoginEvent(parseUser));
+                    ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                    installation.put("user", parseUser);
+                    installation.saveInBackground();
                     finish();
                 }
                 else {

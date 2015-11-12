@@ -32,11 +32,11 @@ public class GetSeriesInfo extends AsyncTask<Integer, Void, TvSeries> {
         TvSeries tvSeries = api.getTvSeries().getSeries(params[0], "en");
         List<TvSeason> tvSeasonList = tvSeries.getSeasons();
 
-
-       for(TvSeason tvSeason : tvSeasonList){
-           tvSeason.setEpisodes(api.getTvSeasons().getSeason(params[0], tvSeason.getSeasonNumber(), "en").getEpisodes());
+        for (int i = 0; i < tvSeasonList.size(); i++) {
+            tvSeasonList.set(i,api.getTvSeasons().getSeason(params[0], tvSeasonList.get(i).getSeasonNumber(), "en"));
         }
 
+        System.out.print("d");
         return tvSeries ;
     }
 

@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.ui.dialog.PosterFullScreenDialog;
 import com.github.skittlesdev.kubrick.utils.GenresUtils;
@@ -65,16 +67,11 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
 
         if (media instanceof MovieDb) {
             posterPath = ((MovieDb) media).getPosterPath();
-        }
-        else {
+        } else {
             posterPath = ((TvSeries) media).getPosterPath();
         }
 
-        Glide.with(getActivity().getApplicationContext())
-                .load("http://image.tmdb.org/t/p/w500" + posterPath)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) rootView.findViewById(R.id.moviePosterPicture));
+        ((SimpleDraweeView) rootView.findViewById(R.id.moviePosterPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w154" + posterPath));
     }
 
     private void showTitle() {
@@ -90,30 +87,43 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
 
     private void showReleaseDate() {
         TextView releaseDate = (TextView) rootView.findViewById(R.id.movieReleaseDate);
+        String releaseDateString;
 
         if (media instanceof MovieDb) {
-            releaseDate.setText("(" + ((MovieDb) media).getReleaseDate().split("-")[0] + ")");
+            releaseDateString = "[" + ((MovieDb) media).getReleaseDate().split("-")[0] + "]";
         }
         else {
             String firstYear = ((TvSeries) media).getFirstAirDate().split("-")[0];
             String lastYear = ((TvSeries) media).getLastAirDate().split("-")[0];
-            releaseDate.setText(" (" + firstYear + " - " + lastYear + ")");
+            releaseDateString = "[" + firstYear + "~" + lastYear + "]";
         }
+
+        releaseDate.setText(releaseDateString);
     }
 
     private void showDuration() {
         if (this.media instanceof MovieDb) {
             MovieDb movieDb = (MovieDb) this.media;
-
             TextView durationView = (TextView) rootView.findViewById(R.id.movieDuration);
-
             Duration duration = new Duration(movieDb.getRuntime() * 1000 * 60);
+            String hours = " hr";
+            String mins = " min";
+
+            if (duration.getStandardHours() > 1) {
+                hours += "s";
+            }
+
+            if (duration.getStandardMinutes() > 1) {
+                mins += "s";
+            }
+
             PeriodFormatter formatter = new PeriodFormatterBuilder()
-                    .appendHours()
-                    .appendSuffix(":")
-                    .minimumPrintedDigits(2)
+                .appendHours()
+                    .appendSuffix(hours + " ")
+                .minimumPrintedDigits(2)
                     .appendMinutes()
-                    .toFormatter();
+                    .appendSuffix(mins)
+                .toFormatter();
 
             String durationDisplay = formatter.print(duration.toPeriod());
 
@@ -125,7 +135,17 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
         if (this.media instanceof TvSeries) {
             TvSeries tvSeries = (TvSeries) this.media;
             TextView durationView = (TextView) rootView.findViewById(R.id.movieDuration);
-            String stats = tvSeries.getNumberOfSeasons() + " seasons, " + tvSeries.getNumberOfEpisodes() + " episodes";
+            String seasons = "season", episodes = "episode";
+
+            if (tvSeries.getNumberOfSeasons() > 1) {
+                seasons += "s";
+            }
+
+            if (tvSeries.getNumberOfEpisodes() > 1) {
+                episodes += "s";
+            }
+
+            String stats = tvSeries.getNumberOfSeasons() + " " + seasons + " | " + tvSeries.getNumberOfEpisodes() + " " + episodes;
             durationView.setText(stats);
         }
     }
@@ -149,5 +169,11 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
         Drawable drawable = this.posterView.getDrawable();
         PosterFullScreenDialog posterDialog = new PosterFullScreenDialog(getActivity(), drawable);
         posterDialog.show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

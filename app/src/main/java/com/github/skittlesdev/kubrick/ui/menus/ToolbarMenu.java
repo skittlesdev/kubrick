@@ -18,7 +18,7 @@ public class ToolbarMenu {
 
     public ToolbarMenu(Context context) {
         this.context = context;
-        KubrickApplication.getEventBus().register(this);
+        // KubrickApplication.getEventBus().register(this);
     }
 
     public void filterItems(Menu menu) {

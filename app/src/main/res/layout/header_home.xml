@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="178dp"
-    android:background="@drawable/background_poly"
-    android:orientation="vertical"
-    android:weightSum="1">
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="178dp"
+                android:background="@drawable/background_poly"
+                android:orientation="vertical"
+                android:weightSum="1">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -27,11 +28,14 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:text="" />
     </LinearLayout>
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/ic_launcher"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginTop="38dp"
-        android:id="@+id/circleView" />
+        android:id="@+id/circleView"
+        fresco:roundAsCircle="true"
+        fresco:placeholderImage="@drawable/ic_launcher"
+        fresco:placeholderImageScaleType="centerCrop"
+        fresco:failureImage="@drawable/poster_default_error"/>
 </RelativeLayout>

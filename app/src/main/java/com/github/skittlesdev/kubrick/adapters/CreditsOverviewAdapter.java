@@ -2,17 +2,22 @@ package com.github.skittlesdev.kubrick.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.bumptech.glide.Glide;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.MediaActivity;
+import com.github.skittlesdev.kubrick.PeopleActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.parse.ParseObject;
 import info.movito.themoviedbapi.model.people.Person;
+import info.movito.themoviedbapi.model.people.PersonCast;
+import info.movito.themoviedbapi.model.people.PersonCrew;
 
 import java.util.List;
 
@@ -42,27 +47,45 @@ public class CreditsOverviewAdapter extends RecyclerView.Adapter<CreditsOverview
         return this.credits.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView profile;
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private SimpleDraweeView profile;
         private TextView name;
+        private TextView job;
         private Person item;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.profile = (ImageView) itemView.findViewById(R.id.moviePoster);
+
+            this.profile = (SimpleDraweeView) itemView.findViewById(R.id.moviePoster);
+            this.profile.setOnClickListener(this);
             this.name = (TextView) itemView.findViewById(R.id.name);
+            this.job = (TextView) itemView.findViewById(R.id.personJob);
         }
+
         public void setProfile(Context context) {
-            Glide.with(context)
-                    .load("http://image.tmdb.org/t/p/w185" + item.getProfilePath())
-                    .placeholder(R.drawable.poster_default_placeholder)
-                    .error(R.drawable.poster_default_error)
-                    .into(this.profile);
+            this.profile.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getProfilePath()));
         }
 
         public void setItem(Person item) {
             this.item = item;
             this.name.setText(item.getName());
+
+            if (this.item instanceof PersonCrew) {
+                this.job.setText(((PersonCrew) this.item).getJob());
+            } else {
+                this.job.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onClick(View view) {
+            Context context = view.getContext();
+            Intent intent = new Intent(context, PeopleActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("person", this.item);
+
+            intent.putExtra("PERSON_OBJECT", bundle);
+            context.startActivity(intent);
         }
     }
 }

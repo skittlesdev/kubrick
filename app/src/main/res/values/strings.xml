@@ -12,13 +12,13 @@
     <string name="closeDrawer">2</string>
     <string name="tmdb_api_key">0d1d0cc3c4aec9ca1c2c8c9e781a7ef1</string>
     <string name="title_activity_search">SearchActivity</string>
-    <string name="search_hint">Search terms</string>
+    <string name="search_hint">Search terms...</string>
     <string name="navigation_drawer_icon">Icon</string>
     <string name="navigation_drawer_title">Title</string>
     <string name="movie_overview_content">-</string>
     <string name="movie_overview_title">Overview</string>
-    <string name="movie_release_date">(Date)</string>
-    <string name="movie_duration">0:0</string>
+    <string name="movie_release_date">[Date]</string>
+    <string name="movie_duration">0 hr 00 min</string>
     <string name="movie_genres">Genres</string>
     <string name="movie_title">Movie Title</string>
     <string name="movie_poster_picture_content_description">Movie poster</string>
@@ -31,5 +31,19 @@
     <string name="tv_episode_poster_content_description">Episode poster</string>
     <string name="tv_episode_title">Episode title</string>
     <string name="tv_episode_number">S??E??</string>
+    <string name="cast_default">Cast</string>
+    <string name="crew_default">Crew</string>
+    <string name="credits_picture_default">Person picture</string>
+    <string name="credits_name_default">-</string>
+    <string name="person_name_default">Name</string>
+    <string name="seasonListButton">Season list</string>
+    <string name="person_job_default">Job</string>
+    <string name="person_birth_default">Birth</string>
+    <string name="person_death_default">Death</string>
+    <string name="video_thumbnail_default">Video thumbnail</string>
+    <string name="movie_videos_title_default">Videos</string>
+    <string name="about_title_default">Kubrick</string>
+    <string name="about_description">Is an awesome movie director who made some of the greatest films of the 20th century.\nIt\'s also our application\'s name and a good inspiration for our logo.</string>
+    <string name="about_footer">© 2015 The Kubrick app contributors\nReleased upon the terms of the Apache 2.0 License.</string>
 </resources>
 

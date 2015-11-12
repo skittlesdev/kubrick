@@ -13,6 +13,7 @@ import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import com.github.skittlesdev.kubrick.ui.fragments.MediaSearchFragment;
+import com.github.skittlesdev.kubrick.ui.fragments.PeopleSearchFragment;
 import com.github.skittlesdev.kubrick.ui.fragments.ProfileSearchFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
@@ -24,6 +25,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private TmdbSearch.MultiListResultsPage results;
     private MediaSearchFragment mediaSearch;
     private ProfileSearchFragment profileSearch;
+    private PeopleSearchFragment peopleSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +48,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         super.onStart();
         this.mediaSearch = new MediaSearchFragment();
         this.profileSearch = new ProfileSearchFragment();
+        this.peopleSearch = new PeopleSearchFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.profileSearch, this.profileSearch, "profileSearch");
+        transaction.add(R.id.peopleSearch, this.peopleSearch, "peopleSearch");
         transaction.add(R.id.mediaSearch, this.mediaSearch, "mediaSearch");
         transaction.commit();
     }
@@ -119,6 +123,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     public void executeSearchTask(TextView textView, Context context) {
         String terms = textView.getText().toString();
         this.profileSearch.search(terms);
+        this.peopleSearch.search(terms);
         this.mediaSearch.search(terms);
     }
 }

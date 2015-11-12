@@ -3,6 +3,8 @@ package com.github.skittlesdev.kubrick;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -11,13 +13,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.*;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
-import com.bumptech.glide.Glide;
+
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.asyncs.GetMovieTask;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesInfo;
 import com.github.skittlesdev.kubrick.asyncs.GetSeriesTask;
@@ -26,10 +28,11 @@ import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.MediaListener;
 import com.github.skittlesdev.kubrick.interfaces.TvSeriesSeasonsListener;
-import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorNextEpisodes;
-import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorNoEpisode;
-import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
-import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorToday;
+import com.github.skittlesdev.kubrick.models.SeriesEpisode;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNextEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNoEpisode;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorToday;
 import com.github.skittlesdev.kubrick.ui.fragments.*;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
@@ -41,21 +44,34 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.Video;
 import info.movito.themoviedbapi.model.core.IdElement;
-import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 public class MediaActivity extends AppCompatActivity implements MediaListener, View.OnClickListener, TvSeriesSeasonsListener, OnDateSelectedListener{
+    private AsyncTask task;
+    private GetSeriesInfo seriesInfoTask;
     private int mediaId;
     private IdElement media;
+    private List<SeriesEpisode> episodes;
     private FavoriteState favoriteState;
     private MaterialCalendarView calendar;
     private boolean backPressed = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_media);
+
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitleEnabled(false);
 
         this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -67,20 +83,36 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         FloatingActionButton favoriteFab = (FloatingActionButton) this.findViewById(R.id.favoriteFab);
         favoriteFab.setOnClickListener(this);
 
-        this.mediaId = this.getIntent().getIntExtra("MEDIA_ID", -1);
+        Button button = (Button) findViewById(R.id.seasonListButton);
+        button.setOnClickListener(this);
+
+        String mediaType;
+
+        if (getIntent().hasExtra("MEDIA_ID") && getIntent().hasExtra("MEDIA_TYPE")) {
+            this.mediaId = getIntent().getIntExtra("MEDIA_ID", -1);
+            mediaType = getIntent().getStringExtra("MEDIA_TYPE");
+        }
+        else {
+            List<String> segments = this.getIntent().getData().getPathSegments();
+            mediaType = segments.get(0);
+            this.mediaId = Integer.valueOf(segments.get(1));
+        }
 
         calendar = (MaterialCalendarView) findViewById(R.id.seriesPlanningCalendarView);
         calendar.setOnDateChangedListener(this);
         calendar.setSelectionColor(getResources().getColor(R.color.light_orange));
 
-        if (this.getIntent().getStringExtra("MEDIA_TYPE").compareTo("tv") == 0) {
-            GetSeriesTask task = new GetSeriesTask(this);
-            task.execute(this.mediaId);
+        if (mediaType.compareTo("tv") == 0) {
+            this.task = new GetSeriesTask(this);
+            ((GetSeriesTask) this.task).execute(this.mediaId);
         }
         else {
-            GetMovieTask task = new GetMovieTask(this);
-            task.execute(this.mediaId);
+            button.setVisibility(View.INVISIBLE);
+            this.task = new GetMovieTask(this);
+            ((GetMovieTask) this.task).execute(this.mediaId);
         }
+
+
     }
 
     @Override
@@ -97,18 +129,15 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         return super.onOptionsItemSelected(item);
     }
 
-    private void showTitle(IdElement media) {
-        TextView titleView = (TextView) findViewById(R.id.title);
-        if (media instanceof MovieDb) {
-            String title = ((MovieDb) media).getTitle();
-            String year = "(" + ((MovieDb) media).getReleaseDate().split("-")[0] + ")";
-            titleView.setText(title + " " + year);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getEventBus().unregister(this);
+        if (this.task != null) {
+            this.task.cancel(true);
         }
-        else {
-            String title = ((TvSeries) media).getName();
-            String firstYear = ((TvSeries) media).getFirstAirDate().split("-")[0];
-            String lastYear = ((TvSeries) media).getLastAirDate().split("-")[0];
-            titleView.setText(title + " (" + firstYear + " - " + lastYear + ")");
+        if (this.seriesInfoTask != null) {
+            this.seriesInfoTask.cancel(true);
         }
     }
 
@@ -139,23 +168,34 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         });
     }
 
-    public void displaySerieEpisodesCalendar(TvSeries tvSeries){
-        GetSeriesInfo task = new GetSeriesInfo(this);
-        task.execute(this.mediaId);
+    public void displaySerieEpisodesCalendar(final TvSeries tvSeries){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("seriesId", String.valueOf(tvSeries.getId()));
+        ParseCloud.callFunctionInBackground("getSeriesEpisodes", params, new FunctionCallback<List<HashMap<String, Object>>>() {
+            @Override
+            public void done(List<HashMap<String, Object>> results, ParseException e) {
+                List<SeriesEpisode> episodes = new LinkedList<>();
+                for (HashMap<String, Object> result : results) {
+                    episodes.add(new SeriesEpisode(tvSeries, result));
+                }
+
+                setEpisodes(episodes);
+
+                calendar.addDecorators(
+                        new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.DKGRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
+                        new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
+                        new CalendarViewSeriesPlanningDecoratorNextEpisodes(R.color.light_orange, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
+                        new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
+                );
+
+                calendar.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
     public void onTvSeriesSeasonsRetrieved(TvSeries tvSeries) {
-        calendar.setVisibility(View.VISIBLE);
 
-        this.media = tvSeries;
-
-        calendar.addDecorators(
-                new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorPassedEpisodes(Color.GRAY, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorNextEpisodes(Color.RED, CalendarViewUtils.tvSeriesToEpisodeAirDate(tvSeries)),
-                new CalendarViewSeriesPlanningDecoratorToday(Color.WHITE)
-        );
     }
 
     @Override
@@ -227,6 +267,21 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                 });
             }
         }
+
+        if(v.getId() == R.id.seasonListButton){
+
+            Intent intentE = new Intent(getApplication().getApplicationContext(), SeasonListActivity.class);
+
+            Bundle bundleE = new Bundle();
+            bundleE.putInt("seriesId", media.getId());
+            bundleE.putSerializable("series", media);
+
+            intentE.putExtras(bundleE);
+
+            startActivity(intentE);
+           //finish();
+
+        }
     }
 
     private void showBackdrop(IdElement mMedia) {
@@ -239,11 +294,43 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             backdrop = ((TvSeries) mMedia).getBackdropPath();
         }
 
-        Glide.with(this)
-                .load("http://image.tmdb.org/t/p/w780" + backdrop)
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .into((ImageView) this.findViewById(R.id.movieBackDropPicture));
+        ((SimpleDraweeView) findViewById(R.id.movieBackDropPicture)).setImageURI(Uri.parse("http://image.tmdb.org/t/p/w780" + backdrop));
+    }
+
+    private void showSimilar(IdElement media) {
+        final FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        final SimilarMoviesOverviewFragment similarFragment = new SimilarMoviesOverviewFragment();
+        final Bundle similarFragmentArgs = new Bundle();
+
+        if (media instanceof MovieDb) {
+            similarFragmentArgs.putString("type", "movie");
+            List<MovieDb> similarMoviesList = ((MovieDb) media).getSimilarMovies();
+            ArrayList<MovieDb> similarMoviesArrayList = new ArrayList<>(similarMoviesList.size());
+            similarMoviesArrayList.addAll(similarMoviesList);
+            similarFragmentArgs.putSerializable("movies", similarMoviesArrayList);
+
+            similarFragment.setArguments(similarFragmentArgs);
+            transaction.add(R.id.fragment_similar, similarFragment, "similar");
+            transaction.commit();
+        }
+        else {
+            similarFragmentArgs.putString("type", "tv");
+
+            HashMap<String, String> params = new HashMap<>();
+            params.put("seriesId", String.valueOf(media.getId()));
+            ParseCloud.callFunctionInBackground("similarSeries", params, new FunctionCallback<HashMap>() {
+                @Override
+                public void done(HashMap results, ParseException e) {
+                    if (e == null) {
+                        similarFragmentArgs.putSerializable("series", results);
+
+                        similarFragment.setArguments(similarFragmentArgs);
+                        transaction.add(R.id.fragment_similar, similarFragment, "similar");
+                        transaction.commit();
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -251,6 +338,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         this.media = media;
 
         this.showBackdrop(this.media);
+        showSimilar(this.media);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitleEnabled(true);
@@ -262,9 +350,10 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             collapsingToolbar.setTitle(((TvSeries) this.media).getName());
         }
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        final FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         Bundle options = new Bundle();
+
         options.putSerializable("media", this.media);
 
         FragmentMovieHeader header = new FragmentMovieHeader();
@@ -273,8 +362,45 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         FragmentMovieOverview overview = new FragmentMovieOverview();
         overview.setArguments(options);
 
+
+
         transaction.add(R.id.movieHeaderContainer, header);
         transaction.add(R.id.movieOverviewContainer, overview);
+
+        List<Video> videosList = null;
+        final Bundle videosBundle = new Bundle();
+        final FragmentMovieTrailer videosFragment = new FragmentMovieTrailer();
+        String videoType = null;
+
+        if (this.media instanceof TvSeries) {
+            videosList = ((TvSeries) this.media).getVideos();
+            videoType = "tv";
+        } else if (this.media instanceof MovieDb) {
+            videosList = ((MovieDb) this.media).getVideos();
+            videoType = "movie";
+        }
+
+        if (videosList != null && videosList.size() > 0) {
+            videosFragment.setArguments(videosBundle);
+            videosBundle.putSerializable("videos", (Serializable) videosList);
+            transaction.add(R.id.movieVideosContainer, videosFragment);
+        } else {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("mediaId", String.valueOf(media.getId()));
+            params.put("videoType", String.valueOf(videoType));
+            final FragmentTransaction movieTransaction = getFragmentManager().beginTransaction();
+            ParseCloud.callFunctionInBackground("getVideos", params, new FunctionCallback<HashMap>() {
+                @Override
+                public void done(HashMap results, ParseException e) {
+                    if (e == null) {
+                        videosBundle.putSerializable("videos", results);
+                        videosFragment.setArguments(videosBundle);
+                        movieTransaction.add(R.id.movieVideosContainer, videosFragment);
+                        movieTransaction.commit();
+                    }
+                }
+            });
+        }
 
         CreditsOverviewFragment movieCast = new CreditsOverviewFragment();
         Bundle movieCastOptions = new Bundle();
@@ -323,16 +449,16 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
     @Override
     public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
-        Log.d("onSelectedDayChange", "day changed");
         TvSeries serie = (TvSeries) this.media;
 
-        TvEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, serie);
+        SeriesEpisode tvEpisode =  CalendarViewUtils.getEpisodeFromDate(date, this.episodes);
 
         if (tvEpisode != null) {
 
             Intent intent = new Intent(getApplicationContext(), SerieEpisodeActivity.class);
             Bundle bundle = new Bundle();
 
+            bundle.putInt("episode_id", tvEpisode.id);
             bundle.putSerializable("tvEpisode", tvEpisode);
             bundle.putString("seriePoster", serie.getPosterPath());
             bundle.putString("serieBackdrop", serie.getBackdropPath());
@@ -356,7 +482,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
             this.favoriteState = FavoriteState.ON;
             toggleView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_heart_broken));
         }
-        
+
         toggleView.setLayoutParams(toggleParams);
         toggleView.setVisibility(View.VISIBLE);
     }
@@ -370,5 +496,25 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         toggleView.setVisibility(View.GONE);
         CoordinatorLayout.LayoutParams toggleParams = (CoordinatorLayout.LayoutParams) toggleView.getLayoutParams();
         toggleParams.setAnchorId(View.NO_ID);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) { // SMALL FIX
+        try {
+            /*
+            *
+            * WE MUST DO THIS because sometimes a org.json.JSONObject.NULL has to be
+            * serialized (received by the TMDB wrapper), and it is not working
+            * because org.json.JSONObject.NULL is no serializable.
+            *
+            * */
+            // super.onSaveInstanceState(state); catch not taken? If this line is uncommented the app can crash...
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setEpisodes(List<SeriesEpisode> episodes) {
+        this.episodes = episodes;
     }
 }

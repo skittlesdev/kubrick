@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.github.skittlesdev.kubrick.KubrickApplication;
 import com.github.skittlesdev.kubrick.MediaActivity;
 import com.github.skittlesdev.kubrick.R;
 import com.github.skittlesdev.kubrick.asyncs.SearchMediaTask;
@@ -27,6 +28,7 @@ import java.util.List;
 public class MediaSearchFragment extends Fragment implements SearchListener, AdapterView.OnItemClickListener {
     private ListView view;
     private TmdbSearch.MultiListResultsPage results;
+    private SearchMediaTask searchTask;
 
     @Nullable
     @Override
@@ -37,8 +39,18 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
     }
 
     public void search(String searchTerms) {
-        SearchMediaTask searchTask = new SearchMediaTask(this);
-        searchTask.execute(searchTerms);
+        this.searchTask = new SearchMediaTask(this);
+        this.searchTask.execute(searchTerms);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.searchTask != null) {
+            this.searchTask.cancel(true);
+        }
+
+        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override
@@ -77,5 +89,6 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
             intent.putExtra("MEDIA_TYPE", "tv");
             startActivity(intent);
         }
+        getFragmentManager().beginTransaction().remove(this).commit();
     }
 }

@@ -1,4 +1,4 @@
-package com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries;
+package com.github.skittlesdev.kubrick.ui.calendar.decorators;
 
 import android.graphics.Color;
 import android.graphics.Typeface;

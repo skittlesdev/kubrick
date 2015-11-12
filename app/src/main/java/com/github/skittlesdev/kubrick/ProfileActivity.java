@@ -3,6 +3,7 @@ package com.github.skittlesdev.kubrick;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,22 +16,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CalendarView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.bumptech.glide.Glide;
-import com.github.skittlesdev.kubrick.adapters.FavoritesOverviewAdapter;
 import com.github.skittlesdev.kubrick.asyncs.GetSeasonEpisodeTask;
 import com.github.skittlesdev.kubrick.customsWrapperTypes.CustomTvEpisode;
 import com.github.skittlesdev.kubrick.customsWrapperTypes.CustomTvSeason;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.events.LoginEvent;
 import com.github.skittlesdev.kubrick.events.LogoutEvent;
 import com.github.skittlesdev.kubrick.interfaces.TvSeasonListener;
-import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorNextEpisodes;
-import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorNoEpisode;
-import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
-import com.github.skittlesdev.kubrick.ui.calendar.decorators.TvSeries.CalendarViewSeriesPlanningDecoratorToday;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNextEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorNoEpisode;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorPassedEpisodes;
+import com.github.skittlesdev.kubrick.ui.calendar.decorators.CalendarViewSeriesPlanningDecoratorToday;
 import com.github.skittlesdev.kubrick.ui.fragments.FavoritesOverviewFragment;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
@@ -43,7 +41,6 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,10 +48,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import info.movito.themoviedbapi.model.ExternalIds;
 import info.movito.themoviedbapi.model.tv.TvEpisode;
 import info.movito.themoviedbapi.model.tv.TvSeason;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, TvSeasonListener, OnDateSelectedListener {
     private ParseUser user;
@@ -89,7 +84,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         calendar.setOnDateChangedListener(this);
         calendar.setVisibility(View.VISIBLE);
 
-        ParseUser.getQuery().getInBackground(getIntent().getStringExtra("user_id"), new GetCallback<ParseUser>() {
+        String user_id;
+        if (getIntent().hasExtra("user_id")) {
+            user_id = getIntent().getStringExtra("user_id");
+        }
+        else {
+            user_id = getIntent().getData().getPathSegments().get(0);
+        }
+
+        ParseUser.getQuery().getInBackground(user_id, new GetCallback<ParseUser>() {
+
             @Override
             public void done(ParseUser user, ParseException e) {
                 buildProfile(user);
@@ -110,9 +114,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 seriesFavorites.setArguments(seriesFavoritesArgs);
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(R.id.fragment_movies, movieFavorites, "movies");
-                transaction.add(R.id.fragment_series, seriesFavorites, "series");
-                transaction.commit();
 
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("ViewedTvSeriesEpisodes");
 
@@ -140,6 +141,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 });
+
+                transaction.replace(R.id.fragment_movies, movieFavorites, "movies");
+                transaction.replace(R.id.fragment_series, seriesFavorites, "series");
+                transaction.commitAllowingStateLoss();
             }
         });
 
@@ -254,7 +259,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         GetSeasonEpisodeTask getSeasonEpisodeTask = new GetSeasonEpisodeTask(this);
-        getSeasonEpisodeTask.execute(serieIdArray,seasonNumber);
+        getSeasonEpisodeTask.execute(serieIdArray, seasonNumber);
 
     }
 
@@ -263,16 +268,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         ProfileElement profile = new ProfileElement(user);
 
         TextView name = (TextView) findViewById(R.id.name);
-        ImageView image = (ImageView) findViewById(R.id.circleView);
+        SimpleDraweeView image = (SimpleDraweeView) findViewById(R.id.circleView);
 
         name.setText(profile.getName());
         if (!TextUtils.isEmpty(profile.getAvatarUrl())) {
-            Glide.with(KubrickApplication.getContext())
-                .load(profile.getAvatarUrl())
-                .placeholder(R.drawable.poster_default_placeholder)
-                .error(R.drawable.poster_default_error)
-                .bitmapTransform(new CropCircleTransformation(KubrickApplication.getContext()))
-                .into(image);
+            image.setImageURI(Uri.parse(profile.getAvatarUrl()));
         }
     }
 
@@ -325,7 +325,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void getFollowStatus(ParseUser user) {
-        if (ParseUser.getCurrentUser() == null) {
+        if (ParseUser.getCurrentUser() == null || user.getObjectId().compareTo(ParseUser.getCurrentUser().getObjectId()) == 0) {
             return;
         }
 
@@ -435,5 +435,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void onEvent(LogoutEvent e) {
         final Button toggle = (Button) findViewById(R.id.followToggle);
         toggle.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KubrickApplication.getEventBus().unregister(this);
     }
 }
