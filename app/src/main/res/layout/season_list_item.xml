@@ -22,4 +22,12 @@
         android:textColor="@android:color/white"
         android:textSize="18sp" />
 
+    <ImageView
+        android:id="@+id/seasonListWatched"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/seasonListName"
+        android:layout_toRightOf="@+id/seasonListName"
+        android:layout_toEndOf="@+id/seasonListName" />
+
 </RelativeLayout>

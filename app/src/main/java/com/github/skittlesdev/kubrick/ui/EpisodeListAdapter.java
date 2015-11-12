@@ -44,6 +44,9 @@ public class EpisodeListAdapter extends BaseAdapter {
         SeriesEpisode item = getItem(position);
         //holder.poster.setImageURI(Uri.parse("http://image.tmdb.org/t/p/w185" + item.getPosterPath()));
         holder.name.setText((String) item.name);
+        if (false) {// TODO test if current user have watched this item
+            holder.watched.setImageDrawable(convertView.getContext().getResources().getDrawable(R.drawable.ic_view));
+        }
         return convertView;
     }
 
@@ -61,11 +64,13 @@ public class EpisodeListAdapter extends BaseAdapter {
     public static class ViewHolder {
         public ImageView poster;
         public TextView name;
+        public ImageView watched;
 
 
         public ViewHolder(View itemView) {
             this.poster = (ImageView) itemView.findViewById(R.id.seasonListIcon);
             this.name = (TextView) itemView.findViewById(R.id.seasonListName);
+            this.watched = (ImageView) itemView.findViewById(R.id.seasonListWatched);
             itemView.setTag(this);
         }
 
