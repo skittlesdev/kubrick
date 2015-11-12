@@ -2,6 +2,7 @@ package com.github.skittlesdev.kubrick.ui.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,14 @@ public class FragmentPersonPeopleOverview extends Fragment {
     }
 
     private void showOverview() {
-        ((TextView) this.rootView.findViewById(R.id.personBiography)).setText(this.personPeople.getBiography());
+        String overview = this.personPeople.getBiography();
+        TextView container = (TextView) rootView.findViewById(R.id.personBiography);
+
+        if (!TextUtils.isEmpty(overview)) {
+            container.setText(overview);
+        } else {
+            ((CardView) this.rootView.findViewById(R.id.personOverviewCardView)).setVisibility(View.GONE);
+        }
     }
 
     @Override
