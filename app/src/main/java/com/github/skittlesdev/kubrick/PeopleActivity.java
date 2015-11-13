@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.skittlesdev.kubrick.asyncs.GetPersonPeople;
@@ -16,6 +18,7 @@ import com.github.skittlesdev.kubrick.interfaces.PeopleListener;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentPersonPeopleHeader;
 import com.github.skittlesdev.kubrick.ui.fragments.FragmentPersonPeopleOverview;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
+import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 
 import info.movito.themoviedbapi.model.people.Person;
 import info.movito.themoviedbapi.model.people.PersonPeople;
@@ -101,5 +104,19 @@ public class PeopleActivity extends AppCompatActivity implements PeopleListener 
         transaction.add(R.id.personOverviewContainer, overview);
 
         transaction.commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_home, menu);
+        new ToolbarMenu(this).filterItems(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        new ToolbarMenu(this).itemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -4,8 +4,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -17,6 +24,8 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.github.skittlesdev.kubrick.models.SeriesEpisode;
 import com.github.skittlesdev.kubrick.ui.EpisodeListAdapter;
+import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
+import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -44,6 +53,11 @@ public class EpisodeListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.serie_episode_list_main);
+
+        this.setSupportActionBar((Toolbar) this.findViewById(R.id.toolBar));
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        new DrawerMenu(this, (DrawerLayout) findViewById(R.id.homeDrawerLayout), (RecyclerView) findViewById(R.id.homeRecyclerView)).draw();
 
         this.episodes = (List<SeriesEpisode>) getIntent().getExtras().getSerializable("episodes");
         this.tvSeries = (TvSeries) getIntent().getExtras().getSerializable("series");
@@ -142,5 +156,19 @@ public class EpisodeListActivity extends AppCompatActivity {
     private int dp2px(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_home, menu);
+        new ToolbarMenu(this).filterItems(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        new ToolbarMenu(this).itemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 }
