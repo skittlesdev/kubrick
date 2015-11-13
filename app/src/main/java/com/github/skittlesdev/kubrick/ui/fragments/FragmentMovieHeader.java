@@ -174,6 +174,5 @@ public class FragmentMovieHeader extends Fragment implements View.OnClickListene
     @Override
     public void onDestroy() {
         super.onDestroy();
-        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

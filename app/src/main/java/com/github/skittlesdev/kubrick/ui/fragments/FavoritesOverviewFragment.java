@@ -89,6 +89,5 @@ public class FavoritesOverviewFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         KubrickApplication.getEventBus().unregister(this);
-        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

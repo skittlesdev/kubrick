@@ -18,7 +18,6 @@ import com.github.skittlesdev.kubrick.ui.fragments.FragmentHome;
 import com.github.skittlesdev.kubrick.ui.menus.DrawerMenu;
 import com.github.skittlesdev.kubrick.ui.menus.ToolbarMenu;
 import com.newrelic.agent.android.NewRelic;
-import com.squareup.leakcanary.RefWatcher;
 
 public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;

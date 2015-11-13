@@ -66,8 +66,6 @@ public class PeopleSearchFragment extends Fragment implements PeopleSearchListen
         if (this.peopleSearchTask != null) {
             this.peopleSearchTask.cancel(true);
         }
-
-        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

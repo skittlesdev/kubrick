@@ -82,6 +82,5 @@ public class ProfileSearchFragment extends Fragment implements AdapterView.OnIte
     @Override
     public void onDestroy() {
         super.onDestroy();
-        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

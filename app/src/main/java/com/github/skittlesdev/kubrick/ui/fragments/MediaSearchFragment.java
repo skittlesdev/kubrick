@@ -58,8 +58,6 @@ public class MediaSearchFragment extends Fragment implements SearchListener, Ada
         if (this.searchTask != null) {
             this.searchTask.cancel(true);
         }
-
-        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

@@ -66,6 +66,5 @@ public class FragmentHome extends Fragment implements DataListener {
         if (this.tmdbApiTask != null) {
             this.tmdbApiTask.cancel(true);
         }
-        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }

@@ -63,6 +63,5 @@ public class SimilarMoviesOverviewFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        KubrickApplication.getRefWatcher(getActivity()).watch(this);
     }
 }
