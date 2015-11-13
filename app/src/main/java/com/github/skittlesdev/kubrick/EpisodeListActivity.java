@@ -171,4 +171,9 @@ public class EpisodeListActivity extends AppCompatActivity {
         new ToolbarMenu(this).itemSelected(item);
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return super.onMenuOpened(featureId, menu);
+    }
 }
