@@ -36,8 +36,9 @@
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
         <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/profileSearch" />
-        <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/peopleSearch" />
         <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/mediaSearch" />
+        <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/peopleSearch" />
+
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/homeRecyclerView"

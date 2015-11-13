@@ -85,6 +85,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         favoriteFab.setOnClickListener(this);
 
         Button button = (Button) findViewById(R.id.seasonListButton);
+        button.setVisibility(View.INVISIBLE);
         button.setOnClickListener(this);
 
         String mediaType;
@@ -182,7 +183,7 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
                 setEpisodes(episodes);
 
-               Object o = CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes);
+                Object o = CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes);
 
                 calendar.addDecorators(
                         new CalendarViewSeriesPlanningDecoratorNoEpisode(Color.WHITE, CalendarViewUtils.tvSeriesToEpisodeAirDate(episodes)),
@@ -329,7 +330,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
 
                         similarFragment.setArguments(similarFragmentArgs);
                         transaction.add(R.id.fragment_similar, similarFragment, "similar");
-                        transaction.commit();
+                        if (!backPressed) {
+                            transaction.commit();
+                        }
                     }
                 }
             });
@@ -399,7 +402,9 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
                         videosBundle.putSerializable("videos", results);
                         videosFragment.setArguments(videosBundle);
                         movieTransaction.add(R.id.movieVideosContainer, videosFragment);
-                        movieTransaction.commit();
+                        if(!backPressed) {
+                            movieTransaction.commit();
+                        }
                     }
                 }
             });
@@ -437,6 +442,10 @@ public class MediaActivity extends AppCompatActivity implements MediaListener, V
         }
 
         getFavoriteStatus();
+
+        if(media instanceof TvSeries) {
+            findViewById(R.id.seasonListButton).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

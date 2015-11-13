@@ -50,9 +50,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         this.profileSearch = new ProfileSearchFragment();
         this.peopleSearch = new PeopleSearchFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.mediaSearch, this.mediaSearch, "mediaSearch");
         transaction.add(R.id.profileSearch, this.profileSearch, "profileSearch");
         transaction.add(R.id.peopleSearch, this.peopleSearch, "peopleSearch");
-        transaction.add(R.id.mediaSearch, this.mediaSearch, "mediaSearch");
         transaction.commit();
     }
 
